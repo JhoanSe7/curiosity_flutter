@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/design/tokens/colors.dart';
-import 'core/routes/route.dart';
+import 'core/routes/routes.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -22,7 +22,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        colorScheme: ColorScheme.fromSeed(seedColor: colors.principal),
+        colorScheme: ColorScheme.fromSeed(seedColor: colors.mainGreen),
         useMaterial3: true,
       ),
       routerConfig: router,
