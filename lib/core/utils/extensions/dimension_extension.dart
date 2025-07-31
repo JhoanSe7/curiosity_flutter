@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 extension Dimension on BuildContext {
-  get width => MediaQuery.of(this).size.width;
+  double get width => MediaQuery.of(this).size.width;
 
-  get height => MediaQuery.of(this).size.height;
+  double get height => MediaQuery.of(this).size.height;
 }

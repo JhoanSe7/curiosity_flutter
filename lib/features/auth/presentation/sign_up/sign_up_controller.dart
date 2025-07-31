@@ -1,20 +1,18 @@
 import 'package:curiosity_flutter/core/di/injection.dart';
 import 'package:curiosity_flutter/core/utils/failure_util.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
-import 'package:curiosity_flutter/features/auth/data/models/sign_in_model.dart';
+import 'package:curiosity_flutter/features/auth/data/models/sign_up_model.dart';
 import 'package:curiosity_flutter/features/auth/domain/use_cases/auth_use_case.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'sign_in_state.dart';
-
-class SignInController extends StateNotifier<SignInState> {
-  SignInController(this.useCase) : super(SignInState());
-
+class SignUpController extends StateNotifier<SignUpState> {
+  SignUpController(this.useCase) : super(SignUpState());
   final AuthUseCase useCase;
 
-  Future<UserModel?> signIn(BuildContext context, {required SignInModel data}) async {
-    final result = await useCase.signIn(data: data);
+  Future<UserModel?> signUp(BuildContext context, {required SignUpModel data}) async {
+    final result = await useCase.signUp(data: data);
     return result.fold(
       (e) => processError<UserModel>(context, error: e.message),
       (data) => data.user,
@@ -25,9 +23,9 @@ class SignInController extends StateNotifier<SignInState> {
     if (mounted) state = state.copyWith(user: data);
   }
 
-  Future<bool> logIn(BuildContext context, String user, String passwd) async {
-    final data = SignInModel(username: user.trim(), password: passwd.trim());
-    final res = await signIn(context, data: data);
+  Future<bool> register(BuildContext context, SignUpModel data) async {
+
+    final res = await signUp(context, data: data);
     if (res != null) {
       setUser(data: res);
       return true;
@@ -36,8 +34,8 @@ class SignInController extends StateNotifier<SignInState> {
   }
 }
 
-final signInController = StateNotifierProvider.autoDispose<SignInController, SignInState>(
-  (ref) => SignInController(
+final signUpController = StateNotifierProvider.autoDispose<SignUpController, SignUpState>(
+  (ref) => SignUpController(
     getIt.get(),
   ),
 );

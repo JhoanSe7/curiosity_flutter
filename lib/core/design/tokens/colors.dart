@@ -21,17 +21,32 @@ class SystemColors {
 
   final principal = const [Color(0xFF30D299), Color(0xFF12B4A7)];
   final secondary = const [Color(0xFFF88d49), Color(0xFFF16977)];
-  final tertiary = const [Color(0xFFF7C119), Color(0xFFF7A036)];
+  final gradientOrange = const [Color(0xFFF7C119), Color(0xFFF7A036)];
   final gradientGrey = const [Color(0xFF808080), Color(0xFFABABAB)];
+  final gradientPurple = const [Color(0xFFBD76F5), Color(0xFFE73D97)];
+  final gradientBlue = const [Color(0xFF4D9FF7), Color(0xFF00AFD3)];
+  final gradientGreen = const [Color(0xFF3BDB78), Color(0xFF00B577)];
+  final gradientYellow = const [Color(0xFFFAC506), Color(0xFFF96C03)];
+  final gradientViolet = const [Color(0xFF7A83F8), Color(0xFFA04AF6)];
+  final gradientMagenta = const [Color(0xFFF7666A), Color(0xFFEB3C90)];
 
   final mainGreen = const Color(0xFF30D299);
   final secondGreen = const Color(0xFF12B4A7);
+  final green = const Color(0xFF28BD65);
   final yellow = const Color(0xFFF7DA40);
+  final orange = const Color(0xFFF96C03);
+  final red = const Color(0xFFF16977);
 
   final white = const Color(0xFFFFFFFF);
   final black = const Color(0xFF000000);
   final grey = const Color(0xFF808080);
   final greyLight = const Color(0xFFABABAB);
+
+  final error = const Color(0xFF721C24);
+  final backgroundError = const Color(0xFFF8D7DA);
+
+  final success = const Color(0xFF155724);
+  final backgroundSuccess = const Color(0xFFD4EDDA);
 }
 
 SystemColors colors = lightColors;

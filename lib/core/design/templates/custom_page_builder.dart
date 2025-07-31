@@ -5,12 +5,16 @@ class CustomPageBuilder extends StatelessWidget {
   final Widget body;
   final bool enableAppbar;
   final String title;
+  final bool enableScrollBar;
+  final bool enableScrollable;
 
   const CustomPageBuilder({
     super.key,
     required this.body,
     this.enableAppbar = true,
     this.title = "",
+    this.enableScrollBar = false,
+    this.enableScrollable = true,
   });
 
   @override
@@ -26,7 +30,15 @@ class CustomPageBuilder extends StatelessWidget {
                 ),
               )
             : null,
-        body: SingleChildScrollView(child: body),
+        body: enableScrollable
+            ? enableScrollBar
+                ? Scrollbar(
+                    thumbVisibility: true,
+                    thickness: 10,
+                    child: SingleChildScrollView(child: body),
+                  )
+                : SingleChildScrollView(child: body)
+            : body,
       ),
     );
   }

@@ -1,4 +1,4 @@
-import 'package:curiosity_flutter/core/services/Logging.dart';
+import 'package:curiosity_flutter/core/services/logging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

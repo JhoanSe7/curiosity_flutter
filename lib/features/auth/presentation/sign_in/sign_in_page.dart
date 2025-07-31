@@ -1,6 +1,10 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/routes/routes.dart';
+import 'package:curiosity_flutter/core/utils/utils.dart';
+import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});
@@ -12,6 +16,9 @@ class SignInPage extends ConsumerStatefulWidget {
 class _SignInPageState extends ConsumerState<SignInPage> {
   TextEditingController userController = TextEditingController();
   TextEditingController passController = TextEditingController();
+
+  String error1 = "";
+  String error2 = "";
 
   @override
   Widget build(BuildContext context) {
@@ -64,22 +71,32 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   color: colors.paragraph,
                 ),
                 styles.h(Size.l),
-                labelInput("Correo Electronico", Icons.email_outlined, colors.principal),
-                styles.h(Size.l),
                 CustomTextField(
+                  label: "Correo Electronico",
+                  iconLabel: Icons.email_outlined,
+                  iconBackground: colors.principal,
                   controller: userController,
+                  inputType: TextInputType.emailAddress,
+                  formatters: InputFilters.email(),
+                  onChange: (_) => _clearError(true),
+                  textError: error1,
                 ),
                 styles.h(Size.l),
-                labelInput("Contraseña", Icons.lock_outline, colors.secondary),
-                styles.h(Size.l),
                 CustomTextField(
+                  label: "Contraseña",
+                  iconLabel: Icons.lock_outline,
+                  iconBackground: colors.secondary,
                   controller: passController,
                   password: true,
+                  inputType: TextInputType.visiblePassword,
+                  formatters: InputFilters.passwd(),
+                  onChange: (_) => _clearError(false),
+                  textError: error2,
                 ),
                 styles.h(Size.l),
                 // LoginButtonWidget(),
                 CustomButton(
-                  onTap: () {},
+                  onTap: _userLogin,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -139,7 +156,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 ),
                 styles.h(Size.l),
                 CustomGestureDetector(
-                  onTap: () {},
+                  onTap: _goToRegister,
                   child: CustomText(
                     "¡Únete gratis y aprende!",
                     fontSize: 14,
@@ -155,28 +172,47 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     );
   }
 
-  labelInput(String text, IconData icon, List<Color> color) {
-    return Row(
-      children: [
-        iconInput(icon, color),
-        styles.w(Size.m),
-        CustomText(
-          text,
-          fontWeight: FontWeight.w700,
-          fontSize: 14,
-        ),
-      ],
-    );
+  //Functions
+  _userLogin() async {
+    final valid = _validateData();
+    if (valid) await _handleLogin();
   }
 
-  iconInput(IconData icon, List<Color> color) {
-    return Container(
-      padding: EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: color),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Icon(icon, color: colors.white, size: 14),
-    );
+  bool _validateData() {
+    if (userController.text.isEmpty) {
+      error1 = "Digite su correo electronico";
+    } else if (!userController.text.isEmail) {
+      error1 = "Correo electronico no valido";
+    } else {
+      error1 = "";
+    }
+    if (passController.text.isEmpty) {
+      error2 = "Digite su contraseña";
+    } else {
+      error2 = "";
+    }
+    setState(() {});
+    return error1.isEmpty && error2.isEmpty;
+  }
+
+  _handleLogin() async {
+    final controller = ref.read(signInController.notifier);
+    final login = await controller.logIn(context, userController.text, passController.text);
+    if (login) {
+      if (mounted) context.go(Routes.home);
+    }
+  }
+
+  _clearError(bool user) {
+    if (user) {
+      error1 = "";
+    } else {
+      error2 = "";
+    }
+    setState(() {});
+  }
+
+  _goToRegister() {
+    context.push(Routes.signUp);
   }
 }

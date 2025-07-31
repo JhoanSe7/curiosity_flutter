@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:curiosity_flutter/core/utils/extensions/http_extension.dart';
 import 'package:http/http.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 
+import '../constants/config.dart';
 import 'models/http_response.dart';
 
 @injectable
@@ -14,29 +16,29 @@ class ClientHttp {
 
   Future<HttpResponseModel> get({required String endpoint}) async {
     try {
-      var response = await http.get(Uri.parse(endpoint));
-      response.inspect();
+      var response = await http.get(Uri.parse(endpoint), headers: Config.headers);
+      response.inspect("");
       return response.validate();
     } on TimeoutException catch (e) {
       log.warning("GET Timeout http request to $endpoint: $e");
-      return HttpResponseModel(status: false);
+      return HttpResponseModel(success: false);
     } catch (e) {
       log.warning("GET Error http request to $endpoint: $e");
-      return HttpResponseModel(status: false);
+      return HttpResponseModel(success: false);
     }
   }
 
   Future<HttpResponseModel> post({required String endpoint, required dynamic body}) async {
     try {
-      var response = await http.post(Uri.parse(endpoint), body: body);
-      response.inspect();
+      var response = await http.post(Uri.parse(endpoint), body: jsonEncode(body), headers: Config.headers);
+      response.inspect(body);
       return response.validate();
     } on TimeoutException catch (e) {
       log.warning("POST Timeout http request to $endpoint: $e");
-      return HttpResponseModel(status: false);
+      return HttpResponseModel(success: false);
     } catch (e) {
       log.warning("POST Error http request to $endpoint: $e");
-      return HttpResponseModel(status: false);
+      return HttpResponseModel(success: false);
     }
   }
 }

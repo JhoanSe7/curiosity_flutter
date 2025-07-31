@@ -4,9 +4,9 @@ class SignInModel {
 
   SignInModel({this.username, this.password});
 
-  factory SignInModel.fromJson(Map<String, dynamic>? json) => SignInModel(
-        username: json?["username"],
-        password: json?["password"],
+  factory SignInModel.fromJson(Map<String, dynamic> json) => SignInModel(
+        username: json["username"],
+        password: json["password"],
       );
 
   Map<String, dynamic> toJson() => {

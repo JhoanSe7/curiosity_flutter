@@ -1,12 +1,15 @@
+import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomHeader extends StatelessWidget {
   final String title;
   final String subtitle;
   final List<Widget>? additionalWidget;
   final List<Color>? decorationColor;
+  final bool enableLeading;
 
   const CustomHeader({
     super.key,
@@ -14,6 +17,7 @@ class CustomHeader extends StatelessWidget {
     this.subtitle = "",
     this.additionalWidget,
     this.decorationColor,
+    this.enableLeading = false,
   });
 
   @override
@@ -26,7 +30,21 @@ class CustomHeader extends StatelessWidget {
       ),
       child: Column(
         children: [
-          styles.h(Size.xl),
+          if (enableLeading)
+            CustomGestureDetector(
+              onTap: context.pop,
+              child: Container(
+                alignment: Alignment.topLeft,
+                margin: EdgeInsets.all(8),
+                child: Icon(
+                  Icons.arrow_back,
+                  size: 30,
+                  color: colors.white,
+                ),
+              ),
+            )
+          else
+            styles.h(Size.l),
           Stack(
             children: [
               Container(
@@ -50,7 +68,7 @@ class CustomHeader extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: colors.tertiary),
+                    gradient: LinearGradient(colors: colors.gradientOrange),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(color: colors.greyLight, offset: Offset(0, 3), blurRadius: 10),

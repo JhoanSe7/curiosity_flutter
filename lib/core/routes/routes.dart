@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_page.dart';
+import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_page.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_page.dart';
 import 'package:curiosity_flutter/features/main/presentation/splash_page.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:go_router/go_router.dart';
 class Routes {
   static String root = "/";
   static String signIn = "/sign-in";
+  static String signUp = "/sign-up";
   static String home = "/home";
 }
 
@@ -18,6 +20,10 @@ final router = GoRouter(
     GoRoute(
       path: Routes.signIn,
       builder: (context, state) => const SignInPage(),
+    ),
+    GoRoute(
+      path: Routes.signUp,
+      builder: (context, state) => const SignUpPage(),
     ),
     GoRoute(
       path: Routes.home,

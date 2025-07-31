@@ -6,6 +6,9 @@ class CustomButton extends StatelessWidget {
   final Widget? child;
   final Color? backgroundColor;
   final Function()? onTap;
+  final double? width;
+  final double? height;
+  final bool enable;
 
   const CustomButton({
     super.key,
@@ -13,17 +16,20 @@ class CustomButton extends StatelessWidget {
     this.child,
     this.backgroundColor,
     this.onTap,
+    this.width,
+    this.height,
+    this.enable = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomGestureDetector(
-      onTap: onTap,
+      onTap: enable ? onTap : () {},
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.symmetric(vertical: width ?? 10, horizontal: height ?? 10),
         decoration: BoxDecoration(
-          gradient: backgroundColor == null ? LinearGradient(colors: colors.principal) : null,
-          color: backgroundColor,
+          gradient: backgroundColor == null && enable ? LinearGradient(colors: colors.principal) : null,
+          color: enable ? backgroundColor : colors.inactiveButton,
           borderRadius: BorderRadius.circular(14),
         ),
         child: child ??

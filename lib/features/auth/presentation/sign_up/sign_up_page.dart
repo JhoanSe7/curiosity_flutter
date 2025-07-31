@@ -1,0 +1,348 @@
+import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/routes/routes.dart';
+import 'package:curiosity_flutter/core/utils/utils.dart';
+import 'package:curiosity_flutter/features/auth/data/models/field_name.dart';
+import 'package:curiosity_flutter/features/auth/data/models/sign_up_model.dart';
+import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+class SignUpPage extends ConsumerStatefulWidget {
+  const SignUpPage({super.key});
+
+  @override
+  ConsumerState<SignUpPage> createState() => SignUpPageState();
+}
+
+class SignUpPageState extends ConsumerState<SignUpPage> {
+  bool btnEnable = false;
+
+  final inputs = [
+    FieldName.name1,
+    FieldName.name2,
+    FieldName.lastName1,
+    FieldName.lastName2,
+    FieldName.email,
+    FieldName.phone,
+    FieldName.rol,
+    FieldName.passwd,
+    FieldName.repass,
+  ];
+
+  final labels = {
+    FieldName.name1: "Primer Nombre",
+    FieldName.name2: "Segundo Nombre (Opcional)",
+    FieldName.lastName1: "Primer Apellido",
+    FieldName.lastName2: "Segundo Apellido (Opcional)",
+    FieldName.email: "Correo Electrónico",
+    FieldName.phone: "Teléfono",
+    FieldName.rol: "¿Cuál es tu rol?",
+    FieldName.passwd: "Contraseña",
+    FieldName.repass: "Confirmar Contraseña",
+  };
+  final iconLabels = {
+    FieldName.name1: Icons.person_2_outlined,
+    FieldName.name2: Icons.person_2_outlined,
+    FieldName.lastName1: Icons.person_2_outlined,
+    FieldName.lastName2: Icons.person_2_outlined,
+    FieldName.email: Icons.email_outlined,
+    FieldName.phone: Icons.phone_outlined,
+    FieldName.rol: Icons.lock_outline,
+    FieldName.passwd: Icons.lock_outline,
+    FieldName.repass: Icons.lock_outline,
+  };
+
+  final iconColor = {
+    FieldName.name1: colors.principal,
+    FieldName.name2: colors.gradientGrey,
+    FieldName.lastName1: colors.secondary,
+    FieldName.lastName2: colors.gradientPurple,
+    FieldName.email: colors.gradientBlue,
+    FieldName.phone: colors.gradientGreen,
+    FieldName.rol: colors.gradientYellow,
+    FieldName.passwd: colors.gradientMagenta,
+    FieldName.repass: colors.gradientViolet,
+  };
+
+  final inputType = {
+    FieldName.name1: TextInputType.text,
+    FieldName.name2: TextInputType.text,
+    FieldName.lastName1: TextInputType.text,
+    FieldName.lastName2: TextInputType.text,
+    FieldName.email: TextInputType.emailAddress,
+    FieldName.phone: TextInputType.number,
+    FieldName.rol: TextInputType.text,
+    FieldName.passwd: TextInputType.text,
+    FieldName.repass: TextInputType.text,
+  };
+
+  final inputFormat = {
+    FieldName.name1: InputFilters.text(),
+    FieldName.name2: InputFilters.text(),
+    FieldName.lastName1: InputFilters.text(),
+    FieldName.lastName2: InputFilters.text(),
+    FieldName.email: InputFilters.email(),
+    FieldName.phone: InputFilters.cellphone(),
+    FieldName.rol: InputFilters.text(),
+    FieldName.passwd: InputFilters.passwd(),
+    FieldName.repass: InputFilters.passwd(),
+  };
+
+  final controllers = {
+    FieldName.name1: TextEditingController(),
+    FieldName.name2: TextEditingController(),
+    FieldName.lastName1: TextEditingController(),
+    FieldName.lastName2: TextEditingController(),
+    FieldName.email: TextEditingController(),
+    FieldName.phone: TextEditingController(),
+    FieldName.rol: TextEditingController(),
+    FieldName.passwd: TextEditingController(),
+    FieldName.repass: TextEditingController(),
+  };
+
+  final errors = {
+    FieldName.name1: "",
+    FieldName.name2: "",
+    FieldName.lastName1: "",
+    FieldName.lastName2: "",
+    FieldName.email: "",
+    FieldName.phone: "",
+    FieldName.rol: "",
+    FieldName.passwd: "",
+    FieldName.repass: "",
+  };
+
+  List<String> roles = [
+    "🎓 Estudiante",
+    "👨‍🏫 Profesor",
+    "👨‍👩‍👧‍👦 Padre/Madre",
+    "⚙️ Administrador",
+  ];
+
+  List<String> desc = [
+    "Aprendo y hago cuestionarios",
+    "Creo contenido educativo",
+    "Superviso el aprendizaje",
+    "Gestiono la plataforma",
+  ];
+
+  @override
+  void dispose() {
+    controllers.forEach((key, controller) => controller.clear());
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPageBuilder(
+      enableAppbar: false,
+      enableScrollable: false,
+      body: Column(
+        children: [
+          CustomHeader(
+            title: "Curiosity",
+            decorationColor: colors.gradientGrey,
+            additionalWidget: [
+              CustomText(
+                "¡Unete a la aventura!",
+                fontType: FontType.h6,
+                color: colors.white,
+              ),
+            ],
+          ),
+          Flexible(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
+              color: colors.background,
+              child: Column(
+                children: [
+                  CustomText(
+                    "¡Crea tu cuenta!",
+                    fontType: FontType.h2,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  CustomText(
+                    "Completa tus datos para comenzar",
+                    fontSize: 12,
+                    color: colors.paragraph,
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          for (var input in inputs) ...[
+                            styles.h(Size.l),
+                            if (input == FieldName.rol)
+                              Column(
+                                children: [
+                                  CustomLabel(
+                                    text: labels[input] ?? "",
+                                    icon: iconLabels[input],
+                                    iconBackground: iconColor[input] ?? colors.principal,
+                                  ),
+                                  styles.h(Size.m),
+                                  CustomDropdownButton(
+                                    items: _items,
+                                    hintText: "Selecciona tu rol",
+                                    onSelect: (value) {
+                                      controllers[input]?.text = value ?? "";
+                                      _validateFields(input);
+                                    },
+                                  ),
+                                  if ((errors[input] ?? "").isNotEmpty) ...[
+                                    styles.h(Size.m),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: CustomText(
+                                        errors[input] ?? "",
+                                        color: colors.error,
+                                        fontSize: 12,
+                                      ),
+                                    )
+                                  ]
+                                ],
+                              )
+                            else
+                              CustomTextField(
+                                controller: controllers[input],
+                                label: labels[input] ?? "",
+                                iconLabel: iconLabels[input],
+                                iconBackground: iconColor[input],
+                                inputType: inputType[input] ?? TextInputType.text,
+                                formatters: inputFormat[input],
+                                password: input == FieldName.passwd || input == FieldName.repass,
+                                textError: errors[input] ?? "",
+                                onChange: (p0) => _validateFields(input),
+                                showStrengthLevel: input == FieldName.passwd,
+                              ),
+                          ],
+                          styles.h(Size.xl),
+                          CustomButton(
+                            onTap: _register,
+                            width: 16,
+                            enable: btnEnable,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.emoji_events_outlined,
+                                  size: 16,
+                                  color: colors.white,
+                                ),
+                                styles.w(Size.m),
+                                CustomText(
+                                  "¡Comenzar mi Aventura!",
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                  color: colors.white,
+                                ),
+                                styles.w(Size.m),
+                                Icon(
+                                  Icons.star_border,
+                                  size: 16,
+                                  color: colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                          styles.h(Size.xl),
+                          CustomGestureDetector(
+                            onTap: context.pop,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CustomText(
+                                  "¿Ya tienes cuenta? ",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: colors.paragraph,
+                                ),
+                                CustomText(
+                                  "¡Inicia sesion aquí! 🚀",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: colors.secondGreen,
+                                )
+                              ],
+                            ),
+                          ),
+                          styles.h(Size.l),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<ItemModel> get _items {
+    List<ItemModel> list = [];
+    for (int i = 0; i < roles.length; i++) {
+      list.add(ItemModel(value: roles[i].cleaned, title: roles[i], subtitle: desc[i]));
+    }
+    return list;
+  }
+
+  _validateFields(FieldName key) {
+    try {
+      String required = "Campo obligatorio";
+      if ((key == FieldName.name1 ||
+              key == FieldName.lastName1 ||
+              key == FieldName.phone ||
+              key == FieldName.passwd ||
+              key == FieldName.email ||
+              key == FieldName.rol ||
+              key == FieldName.repass) &&
+          controllers[key]!.text.isEmpty) {
+        errors[key] = required;
+        setState(() {});
+        return;
+      }
+      if (key == FieldName.email && !controllers[key]!.text.isEmail) {
+        errors[key] = "Correo electronico no valido";
+        setState(() {});
+        return;
+      }
+      if (key == FieldName.repass && (controllers[FieldName.passwd]!.text != controllers[FieldName.repass]!.text)) {
+        errors[key] = "Contraseñas no coinciden";
+        setState(() {});
+        return;
+      }
+      errors[key] = "";
+      btnEnable = !errors.values.any((e) => e.isNotEmpty);
+      setState(() {});
+    } catch (e) {
+      print("_validateFields() Error $e");
+    }
+  }
+
+  _register() {
+    _validateFields(FieldName.rol);
+    if (btnEnable) _handleRegistry();
+    controllers.forEach((key, value) => print("$key -> ${value.text}"));
+  }
+
+  _handleRegistry() async {
+    final controller = ref.read(signUpController.notifier);
+    final data = SignUpModel(
+      firstName: controllers[FieldName.name1]?.text,
+      secondName: controllers[FieldName.name2]?.text,
+      lastName: controllers[FieldName.lastName1]?.text,
+      secondLastName: controllers[FieldName.lastName2]?.text,
+      email: controllers[FieldName.email]?.text,
+      phoneNumber: controllers[FieldName.phone]?.text,
+      role: controllers[FieldName.rol]?.text,
+      password: controllers[FieldName.passwd]?.text,
+    );
+    final register = await controller.register(context, data);
+    if (register) {
+      if (mounted) context.go(Routes.home);
+    }
+  }
+}

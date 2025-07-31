@@ -6,6 +6,8 @@ export 'atoms/custom_svg.dart';
 //molecules
 export 'molecules/custom_button.dart';
 export 'molecules/custom_text_field.dart';
+export 'molecules/custom_label.dart';
+export 'molecules/custom_dropdown_button.dart';
 
 // templates
 export 'templates/custom_header.dart';
