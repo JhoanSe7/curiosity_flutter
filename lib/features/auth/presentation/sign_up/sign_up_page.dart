@@ -116,7 +116,6 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
   List<String> roles = [
     "🎓 Estudiante",
     "👨‍🏫 Profesor",
-    "👨‍👩‍👧‍👦 Padre/Madre",
     "⚙️ Administrador",
   ];
 
@@ -174,35 +173,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                           for (var input in inputs) ...[
                             styles.h(Size.l),
                             if (input == FieldName.rol)
-                              Column(
-                                children: [
-                                  CustomLabel(
-                                    text: labels[input] ?? "",
-                                    icon: iconLabels[input],
-                                    iconBackground: iconColor[input] ?? colors.principal,
-                                  ),
-                                  styles.h(Size.m),
-                                  CustomDropdownButton(
-                                    items: _items,
-                                    hintText: "Selecciona tu rol",
-                                    onSelect: (value) {
-                                      controllers[input]?.text = value ?? "";
-                                      _validateFields(input);
-                                    },
-                                  ),
-                                  if ((errors[input] ?? "").isNotEmpty) ...[
-                                    styles.h(Size.m),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: CustomText(
-                                        errors[input] ?? "",
-                                        color: colors.error,
-                                        fontSize: 12,
-                                      ),
-                                    )
-                                  ]
-                                ],
-                              )
+                              _customField(input)
                             else
                               CustomTextField(
                                 controller: controllers[input],
@@ -278,6 +249,38 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _customField(FieldName input) {
+    return Column(
+      children: [
+        CustomLabel(
+          text: labels[input] ?? "",
+          icon: iconLabels[input],
+          iconBackground: iconColor[input] ?? colors.principal,
+        ),
+        styles.h(Size.m),
+        CustomDropdownButton(
+          items: _items,
+          hintText: "Selecciona tu rol",
+          onSelect: (value) {
+            controllers[input]?.text = value ?? "";
+            _validateFields(input);
+          },
+        ),
+        if ((errors[input] ?? "").isNotEmpty) ...[
+          styles.h(Size.m),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: CustomText(
+              errors[input] ?? "",
+              color: colors.error,
+              fontSize: 12,
+            ),
+          )
+        ]
+      ],
     );
   }
 
