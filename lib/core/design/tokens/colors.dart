@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class SystemColors {
   SystemColors({
+    required this.primary,
+    required this.secondary,
     required this.titles,
     required this.paragraph,
     required this.background,
@@ -11,6 +13,8 @@ class SystemColors {
     required this.iconPlaceholder,
   });
 
+  Color primary;
+  Color secondary;
   Color titles;
   Color paragraph;
   Color background;
@@ -19,8 +23,8 @@ class SystemColors {
   Color inactiveButton;
   Color iconPlaceholder;
 
-  final principal = const [Color(0xFF30D299), Color(0xFF12B4A7)];
-  final secondary = const [Color(0xFFF88d49), Color(0xFFF16977)];
+  final gradientPrimary = const [Color(0xFF30D299), Color(0xFF12B4A7)];
+  final gradientSecondary = const [Color(0xFFF88d49), Color(0xFFF16977)];
   final gradientOrange = const [Color(0xFFF7C119), Color(0xFFF7A036)];
   final gradientGrey = const [Color(0xFF808080), Color(0xFFABABAB)];
   final gradientPurple = const [Color(0xFFBD76F5), Color(0xFFE73D97)];
@@ -30,8 +34,7 @@ class SystemColors {
   final gradientViolet = const [Color(0xFF7A83F8), Color(0xFFA04AF6)];
   final gradientMagenta = const [Color(0xFFF7666A), Color(0xFFEB3C90)];
 
-  final mainGreen = const Color(0xFF30D299);
-  final secondGreen = const Color(0xFF12B4A7);
+  final aquamarine = const Color(0xFF12B4A7);
   final green = const Color(0xFF28BD65);
   final yellow = const Color(0xFFF7DA40);
   final orange = const Color(0xFFF96C03);
@@ -52,6 +55,8 @@ class SystemColors {
 SystemColors colors = lightColors;
 
 final SystemColors lightColors = SystemColors(
+  primary: const Color(0xFF30D299),
+  secondary: const Color(0xFFF16977),
   titles: const Color(0xFF000000),
   paragraph: const Color(0xFF808080),
   background: const Color(0xFFFFFFFF),
@@ -62,6 +67,8 @@ final SystemColors lightColors = SystemColors(
 );
 
 final SystemColors darkColors = SystemColors(
+  primary: const Color(0xFF30D299),
+  secondary: const Color(0xFFF16977),
   titles: const Color(0xFFFFFFFF),
   paragraph: const Color(0xFFE2E2E2),
   background: const Color(0xFF000000),

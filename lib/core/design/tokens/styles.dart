@@ -9,12 +9,14 @@ class Styles {
     Color? color,
     TextAlign? textAlign,
     FontType? fontType,
+    List<Shadow>? shadows,
   }) {
     return GoogleFonts.poppins(
       fontSize: fontSize ?? _getFontSize(fontType) ?? 16,
       fontWeight: fontWeight ?? _getFontWeight(fontType) ?? FontWeight.w400,
       color: color ?? colors.titles,
       decoration: TextDecoration.none,
+      shadows: shadows,
     );
   }
 
@@ -43,21 +45,6 @@ class Styles {
     };
     return data[value];
   }
-
-  SizedBox h(Size size) => SizedBox(height: _getSize(size));
-
-  SizedBox w(Size size) => SizedBox(width: _getSize(size));
-
-  double? _getSize(Size size) {
-    var data = {
-      Size.xs: 2.0,
-      Size.s: 4.0,
-      Size.m: 8.0,
-      Size.l: 16.0,
-      Size.xl: 32.0,
-    };
-    return data[size];
-  }
 }
 
 final styles = Styles();
@@ -72,10 +59,30 @@ enum FontType {
   b,
 }
 
-enum Size {
-  xs,
-  s,
-  m,
-  l,
-  xl,
+class VerticalSpace {
+  SizedBox get xs => SizedBox(height: 2.0);
+
+  SizedBox get s => SizedBox(height: 4.0);
+
+  SizedBox get m => SizedBox(height: 8.0);
+
+  SizedBox get l => SizedBox(height: 16.0);
+
+  SizedBox get xl => SizedBox(height: 32.0);
 }
+
+final height = VerticalSpace();
+
+class HorizontalSpace {
+  SizedBox get xs => SizedBox(width: 2.0);
+
+  SizedBox get s => SizedBox(width: 4.0);
+
+  SizedBox get m => SizedBox(width: 8.0);
+
+  SizedBox get l => SizedBox(width: 16.0);
+
+  SizedBox get xl => SizedBox(width: 32.0);
+}
+
+final width = HorizontalSpace();

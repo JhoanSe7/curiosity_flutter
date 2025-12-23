@@ -22,7 +22,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        colorScheme: ColorScheme.fromSeed(seedColor: colors.mainGreen),
+        colorScheme: ColorScheme.fromSeed(seedColor: colors.primary),
         useMaterial3: true,
       ),
       routerConfig: router,

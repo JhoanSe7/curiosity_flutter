@@ -28,7 +28,7 @@ class CustomLabel extends StatelessWidget {
             ),
             child: Icon(icon, color: iconColor ?? colors.white, size: 14),
           ),
-          styles.w(Size.m),
+          width.m
         ],
         CustomText(
           text,

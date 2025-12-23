@@ -54,9 +54,9 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
   };
 
   final iconColor = {
-    FieldName.name1: colors.principal,
+    FieldName.name1: colors.gradientPrimary,
     FieldName.name2: colors.gradientGrey,
-    FieldName.lastName1: colors.secondary,
+    FieldName.lastName1: colors.gradientSecondary,
     FieldName.lastName2: colors.gradientPurple,
     FieldName.email: colors.gradientBlue,
     FieldName.phone: colors.gradientGreen,
@@ -171,7 +171,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                       child: Column(
                         children: [
                           for (var input in inputs) ...[
-                            styles.h(Size.l),
+                            height.l,
                             if (input == FieldName.rol)
                               _customField(input)
                             else
@@ -188,7 +188,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                                 showStrengthLevel: input == FieldName.passwd,
                               ),
                           ],
-                          styles.h(Size.xl),
+                          height.xl,
                           CustomButton(
                             onTap: _register,
                             width: 16,
@@ -201,14 +201,14 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                                   size: 16,
                                   color: colors.white,
                                 ),
-                                styles.w(Size.m),
+                                height.m,
                                 CustomText(
                                   "¡Comenzar mi Aventura!",
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                   color: colors.white,
                                 ),
-                                styles.w(Size.m),
+                                height.m,
                                 Icon(
                                   Icons.star_border,
                                   size: 16,
@@ -217,7 +217,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                               ],
                             ),
                           ),
-                          styles.h(Size.xl),
+                          height.xl,
                           CustomGestureDetector(
                             onTap: context.pop,
                             child: Row(
@@ -233,12 +233,12 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                                   "¡Inicia sesion aquí! 🚀",
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: colors.secondGreen,
+                                  color: colors.aquamarine,
                                 )
                               ],
                             ),
                           ),
-                          styles.h(Size.l),
+                          height.l,
                         ],
                       ),
                     ),
@@ -258,9 +258,9 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
         CustomLabel(
           text: labels[input] ?? "",
           icon: iconLabels[input],
-          iconBackground: iconColor[input] ?? colors.principal,
+          iconBackground: iconColor[input] ?? colors.gradientPrimary,
         ),
-        styles.h(Size.m),
+        height.m,
         CustomDropdownButton(
           items: _items,
           hintText: "Selecciona tu rol",
@@ -270,7 +270,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
           },
         ),
         if ((errors[input] ?? "").isNotEmpty) ...[
-          styles.h(Size.m),
+          height.m,
           Align(
             alignment: Alignment.centerLeft,
             child: CustomText(

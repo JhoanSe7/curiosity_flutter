@@ -95,9 +95,9 @@ class CustomTextFieldState extends State<CustomTextField> {
           CustomLabel(
             text: widget.label,
             icon: widget.iconLabel,
-            iconBackground: widget.iconBackground ?? colors.principal,
+            iconBackground: widget.iconBackground ?? colors.gradientPrimary,
           ),
-          styles.h(Size.m),
+          height.m,
         ],
         Container(
           height: widget.text.isEmpty ? 48 : 56,
@@ -109,7 +109,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             border: Border.all(
               color: widget.textError.isEmpty
                   ? widget.enable && focusNode.hasFocus
-                      ? colors.mainGreen
+                      ? colors.primary
                       : colors.inputBorder
                   : colors.error,
             ),
@@ -119,7 +119,7 @@ class CustomTextFieldState extends State<CustomTextField> {
               Expanded(
                 child: TextField(
                   focusNode: focusNode,
-                  cursorColor: colors.mainGreen,
+                  cursorColor: colors.primary,
                   obscureText: hideText,
                   onTapOutside: (v) => FocusScope.of(context).requestFocus(FocusNode()),
                   onChanged: widget.onChange,
@@ -136,7 +136,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   ),
                 ),
               ),
-              styles.w(Size.m),
+              width.m,
               CustomGestureDetector(
                 onTap: widget.password ? _showPasswd : widget.onTapSuffix,
                 child: widget.suffix ??
@@ -151,13 +151,13 @@ class CustomTextFieldState extends State<CustomTextField> {
           ),
         ),
         if (widget.password && widget.showStrengthLevel && controller.text.isNotEmpty) ...[
-          styles.h(Size.m),
+          height.m,
           Row(
             children: List.generate(4, (i) {
               return Expanded(child: _itemLvl(i));
             }),
           ),
-          styles.h(Size.m),
+          height.m,
           Align(
             alignment: Alignment.centerLeft,
             child: CustomText(
@@ -168,7 +168,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           ),
         ],
         if (widget.textError.isNotEmpty) ...[
-          styles.h(Size.m),
+          height.m,
           Align(
             alignment: Alignment.centerLeft,
             child: CustomText(

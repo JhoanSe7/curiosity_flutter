@@ -24,7 +24,6 @@ class SignUpController extends StateNotifier<SignUpState> {
   }
 
   Future<bool> register(BuildContext context, SignUpModel data) async {
-
     final res = await signUp(context, data: data);
     if (res != null) {
       setUser(data: res);

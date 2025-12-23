@@ -25,7 +25,7 @@ class CustomHeader extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: colors.principal,
+          colors: colors.gradientPrimary,
         ),
       ),
       child: Column(
@@ -44,7 +44,7 @@ class CustomHeader extends StatelessWidget {
               ),
             )
           else
-            styles.h(Size.l),
+            height.l,
           Stack(
             children: [
               Container(
@@ -52,7 +52,7 @@ class CustomHeader extends StatelessWidget {
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: colors.secondary,
+                    colors: colors.gradientSecondary,
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -82,7 +82,7 @@ class CustomHeader extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(3),
                   decoration: BoxDecoration(
-                    color: colors.mainGreen,
+                    color: colors.primary,
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(color: colors.greyLight, offset: Offset(0, -3), blurRadius: 10),
@@ -94,7 +94,7 @@ class CustomHeader extends StatelessWidget {
             ],
           ),
           if (title.isNotEmpty) ...[
-            styles.h(Size.l),
+            height.l,
             CustomText(
               title,
               fontSize: 28,
@@ -103,7 +103,7 @@ class CustomHeader extends StatelessWidget {
             ),
           ],
           if (subtitle.isNotEmpty) ...[
-            styles.h(Size.l),
+            height.l,
             CustomText(
               subtitle,
               fontSize: 24,
@@ -112,7 +112,7 @@ class CustomHeader extends StatelessWidget {
             ),
           ],
           ...additionalWidget ?? [],
-          styles.h(Size.xl),
+          height.xl,
           Container(
             width: context.width,
             decoration: BoxDecoration(
@@ -124,12 +124,12 @@ class CustomHeader extends StatelessWidget {
             ),
             child: Column(
               children: [
-                styles.h(Size.xl),
+                height.xl,
                 Container(
                   width: 45,
                   height: 5,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: decorationColor ?? colors.secondary),
+                    gradient: LinearGradient(colors: decorationColor ?? colors.gradientSecondary),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),

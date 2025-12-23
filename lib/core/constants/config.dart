@@ -4,4 +4,5 @@ class Config {
     "Accept": "application/json",
     "Content-Type": 'application/json',
   };
+  static String versionApp = "1.0.0";
 }
