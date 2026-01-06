@@ -22,7 +22,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   Future<void> goTo() async {
     await notificationSvc.initialize();
-    if (mounted) context.go(Routes.home);
+    if (mounted) context.go(Routes.signIn);
   }
 
   @override
