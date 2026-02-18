@@ -9,7 +9,9 @@ class CustomTextField extends StatefulWidget {
   final bool enable;
   final bool password;
   final Function()? onTapSuffix;
+  final Function()? onEdited;
   final Function(String)? onChange;
+  final Function(String)? onSubmit;
   final TextInputType inputType;
   final String textError;
   final List<TextInputFormatter>? formatters;
@@ -17,6 +19,9 @@ class CustomTextField extends StatefulWidget {
   final IconData? iconLabel;
   final List<Color>? iconBackground;
   final bool showStrengthLevel;
+  final FontWeight? labelWeight;
+  final int maxLines;
+  final String? placeHolder;
 
   const CustomTextField({
     super.key,
@@ -26,7 +31,9 @@ class CustomTextField extends StatefulWidget {
     this.enable = true,
     this.password = false,
     this.onTapSuffix,
+    this.onEdited,
     this.onChange,
+    this.onSubmit,
     this.inputType = TextInputType.text,
     this.textError = "",
     this.formatters,
@@ -34,6 +41,9 @@ class CustomTextField extends StatefulWidget {
     this.iconLabel,
     this.iconBackground,
     this.showStrengthLevel = false,
+    this.labelWeight,
+    this.maxLines = 1,
+    this.placeHolder,
   });
 
   @override
@@ -45,11 +55,13 @@ class CustomTextFieldState extends State<CustomTextField> {
   FocusNode focusNode = FocusNode();
   bool hideText = false;
   int level = 0;
+  double? boxHeight;
 
   @override
   void initState() {
     super.initState();
     hideText = widget.password;
+    boxHeight = (widget.text.isEmpty ? 48 : 56) + (widget.maxLines * 8);
     focusNode.addListener(() {
       if (mounted) setState(() {});
     });
@@ -71,7 +83,7 @@ class CustomTextFieldState extends State<CustomTextField> {
     if (password.length >= 8) lvl++;
     if (RegExp(r'[A-Z]').hasMatch(password)) lvl++;
     if (RegExp(r'[0-9]').hasMatch(password)) lvl++;
-    if (RegExp(r'[!@#\$&*~%^+=?_.,\-]').hasMatch(password)) lvl++;
+    if (RegExp(r'[!@#\$&*~%^+=¿?_.,\-]').hasMatch(password)) lvl++;
 
     setState(() {
       level = lvl;
@@ -100,7 +112,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           height.m,
         ],
         Container(
-          height: widget.text.isEmpty ? 48 : 56,
+          height: boxHeight,
           alignment: Alignment.center,
           padding: EdgeInsets.fromLTRB(12, 0, widget.password ? 10 : 0, 0),
           decoration: BoxDecoration(
@@ -115,6 +127,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             ),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: TextField(
@@ -123,16 +136,23 @@ class CustomTextFieldState extends State<CustomTextField> {
                   obscureText: hideText,
                   onTapOutside: (v) => FocusScope.of(context).requestFocus(FocusNode()),
                   onChanged: widget.onChange,
+                  onSubmitted: widget.onSubmit,
+                  onEditingComplete: widget.onEdited,
                   controller: controller,
                   keyboardType: widget.inputType,
                   enabled: widget.enable,
                   inputFormatters: widget.formatters,
-                  maxLines: 1,
+                  maxLines: widget.maxLines,
+                  minLines: widget.maxLines,
                   style: styles.poppins(color: colors.paragraph, fontType: FontType.h6),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                     label: _labelWidget(),
+                    hintText: widget.placeHolder,
+                    hintStyle: styles.poppins(
+                      color: colors.paragraph,
+                    ),
                   ),
                 ),
               ),
@@ -191,7 +211,12 @@ class CustomTextFieldState extends State<CustomTextField> {
   Widget? _labelWidget() {
     var text = widget.text;
     if (text.isNotEmpty) {
-      return CustomText(text, color: colors.paragraph, maxLines: 1);
+      return CustomText(
+        text,
+        color: colors.paragraph,
+        maxLines: 1,
+        fontWeight: widget.labelWeight,
+      );
     }
     return null;
   }

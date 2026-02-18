@@ -2,8 +2,9 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/auth/data/models/field_name.dart';
-import 'package:curiosity_flutter/features/auth/data/models/sign_up_model.dart';
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_controller.dart';
+import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -128,7 +129,6 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
 
   @override
   void dispose() {
-    controllers.forEach((key, controller) => controller.clear());
     super.dispose();
   }
 
@@ -191,6 +191,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                           height.xl,
                           CustomButton(
                             onTap: _register,
+                            isGradient: true,
                             width: 16,
                             enable: btnEnable,
                             child: Row(
@@ -333,18 +334,19 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
 
   _handleRegistry() async {
     final controller = ref.read(signUpController.notifier);
-    final data = SignUpModel(
+    final data = UserModel(
       firstName: controllers[FieldName.name1]?.text,
       secondName: controllers[FieldName.name2]?.text,
       lastName: controllers[FieldName.lastName1]?.text,
       secondLastName: controllers[FieldName.lastName2]?.text,
       email: controllers[FieldName.email]?.text,
-      phoneNumber: controllers[FieldName.phone]?.text,
+      phoneNumber: controllers[FieldName.phone]?.text.replaceAll(" ", ""),
       role: controllers[FieldName.rol]?.text,
       password: controllers[FieldName.passwd]?.text,
     );
     final register = await controller.register(context, data);
-    if (register) {
+    if (register != null && (register.firstName ?? "").isNotEmpty) {
+      ref.read(homeController.notifier).setUser(data: register);
       if (mounted) context.go(Routes.home);
     }
   }

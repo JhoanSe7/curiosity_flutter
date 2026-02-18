@@ -20,4 +20,12 @@ extension RouterExtension on BuildContext {
       }
     }
   }
+
+  /// Tener cuidad al usar, solo para hacer pop en lugar explicitos
+  void removeByQuantity(int cant) {
+    final goRouter = GoRouter.of(this);
+    for (var i = 0; i < cant; i++) {
+      if (goRouter.canPop()) goRouter.pop();
+    }
+  }
 }

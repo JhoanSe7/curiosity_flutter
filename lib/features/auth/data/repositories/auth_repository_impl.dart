@@ -1,8 +1,8 @@
 import 'package:curiosity_flutter/core/network/models/common_error.dart';
 import 'package:curiosity_flutter/features/auth/data/data_sources/auth_data_source.dart';
-import 'package:curiosity_flutter/features/auth/data/models/response/auth_response_model.dart';
+import 'package:curiosity_flutter/core/network/models/response/error_response_model.dart';
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/auth/data/models/sign_in_model.dart';
-import 'package:curiosity_flutter/features/auth/data/models/sign_up_model.dart';
 import 'package:curiosity_flutter/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
@@ -14,13 +14,13 @@ class AuthRepositoryImpl extends AuthRepository {
   AuthRepositoryImpl(this.dataSource);
 
   @override
-  Future<Either<CommonError, AuthResponseModel>> signIn({required SignInModel data}) async {
+  Future<Either<CommonError, UserModel>> signIn({required SignInModel data}) async {
     try {
       final result = await dataSource.signIn(data: data);
       if (result.success) {
-        return right(AuthResponseModel.fromJson(result.body));
+        return right(UserModel.fromJson(result.body));
       } else if (!result.success) {
-        final error = AuthResponseModel.fromJson(result.body);
+        final error = ErrorResponseModel.fromJson(result.body);
         return left(CommonError(message: "${error.message}(${error.errorCode})"));
       }
       throw ("No se pudo procesar los datos");
@@ -30,13 +30,13 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<Either<CommonError, AuthResponseModel>> signUp({required SignUpModel data}) async {
+  Future<Either<CommonError, UserModel>> signUp({required UserModel data}) async {
     try {
       final result = await dataSource.signUp(data: data);
       if (result.success) {
-        return right(AuthResponseModel.fromJson(result.body));
+        return right(UserModel.fromJson(result.body));
       } else if (!result.success) {
-        final error = AuthResponseModel.fromJson(result.body);
+        final error = ErrorResponseModel.fromJson(result.body);
         return left(CommonError(message: "${error.message}(${error.errorCode})"));
       }
       throw ("No se pudo procesar los datos");

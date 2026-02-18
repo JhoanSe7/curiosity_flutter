@@ -1,52 +1,47 @@
 class UserModel {
   String? id;
-  String? username;
-  String? password;
-
   String? firstName;
   String? secondName;
-  String? firstLastName;
+  String? lastName;
   String? secondLastName;
   String? email;
   String? phoneNumber;
-  String? rol;
+  String? role;
+  String? password;
 
   UserModel({
     this.id,
-    this.username,
-    this.password,
     this.firstName,
     this.secondName,
-    this.firstLastName,
+    this.lastName,
     this.secondLastName,
     this.email,
     this.phoneNumber,
-    this.rol,
+    this.role,
+    this.password,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json["_id"],
-        username: json["username"],
-        password: json["password"],
+        id: json["id"],
         firstName: json["firstName"],
         secondName: json["secondName"],
-        firstLastName: json["firstLastName"],
+        lastName: json["lastName"],
         secondLastName: json["secondLastName"],
         email: json["email"],
         phoneNumber: json["phoneNumber"],
-        rol: json["rol"],
+        role: json["role"],
+        password: json["password"],
       );
 
   Map<String, dynamic> toJson() => {
-        "_id": id,
-        "username": username,
-        "password": password,
+        "id": id,
         "firstName": firstName,
         "secondName": secondName,
-        "firstLastName": firstLastName,
+        "lastName": lastName,
         "secondLastName": secondLastName,
         "email": email,
         "phoneNumber": phoneNumber,
-        "rol": rol,
+        "role": role,
+        "password": password,
       };
 }

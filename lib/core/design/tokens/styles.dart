@@ -29,6 +29,7 @@ class Styles {
       FontType.h5: FontWeight.w400,
       FontType.h6: FontWeight.w400,
       FontType.b: FontWeight.w500,
+      FontType.title: FontWeight.w700
     };
     return data[value];
   }
@@ -42,6 +43,7 @@ class Styles {
       FontType.h5: 16.0,
       FontType.h6: 14.0,
       FontType.b: 16.0,
+      FontType.title: 22.0,
     };
     return data[value];
   }
@@ -57,6 +59,7 @@ enum FontType {
   h5,
   h6,
   b,
+  title,
 }
 
 class VerticalSpace {

@@ -10,6 +10,7 @@ class CustomText extends StatelessWidget {
   final FontType? fontType;
   final int? maxLines;
   final List<Shadow>? shadows;
+  final TextOverflow? overflow;
 
   const CustomText(
     this.text, {
@@ -21,6 +22,7 @@ class CustomText extends StatelessWidget {
     this.fontType,
     this.maxLines,
     this.shadows,
+    this.overflow,
   });
 
   @override
@@ -29,6 +31,7 @@ class CustomText extends StatelessWidget {
       text,
       textAlign: textAlign ?? TextAlign.center,
       maxLines: maxLines,
+      overflow: overflow,
       style: styles.poppins(
         fontSize: fontSize,
         fontWeight: fontWeight,

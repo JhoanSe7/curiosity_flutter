@@ -1,5 +1,5 @@
 import 'package:curiosity_flutter/core/di/injection.dart';
-import 'package:curiosity_flutter/core/utils/failure_util.dart';
+import 'package:curiosity_flutter/core/utils/util_processor.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/auth/data/models/sign_in_model.dart';
 import 'package:curiosity_flutter/features/auth/domain/use_cases/auth_use_case.dart';
@@ -13,26 +13,18 @@ class SignInController extends StateNotifier<SignInState> {
 
   final AuthUseCase useCase;
 
-  Future<UserModel?> signIn(BuildContext context, {required SignInModel data}) async {
-    final result = await useCase.signIn(data: data);
+  Future<UserModel> signIn(BuildContext context, {required SignInModel data}) async {
+    final result = await execute<UserModel>(context, useCase.signIn(data: data));
     return result.fold(
-      (e) => processError<UserModel>(context, error: e.message),
-      (data) => data.user,
+      (e) => processError(context, error: e.message) ?? UserModel(),
+      (data) => data,
     );
   }
 
-  void setUser({required UserModel? data}) {
-    if (mounted) state = state.copyWith(user: data);
-  }
-
-  Future<bool> logIn(BuildContext context, String user, String passwd) async {
-    final data = SignInModel(username: user.trim(), password: passwd.trim());
+  Future<UserModel?> logIn(BuildContext context, String user, String passwd) async {
+    final data = SignInModel(email: user.trim(), password: passwd.trim());
     final res = await signIn(context, data: data);
-    if (res != null) {
-      setUser(data: res);
-      return true;
-    }
-    return false;
+    return res;
   }
 }
 

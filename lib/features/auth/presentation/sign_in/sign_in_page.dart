@@ -2,6 +2,8 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_controller.dart';
+import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/home/presentation/widgets/bottom_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -91,12 +93,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   inputType: TextInputType.visiblePassword,
                   formatters: InputFilters.passwd(),
                   onChange: (_) => _clearError(false),
+                  onEdited: _userLogin,
                   textError: error2,
                 ),
                 height.l,
                 // LoginButtonWidget(),
                 CustomButton(
                   onTap: _userLogin,
+                  isGradient: true,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -198,7 +202,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   _handleLogin() async {
     final controller = ref.read(signInController.notifier);
     final login = await controller.logIn(context, userController.text, passController.text);
-    if (login) {
+    if (login != null && (login.firstName ?? "").isNotEmpty) {
+      ref.read(homeController.notifier).setUser(data: login);
       if (mounted) context.go(Routes.home);
     }
   }
@@ -213,6 +218,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   }
 
   _goToRegister() {
+    ref.read(homeController.notifier).setMenuIndex(HomeId.init);
     context.push(Routes.signUp);
   }
 }

@@ -39,6 +39,7 @@ class SystemColors {
   final yellow = const Color(0xFFF7DA40);
   final orange = const Color(0xFFF96C03);
   final red = const Color(0xFFF16977);
+  final purple = const Color(0xFFBD76F5);
 
   final white = const Color(0xFFFFFFFF);
   final black = const Color(0xFF000000);
