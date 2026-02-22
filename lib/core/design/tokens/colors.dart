@@ -44,6 +44,7 @@ class SystemColors {
   final blue = const Color(0xFF4D9FF7);
 
   final white = const Color(0xFFFFFFFF);
+  final whiteSmoke = const Color(0xFFF5F5F5);
   final black = const Color(0xFF000000);
   final grey = const Color(0xFF808080);
   final greyLight = const Color(0xFFABABAB);

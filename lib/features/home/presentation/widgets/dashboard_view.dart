@@ -39,6 +39,15 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
   }
 
+  final TextEditingController _codeInput = TextEditingController();
+
+  @override
+  void dispose() {
+    _codeInput.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final state = ref.read(homeController);
@@ -78,7 +87,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               "Código de quiz",
               Icons.numbers,
               colors.gradientPrimary,
-              () {},
+              () => _showCodeModal(),
             ),
           ],
         )
@@ -426,6 +435,72 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               color: colors.white,
               fontWeight: FontWeight.w600,
               fontSize: 14,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _showCodeModal() {
+    final state = ref.watch(homeController);
+    return context.showModal(
+      widthContainer: .8,
+      icon: Icons.numbers_rounded,
+      iconColor: colors.primary,
+      title: "¡Únete al Quiz!",
+      content: "Ingresa el código único de tu quiz para comenzar a jugar y aprender con tus amigos",
+      actions: Flexible(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Material(
+              color: Colors.transparent,
+              child: CustomTextField(
+                placeHolder: 'EJ: ABC123',
+                controller: _codeInput,
+              ),
+            ),
+            height.l,
+            Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    onTap: () {
+                      _codeInput.clear();
+                      context.pop();
+                    },
+                    height: 18,
+                    text: "Cancelar",
+                    textColor: colors.titles,
+                    color: colors.inputBorder,
+                  ),
+                ),
+                width.l,
+                Expanded(
+                  child: CustomButton(
+                    onTap: () async {
+                      final data = {
+                        "roomCode": _codeInput.text.trim(),
+                        "userId": state.user?.id,
+                        "firstName": state.user?.firstName,
+                        "secondName": state.user?.secondName,
+                        "lastName": state.user?.lastName,
+                        "secondLastName": state.user?.secondLastName,
+                        "email": state.user?.email,
+                        "phoneNumber": state.user?.phoneNumber,
+                        "role": state.user?.role,
+                      };
+                      await context.push(Routes.lobbyGuest, extra: data);
+                      _codeInput.clear();
+                      context.pop();
+                    },
+                    height: 18,
+                    text: "Unirse",
+                    color: colors.primary,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

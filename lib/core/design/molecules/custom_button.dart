@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
   final String? text;
+  final double? fontSize;
   final Widget? child;
   final Color? color;
   final Color? textColor;
@@ -16,6 +17,7 @@ class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
     this.text,
+    this.fontSize,
     this.child,
     this.color,
     this.textColor,
@@ -46,7 +48,7 @@ class CustomButton extends StatelessWidget {
             CustomText(
               text ?? "",
               fontWeight: FontWeight.w700,
-              fontSize: 16,
+              fontSize: fontSize ?? 16,
               color: textColor ?? colors.white,
             ),
       ),

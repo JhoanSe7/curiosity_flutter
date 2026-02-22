@@ -25,7 +25,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   Future<void> _initialize() async {
-    await notificationSvc.initialize();
+    // await notificationSvc.initialize();
     await _validLogin();
   }
 

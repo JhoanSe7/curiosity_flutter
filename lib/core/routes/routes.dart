@@ -1,6 +1,7 @@
 import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_page.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_page.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_page.dart';
+import 'package:curiosity_flutter/features/lobbie/presentation/lobby/lobby_page.dart';
 import 'package:curiosity_flutter/features/main/presentation/splash_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_question_view.dart';
@@ -20,6 +21,7 @@ class Routes {
   static String createQuiz = "/create-quiz";
   static String createQuestion = "/create-question";
   static String generateQuiz = "/generate-quiz";
+  static String lobbyGuest =  "/lobby-guest";
 }
 
 final router = GoRouter(
@@ -57,5 +59,21 @@ final router = GoRouter(
       path: Routes.generateQuiz,
       builder: (context, state) => const GenerateQuizView(),
     ),
+
+    GoRoute(path: Routes.lobbyGuest, builder: (context, state) {
+      final args = state.extra as Map<String, dynamic>;
+      return LobbyScreen(
+        roomCode: args['roomCode'],
+        userId: args['userId'],
+        firstName: args['firstName'],
+        secondName: args['secondName'],
+        lastName: args['lastName'],
+        secondLastName: args['secondLastName'],
+        email: args['email'],
+        phoneNumber: args['phoneNumber'],
+        role: args['role'],
+      );
+    }),
+
   ],
 );

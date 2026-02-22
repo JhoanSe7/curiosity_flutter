@@ -1,5 +1,6 @@
 import 'package:curiosity_flutter/core/constants/path_animations.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
@@ -74,6 +75,7 @@ extension MessageExtension on BuildContext {
   Future showModal({
     IconData icon = Icons.info_outline,
     Color iconColor = Colors.cyan,
+    double widthContainer = 1,
     required String title,
     required String content,
     Widget? actions,
@@ -84,6 +86,7 @@ extension MessageExtension on BuildContext {
         context: this,
         builder: (context) => Center(
           child: Container(
+            width: context.width * widthContainer,
             padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: colors.white,
