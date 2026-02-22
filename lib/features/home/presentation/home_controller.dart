@@ -1,23 +1,50 @@
+import 'package:curiosity_flutter/core/di/injection.dart';
+import 'package:curiosity_flutter/core/utils/util_processor.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/home/domain/use_cases/home_use_case.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_state.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'widgets/bottom_bar_widget.dart';
 
 class HomeController extends StateNotifier<HomeState> {
-  HomeController() : super(HomeState());
+  HomeController(this.useCase) : super(HomeState());
 
+  final HomeUseCase useCase;
+
+  ///
   void setMenuIndex(HomeId id) {
     state = state.copyWith(menuId: id);
   }
 
+  ///
   void setUser({required UserModel? data}) {
     if (mounted) state = state.copyWith(user: data);
   }
 
+  ///
   void resetData() {
     if (mounted) state = state.copyWith(menuId: HomeId.init, user: null);
   }
+
+  ///
+  Future<List<QuizModel>> getQuizzes(BuildContext context, {required String userId}) async {
+    final result = await useCase.getQuizzes(userId: userId);
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? [],
+      (res) => res,
+    );
+  }
+
+  Future<void> loadQuizzes(BuildContext context) async {
+    var userId = state.user?.id ?? "";
+    final res = await getQuizzes(context, userId: userId);
+    if (mounted) state = state.copyWith(quizzes: res);
+  }
 }
 
-final homeController = StateNotifierProvider<HomeController, HomeState>((ref) => HomeController());
+final homeController = StateNotifierProvider<HomeController, HomeState>((ref) => HomeController(
+      getIt.get(),
+    ));

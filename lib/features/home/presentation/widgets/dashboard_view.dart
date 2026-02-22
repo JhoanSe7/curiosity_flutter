@@ -1,6 +1,9 @@
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
+import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
+import 'package:curiosity_flutter/features/questionaries/presentation/questionary_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,17 +16,43 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
+  List<Color> allColors = [
+    colors.blue,
+    colors.green,
+    colors.purple,
+    colors.orange,
+  ];
+
+  List<Color> colorCard = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(_loadData);
+  }
+
+  _loadData() async {
+    await ref.read(homeController.notifier).loadQuizzes(context);
+    colorCard = List.generate(
+      ref.read(homeController).quizzes.length,
+      (index) => allColors[index % allColors.length],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final state = ref.read(homeController);
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
         children: [
           quickAccessWidget(),
           SizedBox(height: 32),
-          beginWidget(),
-          SizedBox(height: 32),
-          questionnairesWidget(),
+          if (state.user?.createdQuizzes?.isEmpty ?? true) ...[
+            beginWidget(),
+            SizedBox(height: 32),
+          ],
+          questionnairesWidget(state.quizzes),
         ],
       ),
     );
@@ -168,61 +197,244 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
   }
 
-  Widget questionnairesWidget() {
+  Widget questionnairesWidget(List<QuizModel> quizzes) {
     return Column(
       children: [
         subtitleWidget("Mis Cuestionarios", Icons.menu_book, colors.purple),
         SizedBox(height: 16),
-        Container(
-          padding: EdgeInsets.all(32),
-          decoration: BoxDecoration(
-              color: colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: colors.inputBorder)),
-          child: Column(
-            children: [
-              GenericLogo(),
-              SizedBox(height: 16),
-              CustomText(
-                "¡Tu primer custionario te espera!",
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-              ),
-              SizedBox(height: 16),
-              CustomText(
-                "Crea cuestionarios increibles y comparte tu conocimiento con el mundo",
-                fontType: FontType.h5,
-                color: colors.paragraph,
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                onTap: () => context.push(Routes.questionary),
-                width: 24,
-                height: 12,
-                isGradient: true,
-                gradientColor: colors.gradientPurple,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.add,
-                      color: colors.white,
-                    ),
-                    SizedBox(width: 16),
-                    CustomText(
-                      "Crear mi primer quiz",
-                      color: colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    )
-                  ],
+        quizzes.isEmpty
+            ? Container(
+                padding: EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: colors.inputBorder),
                 ),
+                child: creationQuizWidget(),
               )
+            : quizzesListWidget(quizzes),
+      ],
+    );
+  }
+
+  Widget creationQuizWidget() {
+    return Column(
+      children: [
+        GenericLogo(),
+        SizedBox(height: 16),
+        CustomText(
+          "¡Tu primer custionario te espera!",
+          fontWeight: FontWeight.w700,
+          fontSize: 18,
+        ),
+        SizedBox(height: 16),
+        CustomText(
+          "Crea cuestionarios increibles y comparte tu conocimiento con el mundo",
+          fontType: FontType.h5,
+          color: colors.paragraph,
+        ),
+        SizedBox(height: 16),
+        CustomButton(
+          onTap: () => context.push(Routes.questionary),
+          width: 24,
+          height: 12,
+          isGradient: true,
+          gradientColor: colors.gradientPurple,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.add,
+                color: colors.white,
+              ),
+              SizedBox(width: 16),
+              CustomText(
+                "Crear mi primer quiz",
+                color: colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget quizzesListWidget(List<QuizModel> quizzes) {
+    return Column(children: quizzes.asMap().entries.map((e) => quizCard(e.key, e.value)).toList());
+  }
+
+  Widget quizCard(int i, QuizModel q) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(color: colorCard[i], offset: Offset(0, -5)),
+          BoxShadow(color: colors.greyLight.withValues(alpha: .5), offset: Offset(0, 5), blurRadius: 10),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [titleQuiz(q), moreOptions(q)],
+          ),
+          CustomText(
+            q.description ?? "",
+            textAlign: TextAlign.start,
+            fontWeight: FontWeight.w500,
+            color: colors.paragraph,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [questionsSizeText(q), startQuizButton(i)],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget titleQuiz(QuizModel q) {
+    return Row(
+      children: [
+        CustomText(
+          q.title ?? "",
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+        ),
+        width.m,
+        statusQuiz()
+      ],
+    );
+  }
+
+  Widget statusQuiz() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+      decoration: BoxDecoration(
+        color: colors.green.withValues(alpha: .2),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: CustomText(
+        "Activo",
+        color: colors.green,
+        fontWeight: FontWeight.w700,
+        fontSize: 14,
+      ),
+    );
+  }
+
+  Widget moreOptions(QuizModel q) {
+    return PopupMenuButton(
+      onSelected: (value) => _onSelected(q, value),
+      color: colors.white,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: Option.edit,
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit,
+                size: 24,
+                color: colors.iconPlaceholder,
+              ),
+              width.m,
+              CustomText(
+                "Editar",
+                color: colors.paragraph,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: Option.edit,
+          child: Row(
+            children: [
+              Icon(
+                Icons.delete_forever_outlined,
+                size: 24,
+                color: colors.red,
+              ),
+              width.m,
+              CustomText(
+                "Eliminar",
+                color: colors.red,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
             ],
           ),
         ),
       ],
     );
   }
+
+  _onSelected(QuizModel q, Option value) {
+    switch (value) {
+      case Option.edit:
+        ref.read(questionaryController.notifier).setQuiz(q);
+        context.push(Routes.createQuiz);
+        break;
+      case Option.delete:
+        break;
+    }
+  }
+
+  Widget questionsSizeText(QuizModel q) {
+    var length = q.questions?.length ?? 0;
+    return Row(
+      children: [
+        Icon(
+          Icons.description_outlined,
+          color: colors.iconPlaceholder,
+          size: 20,
+        ),
+        CustomText(
+          "$length ${length > 1 ? "preguntas" : "pregunta"}",
+          fontSize: 14,
+          color: colors.paragraph,
+        ),
+      ],
+    );
+  }
+
+  Widget startQuizButton(int i) {
+    return CustomGestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        decoration: BoxDecoration(
+          color: colorCard[i],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.play_arrow,
+              color: colors.white,
+            ),
+            CustomText(
+              "Iniciar",
+              color: colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+enum Option {
+  edit,
+  delete,
 }

@@ -17,6 +17,11 @@ import '../../features/auth/data/repositories/auth_repository_impl.dart'
     as _i153;
 import '../../features/auth/domain/repositories/auth_repository.dart' as _i787;
 import '../../features/auth/domain/use_cases/auth_use_case.dart' as _i283;
+import '../../features/home/data/data_sources/home_data_source.dart' as _i779;
+import '../../features/home/data/repositories/home_repository_impl.dart'
+    as _i76;
+import '../../features/home/domain/repositories/home_repository.dart' as _i0;
+import '../../features/home/domain/use_cases/home_use_case.dart' as _i933;
 import '../../features/questionaries/data/data_sources/questionaries_data_source.dart'
     as _i812;
 import '../../features/questionaries/data/repositories/questionaries_repository_impl.dart'
@@ -39,16 +44,22 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     gh.factory<_i107.ClientHttp>(() => _i107.ClientHttp());
+    gh.factory<_i779.HomeDataSource>(
+        () => _i779.HomeDataSourceImpl(gh<_i107.ClientHttp>()));
     gh.factory<_i933.AuthDataSource>(
         () => _i933.AuthDataSourceImpl(gh<_i107.ClientHttp>()));
     gh.factory<_i812.QuestionariesDataSource>(
         () => _i812.QuestionariesDataSourceImpl(gh<_i107.ClientHttp>()));
     gh.factory<_i664.QuestionariesRepository>(() =>
         _i932.QuestionariesRepositoryImpl(gh<_i812.QuestionariesDataSource>()));
+    gh.factory<_i0.HomeRepository>(
+        () => _i76.HomeRepositoryImpl(gh<_i779.HomeDataSource>()));
     gh.factory<_i912.QuestionariesUseCase>(
         () => _i912.QuestionariesUseCase(gh<_i664.QuestionariesRepository>()));
     gh.factory<_i787.AuthRepository>(
         () => _i153.AuthRepositoryImpl(gh<_i933.AuthDataSource>()));
+    gh.factory<_i933.HomeUseCase>(
+        () => _i933.HomeUseCase(gh<_i0.HomeRepository>()));
     gh.factory<_i283.AuthUseCase>(
         () => _i283.AuthUseCase(gh<_i787.AuthRepository>()));
     return this;

@@ -8,6 +8,7 @@ class UserModel {
   String? phoneNumber;
   String? role;
   String? password;
+  List<String>? createdQuizzes;
 
   UserModel({
     this.id,
@@ -19,6 +20,7 @@ class UserModel {
     this.phoneNumber,
     this.role,
     this.password,
+    this.createdQuizzes,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -31,6 +33,7 @@ class UserModel {
         phoneNumber: json["phoneNumber"],
         role: json["role"],
         password: json["password"],
+        createdQuizzes: List<String>.from(json["createdQuizzes"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -43,6 +46,7 @@ class UserModel {
         "phoneNumber": phoneNumber,
         "role": role,
         "password": password,
+        "createdQuizzes": createdQuizzes,
       };
 
   List<String> toList() => [
@@ -55,10 +59,11 @@ class UserModel {
         phoneNumber ?? "",
         role ?? "",
         password ?? "",
+        createdQuizzes?.join(",") ?? ""
       ];
 
   factory UserModel.fromList(List<String> data) {
-    if (data.isEmpty || data.length < 9) return UserModel();
+    if (data.isEmpty || data.length < 10) return UserModel();
     return UserModel(
       id: data[0],
       firstName: data[1],
@@ -69,6 +74,7 @@ class UserModel {
       phoneNumber: data[6],
       role: data[7],
       password: data[8],
+      createdQuizzes: data[9].split(","),
     );
   }
 }
