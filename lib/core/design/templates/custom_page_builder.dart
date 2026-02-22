@@ -16,6 +16,7 @@ class CustomPageBuilder extends StatelessWidget {
   final bool centerTitle;
   final List<Color>? appbarColor;
   final Widget? bottomBar;
+  final ScrollController? scrollController;
 
   const CustomPageBuilder({
     super.key,
@@ -32,6 +33,7 @@ class CustomPageBuilder extends StatelessWidget {
     this.centerTitle = false,
     this.appbarColor,
     this.bottomBar,
+    this.scrollController,
   });
 
   @override
@@ -47,9 +49,15 @@ class CustomPageBuilder extends StatelessWidget {
                       ? Scrollbar(
                           thumbVisibility: true,
                           thickness: 10,
-                          child: SingleChildScrollView(child: body),
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            child: body,
+                          ),
                         )
-                      : SingleChildScrollView(child: body)
+                      : SingleChildScrollView(
+                          controller: scrollController,
+                          child: body,
+                        )
                   : body,
             ),
             bottomBar ?? SizedBox(),

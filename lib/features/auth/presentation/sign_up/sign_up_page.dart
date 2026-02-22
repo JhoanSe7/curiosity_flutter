@@ -19,18 +19,6 @@ class SignUpPage extends ConsumerStatefulWidget {
 class SignUpPageState extends ConsumerState<SignUpPage> {
   bool btnEnable = false;
 
-  final inputs = [
-    FieldName.name1,
-    FieldName.name2,
-    FieldName.lastName1,
-    FieldName.lastName2,
-    FieldName.email,
-    FieldName.phone,
-    FieldName.rol,
-    FieldName.passwd,
-    FieldName.repass,
-  ];
-
   final labels = {
     FieldName.name1: "Primer Nombre",
     FieldName.name2: "Segundo Nombre (Opcional)",
@@ -90,29 +78,9 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
     FieldName.repass: InputFilters.passwd(),
   };
 
-  final controllers = {
-    FieldName.name1: TextEditingController(),
-    FieldName.name2: TextEditingController(),
-    FieldName.lastName1: TextEditingController(),
-    FieldName.lastName2: TextEditingController(),
-    FieldName.email: TextEditingController(),
-    FieldName.phone: TextEditingController(),
-    FieldName.rol: TextEditingController(),
-    FieldName.passwd: TextEditingController(),
-    FieldName.repass: TextEditingController(),
-  };
+  final controllers = FieldName.values.asMap().map((_, value) => MapEntry(value, TextEditingController()));
 
-  final errors = {
-    FieldName.name1: "",
-    FieldName.name2: "",
-    FieldName.lastName1: "",
-    FieldName.lastName2: "",
-    FieldName.email: "",
-    FieldName.phone: "",
-    FieldName.rol: "",
-    FieldName.passwd: "",
-    FieldName.repass: "",
-  };
+  final errors = FieldName.values.asMap().map((_, value) => MapEntry(value, ""));
 
   List<String> roles = [
     "🎓 Estudiante",
@@ -163,14 +131,14 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                   ),
                   CustomText(
                     "Completa tus datos para comenzar",
-                    fontSize: 12,
+                    fontSize: 14,
                     color: colors.paragraph,
                   ),
                   Flexible(
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          for (var input in inputs) ...[
+                          for (var input in FieldName.values) ...[
                             height.l,
                             if (input == FieldName.rol)
                               _customField(input)
@@ -276,8 +244,8 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
             alignment: Alignment.centerLeft,
             child: CustomText(
               errors[input] ?? "",
-              color: colors.error,
-              fontSize: 12,
+              color: colors.red,
+              fontSize: 14,
             ),
           )
         ]
@@ -304,23 +272,27 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
               key == FieldName.rol ||
               key == FieldName.repass) &&
           controllers[key]!.text.isEmpty) {
-        errors[key] = required;
-        setState(() {});
+        setState(() {
+          errors[key] = required;
+        });
         return;
       }
       if (key == FieldName.email && !controllers[key]!.text.isEmail) {
-        errors[key] = "Correo electronico no valido";
-        setState(() {});
+        setState(() {
+          errors[key] = "Correo electronico no valido";
+        });
         return;
       }
       if (key == FieldName.repass && (controllers[FieldName.passwd]!.text != controllers[FieldName.repass]!.text)) {
-        errors[key] = "Contraseñas no coinciden";
-        setState(() {});
+        setState(() {
+          errors[key] = "Contraseñas no coinciden";
+        });
         return;
       }
-      errors[key] = "";
-      btnEnable = !errors.values.any((e) => e.isNotEmpty);
-      setState(() {});
+      setState(() {
+        errors[key] = "";
+        btnEnable = !errors.values.any((e) => e.isNotEmpty);
+      });
     } catch (e) {
       print("_validateFields() Error $e");
     }

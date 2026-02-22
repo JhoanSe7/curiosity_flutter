@@ -1,5 +1,6 @@
 import 'package:curiosity_flutter/core/di/injection.dart';
 import 'package:curiosity_flutter/core/utils/util_processor.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/generate_quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_data_type.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
@@ -28,12 +29,13 @@ class QuestionaryController extends StateNotifier<QuestionaryState> {
   void deleteQuestion(QuestionModel q) {
     var index = state.questions.indexOf(q);
     if (index < 0) return;
-    if (mounted) state = state.copyWith(questions: [...state.questions..removeAt(index)]);
+    state.questions.removeAt(index);
+    if (mounted) state = state.copyWith(questions: state.questions);
   }
 
   /// Elimina todas las preguntas del estado
-  void deleteAllQuestions() {
-    if (mounted) state = state.copyWith(questions: []);
+  void clearAll() {
+    if (mounted) state = state.copyWith(questions: [], quiz: QuizModel());
   }
 
   /// Crea un quiz
@@ -43,6 +45,35 @@ class QuestionaryController extends StateNotifier<QuestionaryState> {
       (e) => processError(context, error: e.message) ?? QuizModel(),
       (data) => data,
     );
+  }
+
+  /// Genera un quiz con IA
+  Future<QuizModel> generateQuiz(BuildContext context, {required GenerateQuizModel data}) async {
+    final result = await useCase.generateQuiz(data: data);
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? QuizModel(),
+      (data) => data,
+    );
+  }
+
+  /// Setea un quiz
+  void setQuiz(QuizModel quiz) {
+    if (mounted) state = state.copyWith(quiz: quiz);
+  }
+
+  /// Setea las preguntas
+  void setQuestions(List<QuestionModel>? questions) {
+    if (mounted) state = state.copyWith(questions: questions);
+  }
+
+  /// Setea la pregunta actual
+  void setQuestion(QuestionModel question) {
+    if (mounted) state = state.copyWith(question: question);
+  }
+
+  /// Borra los datos de la pregunta actual
+  void clearQuestion() {
+    if (mounted) state = state.copyWith(question: QuestionModel());
   }
 }
 

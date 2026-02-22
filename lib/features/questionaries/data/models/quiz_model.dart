@@ -21,23 +21,26 @@ class QuizModel {
     this.isPublic,
   });
 
-  factory QuizModel.fromJson(Map<String, dynamic> json) => QuizModel(
-        id: json["id"],
-        userId: json["userId"],
-        title: json["title"],
-        description: json["description"],
-        questions: json["questions"],
-        category: json["category"],
-        difficulty: json["difficulty"],
-        isPublic: json["isPublic"],
-      );
+  factory QuizModel.fromJson(Map<String, dynamic> json) {
+    List questions = json["questions"] != null && json["questions"] is List ? json["questions"] : [];
+    return QuizModel(
+      id: json["id"],
+      userId: json["userId"],
+      title: json["title"],
+      description: json["description"],
+      questions: questions.map((e) => QuestionModel.fromJson(e)).toList(),
+      category: json["category"],
+      difficulty: json["difficulty"],
+      isPublic: json["isPublic"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "userId": userId,
         "title": title,
         "description": description,
-        "questions": questions,
+        "questions": questions?.map((e) => e.toJson()),
         "category": category,
         "difficulty": difficulty,
         "isPublic": isPublic,

@@ -92,7 +92,7 @@ class CustomDropdownButtonState extends State<CustomDropdownButton> {
         if (subtitle.isNotEmpty)
           CustomText(
             subtitle,
-            fontSize: 12,
+            fontSize: 14,
           ),
       ],
     );

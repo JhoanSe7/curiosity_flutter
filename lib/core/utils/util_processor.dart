@@ -5,9 +5,10 @@ import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 dynamic processError(BuildContext context, {required String error}) {
-  context.showToast(text: error, error: true);
+  context.showToast(text: error, type: MessageType.error);
   print(error);
 }
 

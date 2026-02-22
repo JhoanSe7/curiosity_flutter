@@ -5,6 +5,7 @@ import 'package:curiosity_flutter/features/main/presentation/splash_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_question_view.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_quiz_view.dart';
+import 'package:curiosity_flutter/features/questionaries/presentation/widgets/generate_quiz_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,6 +19,7 @@ class Routes {
   static String questionary = "/questionary";
   static String createQuiz = "/create-quiz";
   static String createQuestion = "/create-question";
+  static String generateQuiz = "/generate-quiz";
 }
 
 final router = GoRouter(
@@ -50,6 +52,10 @@ final router = GoRouter(
     GoRoute(
       path: Routes.createQuestion,
       builder: (context, state) => const CreateQuestionView(),
+    ),
+    GoRoute(
+      path: Routes.generateQuiz,
+      builder: (context, state) => const GenerateQuizView(),
     ),
   ],
 );

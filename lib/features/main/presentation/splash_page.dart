@@ -2,9 +2,13 @@ import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/services/notification_service.dart';
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -17,11 +21,25 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2), goTo);
+    Future.delayed(Duration(seconds: 2), _initialize);
   }
 
-  Future<void> goTo() async {
+  Future<void> _initialize() async {
     await notificationSvc.initialize();
+    await _validLogin();
+  }
+
+  _validLogin() async {
+    if (kDebugMode) {
+      final pref = await SharedPreferences.getInstance();
+      var user = pref.getStringList("user") ?? [];
+      if (user.isNotEmpty) {
+        final data = UserModel.fromList(user);
+        ref.read(homeController.notifier).setUser(data: data);
+        if (mounted) context.go(Routes.home);
+        return;
+      }
+    }
     if (mounted) context.go(Routes.signIn);
   }
 

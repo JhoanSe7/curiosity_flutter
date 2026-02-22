@@ -20,10 +20,25 @@ class CreateQuizView extends ConsumerStatefulWidget {
 }
 
 class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController desController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _desController = TextEditingController();
 
   String textError = "";
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(_loadData);
+  }
+
+  _loadData() {
+    var state = ref.read(questionaryController);
+    if (state.quiz != null || state.quiz?.title != null) {
+      _titleController.text = state.quiz?.title ?? "";
+      _desController.text = state.quiz?.description ?? "";
+      ref.read(questionaryController.notifier).setQuestions(state.quiz?.questions);
+    }
+  }
 
   List<QuestionDataType> element = [
     QuestionDataType(
@@ -77,16 +92,19 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
         child: Column(
           children: [
             CustomTextField(
-              text: "Título del quiz",
-              labelWeight: FontWeight.w600,
-              controller: titleController,
+              label: "Título del quiz",
+              placeHolder: "Escribe el titulo del quiz",
+              controller: _titleController,
               textError: textError,
+              onChange: (_) => setState(() => textError = ""),
             ),
             height.l,
             CustomTextField(
-              placeHolder: "Descripcion breve",
-              controller: desController,
+              label: "Descripcion",
+              placeHolder: "Escribe una descripcion del quiz",
+              controller: _desController,
               maxLines: 3,
+              inputType: TextInputType.multiline,
             ),
             height.l,
             Flexible(
@@ -132,6 +150,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
   }
 
   Widget titleWidget(List<QuestionModel> questions) {
+    var q = questions.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -143,7 +162,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
         ),
         if (questions.isNotEmpty)
           CustomText(
-            "${questions.length} preguntas",
+            "$q ${q > 1 ? "preguntas" : "pregunta"}",
             fontType: FontType.h6,
             color: colors.white,
           ),
@@ -171,20 +190,22 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
     if (empty) return;
     var data = QuizModel(
       userId: ref.read(homeController).user?.id,
-      title: titleController.text,
-      description: desController.text,
+      title: _titleController.text,
+      description: _desController.text,
       questions: ref.read(questionaryController).questions,
     );
     var res = await ref.read(questionaryController.notifier).createQuiz(context, data: data);
-    if ((res.id ?? "").isNotEmpty) if (mounted) context.showToast(text: "Quiz creado con exito");
+    if ((res.id ?? "").isNotEmpty) {
+      if (mounted) context.showToast(text: "Quiz creado con exito");
+    }
     if (mounted) context.pop();
   }
 
   bool _validateButton() {
     final questions = ref.watch(questionaryController).questions;
-    bool textEmpty = titleController.text.isEmpty;
+    bool textEmpty = _titleController.text.isEmpty;
     bool questionEmpty = questions.isEmpty;
-    if (questionEmpty) context.showToast(text: "Debe agregar al menos una pregunta", error: true);
+    if (questionEmpty) context.showToast(text: "Debe agregar al menos una pregunta", type: MessageType.error);
     if (mounted) {
       setState(() {
         textError = textEmpty ? "Digite un titulo para el quiz" : "";
@@ -256,37 +277,52 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
           ),
           width.l,
           CustomCircularButton(
+            icon: Icons.edit,
+            color: colors.aquamarine,
+            onTap: () => _editQuestion(q),
+          ),
+          CustomCircularButton(
             icon: Icons.delete_forever_outlined,
             color: colors.red,
-            onTap: () => context.showModal(
-              icon: Icons.delete_forever_outlined,
-              iconColor: colors.red,
-              title: "¿Elimar pregunta?",
-              content: "Esta accion no se puede deshacer. La pregunta sera eliminada permanentemente.",
-              actions: Row(
-                children: [
-                  Expanded(
-                    child: CustomButton(
-                      onTap: () => context.pop(),
-                      height: 18,
-                      text: "Cancelar",
-                      textColor: colors.titles,
-                      color: colors.inputBorder,
-                    ),
-                  ),
-                  width.l,
-                  Expanded(
-                    child: CustomButton(
-                      onTap: () => _deleteQuestion(q),
-                      height: 18,
-                      text: "Eliminar",
-                      color: colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            onTap: () => _showDeleteModal(q),
           )
+        ],
+      ),
+    );
+  }
+
+  _editQuestion(QuestionModel q) {
+    ref.read(questionaryController.notifier).setQuestion(q);
+    ref.read(questionaryController.notifier).setQuestionType(questionData(q));
+    context.push(Routes.createQuestion);
+  }
+
+  _showDeleteModal(QuestionModel q) {
+    return context.showModal(
+      icon: Icons.delete_forever_outlined,
+      iconColor: colors.red,
+      title: "¿Elimar pregunta?",
+      content: "Esta accion no se puede deshacer. La pregunta sera eliminada permanentemente.",
+      actions: Row(
+        children: [
+          Expanded(
+            child: CustomButton(
+              onTap: () => context.pop(),
+              height: 18,
+              text: "Cancelar",
+              textColor: colors.titles,
+              color: colors.inputBorder,
+            ),
+          ),
+          width.l,
+          Expanded(
+            child: CustomButton(
+              onTap: () => _deleteQuestion(q),
+              height: 18,
+              text: "Eliminar",
+              color: colors.red,
+            ),
+          ),
         ],
       ),
     );
@@ -403,6 +439,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
 
   _newQuestion(QuestionDataType q) {
     ref.read(questionaryController.notifier).setQuestionType(q);
+    ref.read(questionaryController.notifier).clearQuestion();
     context.push(Routes.createQuestion);
   }
 }

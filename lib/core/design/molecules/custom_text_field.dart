@@ -22,6 +22,7 @@ class CustomTextField extends StatefulWidget {
   final FontWeight? labelWeight;
   final int maxLines;
   final String? placeHolder;
+  final FocusNode? focusNode;
 
   const CustomTextField({
     super.key,
@@ -44,6 +45,7 @@ class CustomTextField extends StatefulWidget {
     this.labelWeight,
     this.maxLines = 1,
     this.placeHolder,
+    this.focusNode,
   });
 
   @override
@@ -51,8 +53,8 @@ class CustomTextField extends StatefulWidget {
 }
 
 class CustomTextFieldState extends State<CustomTextField> {
-  var controller = TextEditingController();
-  FocusNode focusNode = FocusNode();
+  late final TextEditingController controller;
+  late FocusNode focusNode;
   bool hideText = false;
   int level = 0;
   double? boxHeight;
@@ -62,6 +64,7 @@ class CustomTextFieldState extends State<CustomTextField> {
     super.initState();
     hideText = widget.password;
     boxHeight = (widget.text.isEmpty ? 48 : 56) + (widget.maxLines * 8);
+    focusNode = widget.focusNode ?? FocusNode();
     focusNode.addListener(() {
       if (mounted) setState(() {});
     });
@@ -69,7 +72,7 @@ class CustomTextFieldState extends State<CustomTextField> {
   }
 
   _initController() {
-    controller = widget.controller ?? controller;
+    controller = widget.controller ?? TextEditingController();
     controller.addListener(
       () {
         _evaluatePassword(controller.text);
@@ -123,7 +126,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                   ? widget.enable && focusNode.hasFocus
                       ? colors.primary
                       : colors.inputBorder
-                  : colors.error,
+                  : colors.red,
             ),
           ),
           child: Row(
@@ -193,8 +196,8 @@ class CustomTextFieldState extends State<CustomTextField> {
             alignment: Alignment.centerLeft,
             child: CustomText(
               widget.textError,
-              color: colors.error,
-              fontSize: 12,
+              color: colors.red,
+              fontSize: 14,
             ),
           )
         ]

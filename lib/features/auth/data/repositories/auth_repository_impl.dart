@@ -19,11 +19,11 @@ class AuthRepositoryImpl extends AuthRepository {
       final result = await dataSource.signIn(data: data);
       if (result.success) {
         return right(UserModel.fromJson(result.body));
-      } else if (!result.success) {
+      } else if (!result.success && result.body is Map<String, dynamic>) {
         final error = ErrorResponseModel.fromJson(result.body);
         return left(CommonError(message: "${error.message}(${error.errorCode})"));
       }
-      throw ("No se pudo procesar los datos");
+      throw (result.message ?? "No se pudo procesar los datos");
     } catch (e) {
       return left(CommonError(message: "Error signIn: $e"));
     }
@@ -35,11 +35,11 @@ class AuthRepositoryImpl extends AuthRepository {
       final result = await dataSource.signUp(data: data);
       if (result.success) {
         return right(UserModel.fromJson(result.body));
-      } else if (!result.success) {
+      } else if (!result.success && result.body is Map<String, dynamic>) {
         final error = ErrorResponseModel.fromJson(result.body);
         return left(CommonError(message: "${error.message}(${error.errorCode})"));
       }
-      throw ("No se pudo procesar los datos");
+      throw (result.message ?? "No se pudo procesar los datos");
     } catch (e) {
       return left(CommonError(message: "Error signUp: $e"));
     }

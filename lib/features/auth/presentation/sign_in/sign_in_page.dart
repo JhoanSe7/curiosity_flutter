@@ -1,12 +1,15 @@
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_controller.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/bottom_bar_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});
@@ -16,8 +19,8 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class _SignInPageState extends ConsumerState<SignInPage> {
-  TextEditingController userController = TextEditingController();
-  TextEditingController passController = TextEditingController();
+  final TextEditingController _userController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
 
   String error1 = "";
   String error2 = "";
@@ -77,10 +80,10 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   label: "Correo Electronico",
                   iconLabel: Icons.email_outlined,
                   iconBackground: colors.gradientPrimary,
-                  controller: userController,
+                  controller: _userController,
                   inputType: TextInputType.emailAddress,
                   formatters: InputFilters.email(),
-                  onChange: (_) => _clearError(true),
+                  onChange: (_) => setState(() => error1 = ""),
                   textError: error1,
                 ),
                 height.l,
@@ -88,16 +91,15 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   label: "Contraseña",
                   iconLabel: Icons.lock_outline,
                   iconBackground: colors.gradientSecondary,
-                  controller: passController,
+                  controller: _passController,
                   password: true,
                   inputType: TextInputType.visiblePassword,
                   formatters: InputFilters.passwd(),
-                  onChange: (_) => _clearError(false),
+                  onChange: (_) => setState(() => error2 = ""),
                   onEdited: _userLogin,
                   textError: error2,
                 ),
                 height.l,
-                // LoginButtonWidget(),
                 CustomButton(
                   onTap: _userLogin,
                   isGradient: true,
@@ -183,14 +185,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   }
 
   bool _validateData() {
-    if (userController.text.isEmpty) {
+    if (_userController.text.isEmpty) {
       error1 = "Digite su correo electronico";
-    } else if (!userController.text.isEmail) {
+    } else if (!_userController.text.isEmail) {
       error1 = "Correo electronico no valido";
     } else {
       error1 = "";
     }
-    if (passController.text.isEmpty) {
+    if (_passController.text.isEmpty) {
       error2 = "Digite su contraseña";
     } else {
       error2 = "";
@@ -201,24 +203,21 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
   _handleLogin() async {
     final controller = ref.read(signInController.notifier);
-    final login = await controller.logIn(context, userController.text, passController.text);
-    if (login != null && (login.firstName ?? "").isNotEmpty) {
+    final login = await controller.logIn(context, _userController.text, _passController.text);
+    if (login != null && (login.id ?? "").isNotEmpty) {
       ref.read(homeController.notifier).setUser(data: login);
+      if (kDebugMode) await _saveData(login);
       if (mounted) context.go(Routes.home);
     }
-  }
-
-  _clearError(bool user) {
-    if (user) {
-      error1 = "";
-    } else {
-      error2 = "";
-    }
-    setState(() {});
   }
 
   _goToRegister() {
     ref.read(homeController.notifier).setMenuIndex(HomeId.init);
     context.push(Routes.signUp);
+  }
+
+  _saveData(UserModel user) async {
+    final pref = await SharedPreferences.getInstance();
+    pref.setStringList("user", user.toList());
   }
 }

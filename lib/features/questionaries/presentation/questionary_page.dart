@@ -42,6 +42,7 @@ class _QuestionaryPageState extends ConsumerState<QuestionaryPage> {
             ),
             SizedBox(height: 32),
             CustomCard(
+              onTap: _generateQuiz,
               subtitle: "IA AUTOMÁTICA",
               title: "Generar con IA",
               desc: "Describe tu tema y deja que la IA cree preguntas inteligentes automaticamente",
@@ -53,7 +54,7 @@ class _QuestionaryPageState extends ConsumerState<QuestionaryPage> {
             ),
             SizedBox(height: 32),
             CustomCard(
-              onTap: () => _createCustom(),
+              onTap: _createCustom,
               subtitle: "PERSONALIZADO",
               title: "Crear Manualmente",
               desc: "Diseña cada pregunta a tu gusto con total control y creatividad",
@@ -69,8 +70,17 @@ class _QuestionaryPageState extends ConsumerState<QuestionaryPage> {
   }
 
   _createCustom() {
-    ref.read(questionaryController.notifier).deleteAllQuestions();
-    context.push(Routes.createQuiz);
+    ref.read(questionaryController.notifier).clearAll();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        if (mounted) context.push(Routes.createQuiz);
+      },
+    );
+  }
+
+  _generateQuiz() {
+    ref.read(questionaryController.notifier).clearAll();
+    context.push(Routes.generateQuiz);
   }
 
   Widget titleWidget() {

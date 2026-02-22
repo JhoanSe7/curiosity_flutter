@@ -4,6 +4,7 @@ import 'package:curiosity_flutter/features/home/presentation/home_controller.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
@@ -42,8 +43,10 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
     );
   }
 
-  _onExit() {
+  _onExit() async {
+    final pref = await SharedPreferences.getInstance();
+    pref.remove("user");
     ref.read(homeController.notifier).resetData();
-    context.go(Routes.signIn);
+    if (mounted) context.go(Routes.signIn);
   }
 }

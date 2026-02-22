@@ -1,5 +1,4 @@
 import 'package:curiosity_flutter/core/design/design.dart';
-import 'package:curiosity_flutter/core/utils/extensions/router_extension.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/option_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_model.dart';
@@ -20,14 +19,48 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
   final TextEditingController _questionController = TextEditingController();
   final TextEditingController _answerController = TextEditingController();
   final TextEditingController _explanationController = TextEditingController();
+  final GlobalKey _questionKey = GlobalKey();
+  final GlobalKey _typeOptionKey = GlobalKey();
+  final GlobalKey _timeOptionKey = GlobalKey();
 
   List<int> seconds = [15, 30, 45, 60, 90];
-  List<OptionModel> options =
-      List.generate(4, (i) => OptionModel(id: i, isCorrect: false, controller: TextEditingController()));
+  List<OptionModel> options = [];
+  List<TextEditingController> optionControllers = [];
 
   bool? binarySelected;
   int timeSelected = 0;
   int error = 0;
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(_loadData);
+  }
+
+  _loadData() {
+    _setQuestion();
+    if (options.isEmpty) options = List.generate(4, (i) => OptionModel(id: i, isCorrect: false));
+    optionControllers = List.generate(4, (i) => TextEditingController(text: options[i].text));
+    if (mounted) setState(() => isLoading = false);
+  }
+
+  _setQuestion() {
+    var state = ref.read(questionaryController);
+    if (state.question != null && state.question?.question != null) {
+      _questionController.text = state.question?.question ?? "";
+      _answerController.text = state.question?.correctAnswerText ?? "";
+      _explanationController.text = state.question?.explanation ?? "";
+      if (mounted) {
+        setState(() {
+          timeSelected = state.question?.timeLimit ?? 0;
+          binarySelected = state.question?.correctAnswer;
+          options = state.question?.options ?? options;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +74,24 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomTextField(
-              label: "Pregunta",
-              controller: _questionController,
-              placeHolder: "Escribe tu pregunta aquí...",
-              maxLines: 5,
-              textError: error == 1 ? "Debes escribir una pregunta" : "",
+            Container(
+              key: _questionKey,
+              child: CustomTextField(
+                label: "Pregunta",
+                controller: _questionController,
+                placeHolder: "Escribe tu pregunta aquí...",
+                maxLines: 5,
+                inputType: TextInputType.multiline,
+                textError: error == 1 ? "Debes escribir una pregunta" : "",
+                onChange: (_) => _setError(0),
+              ),
             ),
             height.xl,
-            questionTypeOption(question?.type ?? QuestionType.OPEN_ANSWER),
+            if (!isLoading)
+              Container(
+                key: _typeOptionKey,
+                child: questionTypeOption(question?.type ?? QuestionType.OPEN_ANSWER),
+              ),
             height.xl,
             if (question?.type != QuestionType.OPEN_ANSWER) ...[
               explanationField(),
@@ -110,7 +152,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
       timeLimit: timeSelected,
       correctAnswer: binarySelected,
       correctAnswerText: _answerController.text,
-      options: options.map((e) => e.withText()).toList(),
+      options: options.asMap().entries.map((e) => e.value.copyWith(optionControllers[e.key].text)).toList(),
       explanation: _explanationController.text,
     );
     ref.read(questionaryController.notifier).addQuestion(data);
@@ -122,10 +164,13 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     bool questionTypeEmpty = _validQuestion();
     bool timeEmpty = timeSelected == 0;
     if (textEmpty) {
+      view.autoScroll(_questionKey.currentContext ?? context);
       _setError(1);
     } else if (questionTypeEmpty) {
+      view.autoScroll(_timeOptionKey.currentContext ?? context);
       _setError(2);
     } else if (timeEmpty) {
+      view.autoScroll(_timeOptionKey.currentContext ?? context);
       _setError(3);
     }
     return textEmpty || timeEmpty || questionTypeEmpty;
@@ -146,7 +191,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
         return false;
       case QuestionType.SINGLE_SELECTION:
       case QuestionType.MULTIPLE_SELECTION:
-        return options.every((e) => !e.isCorrect || e.controller.text.isEmpty);
+        return options.every((e) => !e.isCorrect || optionControllers[e.id].text.isEmpty);
       case QuestionType.FILL_IN_THE_BLANK:
         return _answerController.text.isEmpty;
       case QuestionType.TRUE_FALSE:
@@ -170,6 +215,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
           placeHolder: "Explica porque esa es la respuesta correcta",
           controller: _explanationController,
           maxLines: 3,
+          inputType: TextInputType.multiline,
         ),
       ],
     );
@@ -177,6 +223,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
 
   Widget timeOptions() {
     return Column(
+      key: _timeOptionKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText(
@@ -242,7 +289,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
           Flexible(
             child: CustomTextField(
               placeHolder: "Opción ${e.id + 1}",
-              controller: e.controller,
+              controller: optionControllers[e.id],
             ),
           ),
           width.m,
@@ -402,8 +449,8 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
           alignment: Alignment.centerLeft,
           child: CustomText(
             text,
-            color: colors.error,
-            fontSize: 12,
+            color: colors.red,
+            fontSize: 14,
             textAlign: TextAlign.start,
           ),
         )

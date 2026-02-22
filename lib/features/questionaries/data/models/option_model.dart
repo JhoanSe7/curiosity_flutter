@@ -4,20 +4,17 @@ class OptionModel {
   String text;
   bool isCorrect;
   int id;
-  TextEditingController controller;
 
   OptionModel({
     this.text = "",
     this.isCorrect = false,
     required this.id,
-    required this.controller,
   });
 
-  factory OptionModel.fromJson(Map<String, dynamic> json) => OptionModel(
+  factory OptionModel.fromJson(int id, Map<String, dynamic> json) => OptionModel(
         text: json["text"],
         isCorrect: json["isCorrect"],
-        id: json["id"],
-        controller: TextEditingController(),
+        id: id,
       );
 
   Map<String, dynamic> toJson() => {
@@ -25,8 +22,5 @@ class OptionModel {
         "isCorrect": isCorrect,
       };
 
-  OptionModel withText() {
-    text = controller.text;
-    return this;
-  }
+  OptionModel copyWith(String text) => OptionModel(text: text, isCorrect: isCorrect, id: id);
 }

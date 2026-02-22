@@ -21,22 +21,25 @@ class QuestionModel {
     this.explanation,
   });
 
-  factory QuestionModel.fromJson(Map<String, dynamic> json) => QuestionModel(
-        type: json["type"],
-        question: json["question"],
-        timeLimit: json["timeLimit"],
-        options: json["options"],
-        correctAnswer: json["correctAnswer"],
-        correctAnswerText: json["correctAnswerText"],
-        sourceUrl: json["sourceUrl"],
-        explanation: json["explanation"],
-      );
+  factory QuestionModel.fromJson(Map<String, dynamic> json) {
+    List options = json["options"] != null && json["options"] is List ? json["options"] : [];
+    return QuestionModel(
+      type: json["type"],
+      question: json["question"],
+      timeLimit: json["timeLimit"],
+      options: options.asMap().entries.map((e) => OptionModel.fromJson(e.key, e.value)).toList(),
+      correctAnswer: json["correctAnswer"],
+      correctAnswerText: json["correctAnswerText"],
+      sourceUrl: json["sourceUrl"],
+      explanation: json["explanation"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "type": type,
         "question": question,
         "timeLimit": timeLimit,
-        "options": options,
+        "options": options?.map((e) => e.toJson()),
         "correctAnswer": correctAnswer,
         "correctAnswerText": correctAnswerText,
         "sourceUrl": sourceUrl,

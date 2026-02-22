@@ -33,6 +33,7 @@ class SystemColors {
   final gradientYellow = const [Color(0xFFFAC506), Color(0xFFF96C03)];
   final gradientViolet = const [Color(0xFF7A83F8), Color(0xFFA04AF6)];
   final gradientMagenta = const [Color(0xFFF7666A), Color(0xFFEB3C90)];
+  final gradientInactive = const [Color(0xFFC6C6C6), Color(0xFFE6E6E6)];
 
   final aquamarine = const Color(0xFF12B4A7);
   final green = const Color(0xFF28BD65);
@@ -51,6 +52,12 @@ class SystemColors {
 
   final success = const Color(0xFF155724);
   final backgroundSuccess = const Color(0xFFD4EDDA);
+
+  final info = const Color(0xFF0C5460);
+  final backgroundInfo = const Color(0xFFD1ECF1);
+
+  final warning = const Color(0xFF856404);
+  final backgroundWarning = const Color(0xFFFFF3CD);
 }
 
 SystemColors colors = lightColors;

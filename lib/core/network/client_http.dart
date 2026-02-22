@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:curiosity_flutter/core/utils/extensions/http_extension.dart';
 import 'package:http/http.dart';
@@ -21,10 +22,13 @@ class ClientHttp {
       return response.validate();
     } on TimeoutException catch (e) {
       log.warning("GET Timeout http request to $endpoint: $e");
-      return HttpResponseModel(success: false);
+      return HttpResponseModel(success: false, message: "Problemas de conexion");
+    } on SocketException catch (e) {
+      log.warning("GET SocketException http request to $endpoint: $e");
+      return HttpResponseModel(success: false, message: "Sin conexion a internet");
     } catch (e) {
       log.warning("GET Error http request to $endpoint: $e");
-      return HttpResponseModel(success: false);
+      return HttpResponseModel(success: false, message: "Problemas tecnicos");
     }
   }
 
@@ -35,10 +39,13 @@ class ClientHttp {
       return response.validate();
     } on TimeoutException catch (e) {
       log.warning("POST Timeout http request to $endpoint: $e");
-      return HttpResponseModel(success: false);
+      return HttpResponseModel(success: false, message: "Problemas de conexion");
+    } on SocketException catch (e) {
+      log.warning("POST SocketException http request to $endpoint: $e");
+      return HttpResponseModel(success: false, message: "Sin conexion a internet");
     } catch (e) {
       log.warning("POST Error http request to $endpoint: $e");
-      return HttpResponseModel(success: false);
+      return HttpResponseModel(success: false, message: "Problemas tecnicos");
     }
   }
 }
