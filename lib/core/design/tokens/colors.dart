@@ -43,6 +43,7 @@ class SystemColors {
   final purple = const Color(0xFFBD76F5);
 
   final white = const Color(0xFFFFFFFF);
+  final whiteSmoke = const Color(0xFFF5F5F5);
   final black = const Color(0xFF000000);
   final grey = const Color(0xFF808080);
   final greyLight = const Color(0xFFABABAB);

@@ -1,6 +1,7 @@
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
+import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +14,15 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
+  final TextEditingController _codeInput = TextEditingController();
+
+  @override
+  void dispose() {
+    _codeInput.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -49,7 +59,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               "Código de quiz",
               Icons.numbers,
               colors.gradientPrimary,
-              () {},
+              () => _showCodeModal(),
             ),
           ],
         )
@@ -223,6 +233,72 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           ),
         ),
       ],
+    );
+  }
+
+  _showCodeModal() {
+    final state = ref.watch(homeController);
+    return context.showModal(
+      widthContainer: .8,
+      icon: Icons.numbers_rounded,
+      iconColor: colors.primary,
+      title: "¡Únete al Quiz!",
+      content: "Ingresa el código único de tu quiz para comenzar a jugar y aprender con tus amigos",
+      actions: Flexible(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Material(
+              color: Colors.transparent,
+              child: CustomTextField(
+                placeHolder: 'EJ: ABC123',
+                controller: _codeInput,
+              ),
+            ),
+            height.l,
+            Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
+                    onTap: () {
+                      _codeInput.clear();
+                      context.pop();
+                    },
+                    height: 18,
+                    text: "Cancelar",
+                    textColor: colors.titles,
+                    color: colors.inputBorder,
+                  ),
+                ),
+                width.l,
+                Expanded(
+                  child: CustomButton(
+                    onTap: () async {
+                      final data = {
+                        "roomCode": _codeInput.text.trim(),
+                        "userId": state.user?.id,
+                        "firstName": state.user?.firstName,
+                        "secondName": state.user?.secondName,
+                        "lastName": state.user?.lastName,
+                        "secondLastName": state.user?.secondLastName,
+                        "email": state.user?.email,
+                        "phoneNumber": state.user?.phoneNumber,
+                        "role": state.user?.role,
+                      };
+                      await context.push(Routes.lobbyGuest, extra: data);
+                      _codeInput.clear();
+                      context.pop();
+                    },
+                    height: 18,
+                    text: "Unirse",
+                    color: colors.primary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
