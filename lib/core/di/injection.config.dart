@@ -26,6 +26,7 @@ import '../../features/questionaries/domain/repositories/questionaries_repositor
 import '../../features/questionaries/domain/use_cases/questionaries_use_case.dart'
     as _i912;
 import '../network/client_http.dart' as _i107;
+import '../services/web_socket_service.dart' as _i524;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -39,6 +40,7 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     gh.factory<_i107.ClientHttp>(() => _i107.ClientHttp());
+    gh.singleton<_i524.WebSocketService>(() => _i524.WebSocketService());
     gh.factory<_i933.AuthDataSource>(
         () => _i933.AuthDataSourceImpl(gh<_i107.ClientHttp>()));
     gh.factory<_i812.QuestionariesDataSource>(

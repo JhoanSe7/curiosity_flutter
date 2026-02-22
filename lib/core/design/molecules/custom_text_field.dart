@@ -55,30 +55,35 @@ class CustomTextField extends StatefulWidget {
 class CustomTextFieldState extends State<CustomTextField> {
   late final TextEditingController controller;
   late FocusNode focusNode;
+  late final VoidCallback _listener;
   bool hideText = false;
   int level = 0;
   double? boxHeight;
+  late final bool _isExternalController;
+  late final bool _isExternalFocusNode;
+
 
   @override
   void initState() {
     super.initState();
     hideText = widget.password;
     boxHeight = (widget.text.isEmpty ? 48 : 56) + (widget.maxLines * 8);
+    _isExternalController = widget.controller != null;
+    controller = widget.controller ?? TextEditingController();
+
+    _listener = () {
+      _evaluatePassword(controller.text);
+    };
+
+    controller.addListener(_listener);
+    _isExternalFocusNode = widget.focusNode != null;
     focusNode = widget.focusNode ?? FocusNode();
+
     focusNode.addListener(() {
       if (mounted) setState(() {});
     });
-    _initController();
   }
 
-  _initController() {
-    controller = widget.controller ?? TextEditingController();
-    controller.addListener(
-      () {
-        _evaluatePassword(controller.text);
-      },
-    );
-  }
 
   void _evaluatePassword(String password) {
     int lvl = 0;
@@ -95,10 +100,13 @@ class CustomTextFieldState extends State<CustomTextField> {
 
   @override
   void dispose() {
-    controller.removeListener(() {});
-    focusNode.removeListener(() {});
-    controller.dispose();
-    focusNode.dispose();
+    controller.removeListener(_listener);
+    if (!_isExternalController) {
+      controller.dispose();
+    }
+    if (!_isExternalFocusNode) {
+      focusNode.dispose();
+    }
     super.dispose();
   }
 
@@ -130,7 +138,7 @@ class CustomTextFieldState extends State<CustomTextField> {
             ),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: TextField(
