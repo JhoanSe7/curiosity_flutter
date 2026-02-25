@@ -77,4 +77,15 @@ class UserModel {
       createdQuizzes: data[9].split(","),
     );
   }
+
+  Map<String, dynamic> toMap() => {
+        'userId': id,
+        'firstName': firstName,
+        'secondName': secondName,
+        'lastName': lastName,
+        'secondLastName': secondLastName,
+        'email': email,
+        'phoneNumber': phoneNumber,
+        'role': role,
+      };
 }

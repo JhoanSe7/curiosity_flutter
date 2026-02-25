@@ -110,16 +110,7 @@ class WebSocketService {
     _assertConnected();
     _client!.send(
       destination: '/app/lobby.join/$roomCode',
-      body: jsonEncode({
-        'userId': user.id,
-        'firstName': user.firstName,
-        'secondName': user.secondName,
-        'lastName': user.lastName,
-        'secondLastName': user.secondLastName,
-        'email': user.email,
-        'phoneNumber': user.phoneNumber,
-        'role': user.role,
-      }),
+      body: jsonEncode(user.toMap()),
     );
     log.info('joinLobby enviado → sala: $roomCode');
   }
@@ -128,14 +119,7 @@ class WebSocketService {
     _assertConnected();
     _client!.send(
       destination: '/app/lobby.leave/$roomCode',
-      body: jsonEncode({
-        'userId': user.id,
-        'firstName': user.firstName,
-        'lastName': user.lastName,
-        'email': user.email,
-        'phoneNumber': user.phoneNumber,
-        'role': user.role,
-      }),
+      body: jsonEncode(user.toMap()),
     );
     log.info('leaveLobby enviado → sala: $roomCode');
   }
