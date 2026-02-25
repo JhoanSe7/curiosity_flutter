@@ -45,9 +45,9 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     gh.factory<_i107.ClientHttp>(() => _i107.ClientHttp());
+    gh.singleton<_i524.WebSocketService>(() => _i524.WebSocketService());
     gh.factory<_i779.HomeDataSource>(
         () => _i779.HomeDataSourceImpl(gh<_i107.ClientHttp>()));
-    gh.singleton<_i524.WebSocketService>(() => _i524.WebSocketService());
     gh.factory<_i933.AuthDataSource>(
         () => _i933.AuthDataSourceImpl(gh<_i107.ClientHttp>()));
     gh.factory<_i812.QuestionariesDataSource>(

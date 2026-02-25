@@ -59,21 +59,10 @@ final router = GoRouter(
       path: Routes.generateQuiz,
       builder: (context, state) => const GenerateQuizView(),
     ),
-
-    GoRoute(path: Routes.lobbyGuest, builder: (context, state) {
-      final args = state.extra as Map<String, dynamic>;
-      return LobbyScreen(
-        roomCode: args['roomCode'],
-        userId: args['userId'],
-        firstName: args['firstName'],
-        secondName: args['secondName'],
-        lastName: args['lastName'],
-        secondLastName: args['secondLastName'],
-        email: args['email'],
-        phoneNumber: args['phoneNumber'],
-        role: args['role'],
-      );
-    }),
+    GoRoute(
+      path: Routes.lobbyGuest,
+      builder: (context, state) => const LobbyScreen(),
+    ),
 
   ],
 );

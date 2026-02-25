@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:curiosity_flutter/core/constants/config.dart';
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/lobbie/data/models/lobby_event_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
-
 
 @singleton
 class WebSocketService {
@@ -106,53 +106,35 @@ class WebSocketService {
 
   // ─── Mensajes salientes ───────────────────────────────────────────────────
 
-  void joinLobby({
-    required String roomCode,
-    required String userId,
-    required String firstName,
-    String? secondName,
-    required String lastName,
-    String? secondLastName,
-    required String email,
-    required String phoneNumber,
-    required String role,
-  }) {
+  void joinLobby({required String roomCode, required UserModel user}) {
     _assertConnected();
     _client!.send(
       destination: '/app/lobby.join/$roomCode',
       body: jsonEncode({
-        'userId': userId,
-        'firstName': firstName,
-        'secondName': secondName,
-        'lastName': lastName,
-        'secondLastName': secondLastName,
-        'email': email,
-        'phoneNumber': phoneNumber,
-        'role': role,
+        'userId': user.id,
+        'firstName': user.firstName,
+        'secondName': user.secondName,
+        'lastName': user.lastName,
+        'secondLastName': user.secondLastName,
+        'email': user.email,
+        'phoneNumber': user.phoneNumber,
+        'role': user.role,
       }),
     );
     log.info('joinLobby enviado → sala: $roomCode');
   }
 
-  void leaveLobby({
-    required String roomCode,
-    required String userId,
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String phoneNumber,
-    required String role,
-  }) {
+  void leaveLobby({required String roomCode, required UserModel user}) {
     _assertConnected();
     _client!.send(
       destination: '/app/lobby.leave/$roomCode',
       body: jsonEncode({
-        'userId': userId,
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'phoneNumber': phoneNumber,
-        'role': role,
+        'userId': user.id,
+        'firstName': user.firstName,
+        'lastName': user.lastName,
+        'email': user.email,
+        'phoneNumber': user.phoneNumber,
+        'role': user.role,
       }),
     );
     log.info('leaveLobby enviado → sala: $roomCode');

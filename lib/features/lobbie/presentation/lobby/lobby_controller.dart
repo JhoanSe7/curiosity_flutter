@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:curiosity_flutter/core/di/injection.dart';
 import 'package:curiosity_flutter/core/services/web_socket_service.dart';
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/lobbie/data/models/lobby_event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,42 +14,20 @@ class LobbyController extends StateNotifier<LobbyState> {
   final WebSocketService _wsService;
   StreamSubscription<LobbyEventModel>? _lobbySub;
 
-  Future<void> joinLobby({
-    required String roomCode,
-    required String userId,
-    required String firstName,
-    String? secondName,
-    required String lastName,
-    String? secondLastName,
-    required String email,
-    required String phoneNumber,
-    required String role,
-  }) async {
+  Future<void> joinLobby(UserModel user) async {
     if (mounted) state = state.copyWith(isConnecting: true);
+    var roomCode = state.roomCode ?? "";
 
     try {
       _wsService.connect();
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(Duration(milliseconds: 500));
 
       _wsService.subscribeLobby(roomCode);
 
-      // Un solo stream maneja todo: éxito y error
+      // Un solo stream maneja los eventos del lobby
       _lobbySub = _wsService.lobbyStream.listen(_handleEvent);
 
-      _wsService.joinLobby(
-        roomCode: roomCode,
-        userId: userId,
-        firstName: firstName,
-        secondName: secondName,
-        lastName: lastName,
-        secondLastName: secondLastName,
-        email: email,
-        phoneNumber: phoneNumber,
-        role: role,
-      );
-
-      if (mounted) state = state.copyWith(roomCode: roomCode);
-
+      _wsService.joinLobby(roomCode: roomCode, user: user);
     } catch (e) {
       if (mounted) {
         state = state.copyWith(
@@ -93,45 +72,29 @@ class LobbyController extends StateNotifier<LobbyState> {
     }
   }
 
-  void leaveLobby({
-    required String userId,
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String phoneNumber,
-    required String role,
-  }) {
+  void leaveLobby(UserModel user) {
     final roomCode = state.roomCode;
     if (roomCode == null) return;
 
-    _wsService.leaveLobby(
-      roomCode: roomCode,
-      userId: userId,
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      phoneNumber: phoneNumber,
-      role: role,
-    );
+    _wsService.leaveLobby(roomCode: roomCode, user: user);
 
     _cleanup();
     if (mounted) state = LobbyState();
   }
 
+  ///
   void _cleanup() {
     _lobbySub?.cancel();
     _wsService.unsubscribeLobby();
     _lobbySub = null;
   }
 
-  @override
-  void dispose() {
-    _cleanup();
-    super.dispose();
+  ///
+  void setRoomCode(String roomCode) {
+    if (mounted) state = state.copyWith(roomCode: roomCode);
   }
 }
 
-final lobbyController =
-StateNotifierProvider<LobbyController, LobbyState>(
-      (ref) => LobbyController(getIt.get()),
-);
+final lobbyController = StateNotifierProvider<LobbyController, LobbyState>((ref) => LobbyController(
+      getIt.get(),
+    ));

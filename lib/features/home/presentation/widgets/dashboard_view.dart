@@ -2,6 +2,7 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/lobbie/presentation/lobby/lobby_controller.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_controller.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     colors.blue,
     colors.green,
     colors.purple,
-    colors.orange,
   ];
 
   List<Color> colorCard = [];
@@ -46,7 +46,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     _codeInput.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -443,7 +442,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   }
 
   _showCodeModal() {
-    final state = ref.watch(homeController);
     return context.showModal(
       widthContainer: .8,
       icon: Icons.numbers_rounded,
@@ -466,10 +464,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               children: [
                 Expanded(
                   child: CustomButton(
-                    onTap: () {
-                      _codeInput.clear();
-                      context.pop();
-                    },
+                    onTap: _cancelModal,
                     height: 18,
                     text: "Cancelar",
                     textColor: colors.titles,
@@ -479,22 +474,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 width.l,
                 Expanded(
                   child: CustomButton(
-                    onTap: () async {
-                      final data = {
-                        "roomCode": _codeInput.text.trim(),
-                        "userId": state.user?.id,
-                        "firstName": state.user?.firstName,
-                        "secondName": state.user?.secondName,
-                        "lastName": state.user?.lastName,
-                        "secondLastName": state.user?.secondLastName,
-                        "email": state.user?.email,
-                        "phoneNumber": state.user?.phoneNumber,
-                        "role": state.user?.role,
-                      };
-                      await context.push(Routes.lobbyGuest, extra: data);
-                      _codeInput.clear();
-                      context.pop();
-                    },
+                    onTap: _onJoinQuiz,
                     height: 18,
                     text: "Unirse",
                     color: colors.primary,
@@ -506,6 +486,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         ),
       ),
     );
+  }
+
+  _onJoinQuiz() async {
+    ref.read(lobbyController.notifier).setRoomCode(_codeInput.text.trim());
+    await context.push(Routes.lobbyGuest);
+    _codeInput.clear();
+    if (mounted) context.pop();
+  }
+
+  _cancelModal() {
+    _codeInput.clear();
+    context.pop();
   }
 }
 
