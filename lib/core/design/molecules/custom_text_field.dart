@@ -1,9 +1,11 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/filters/input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
+  final Widget? prefix;
   final Widget? suffix;
   final String text;
   final bool enable;
@@ -23,10 +25,12 @@ class CustomTextField extends StatefulWidget {
   final int maxLines;
   final String? placeHolder;
   final FocusNode? focusNode;
+  final bool dense;
 
   const CustomTextField({
     super.key,
     this.controller,
+    this.prefix,
     this.suffix,
     this.text = "",
     this.enable = true,
@@ -46,6 +50,7 @@ class CustomTextField extends StatefulWidget {
     this.maxLines = 1,
     this.placeHolder,
     this.focusNode,
+    this.dense = false,
   });
 
   @override
@@ -61,7 +66,6 @@ class CustomTextFieldState extends State<CustomTextField> {
   double? boxHeight;
   late final bool _isExternalController;
   late final bool _isExternalFocusNode;
-
 
   @override
   void initState() {
@@ -83,7 +87,6 @@ class CustomTextFieldState extends State<CustomTextField> {
       if (mounted) setState(() {});
     });
   }
-
 
   void _evaluatePassword(String password) {
     int lvl = 0;
@@ -123,7 +126,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           height.m,
         ],
         Container(
-          height: boxHeight,
+          height: widget.dense ? 48 : boxHeight,
           alignment: Alignment.center,
           padding: EdgeInsets.fromLTRB(12, 0, widget.password ? 10 : 0, 0),
           decoration: BoxDecoration(
@@ -140,6 +143,10 @@ class CustomTextFieldState extends State<CustomTextField> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              if (widget.prefix != null) ...[
+                widget.prefix ?? SizedBox.shrink(),
+                width.s,
+              ],
               Expanded(
                 child: TextField(
                   focusNode: focusNode,
@@ -152,10 +159,13 @@ class CustomTextFieldState extends State<CustomTextField> {
                   controller: controller,
                   keyboardType: widget.inputType,
                   enabled: widget.enable,
-                  inputFormatters: widget.formatters,
+                  inputFormatters: widget.formatters ?? InputFilters.defaultText(),
                   maxLines: widget.maxLines,
                   minLines: widget.maxLines,
-                  style: styles.poppins(color: colors.paragraph, fontType: FontType.h6),
+                  style: styles.poppins(
+                    color: colors.paragraph,
+                    fontSize: 14
+                  ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
@@ -172,7 +182,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                 onTap: widget.password ? _showPasswd : widget.onTapSuffix,
                 child: widget.suffix ??
                     (widget.password
-                        ? Icon(
+                        ? CustomIcon(
                             hideText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                             color: colors.iconPlaceholder,
                           )
@@ -193,7 +203,8 @@ class CustomTextFieldState extends State<CustomTextField> {
             alignment: Alignment.centerLeft,
             child: CustomText(
               "Seguridad: ${_lvlText[level]}",
-              fontType: FontType.b,
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
               color: level > 2 ? colors.green : colors.titles,
             ),
           ),
@@ -227,6 +238,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         color: colors.paragraph,
         maxLines: 1,
         fontWeight: widget.labelWeight,
+        fontSize: 14,
       );
     }
     return null;

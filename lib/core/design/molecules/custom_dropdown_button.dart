@@ -50,7 +50,7 @@ class CustomDropdownButtonState extends State<CustomDropdownButton> {
         focusNode: focusNode,
         value: selected,
         isExpanded: true,
-        icon: Icon(Icons.keyboard_arrow_down_rounded),
+        icon: CustomIcon(Icons.keyboard_arrow_down_rounded),
         iconEnabledColor: colors.iconPlaceholder,
         iconSize: 30,
         hint: CustomText(

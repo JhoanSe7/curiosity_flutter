@@ -38,10 +38,16 @@ class HomeController extends StateNotifier<HomeState> {
     );
   }
 
+  ///
   Future<void> loadQuizzes(BuildContext context) async {
     var userId = state.user?.id ?? "";
     final res = await getQuizzes(context, userId: userId);
     if (mounted) state = state.copyWith(quizzes: res);
+  }
+
+  ///
+  void setLoading(bool value) {
+    if (mounted) state = state.copyWith(isLoading: value);
   }
 }
 

@@ -17,30 +17,31 @@ class _QuestionaryPageState extends ConsumerState<QuestionaryPage> {
   @override
   Widget build(BuildContext context) {
     return CustomPageBuilder(
-      customTitle: titleWidget(),
+      customTitle: titleWidget,
       appbarColor: colors.gradientPurple,
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            SizedBox(height: 16),
+            height.l,
             GenericLogo(
               complementOut: true,
-              size: 60,
-              complementSize: 25,
+              size: 52,
+              complementSize: 20,
             ),
-            SizedBox(height: 32),
+            height.xl,
             CustomText(
               "¿Cómo quieres crear tu quiz?",
-              fontType: FontType.title,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
             ),
-            SizedBox(height: 8),
+            height.m,
             CustomText(
               "Elije el metodo que prefieras",
-              fontType: FontType.h5,
+              fontSize: 14,
               color: colors.paragraph,
             ),
-            SizedBox(height: 32),
+            height.xl,
             CustomCard(
               onTap: _generateQuiz,
               subtitle: "IA AUTOMÁTICA",
@@ -52,7 +53,7 @@ class _QuestionaryPageState extends ConsumerState<QuestionaryPage> {
               tag: "RÁPIDO",
               enableBorder: true,
             ),
-            SizedBox(height: 32),
+            height.xl,
             CustomCard(
               onTap: _createCustom,
               subtitle: "PERSONALIZADO",
@@ -83,22 +84,20 @@ class _QuestionaryPageState extends ConsumerState<QuestionaryPage> {
     context.push(Routes.generateQuiz);
   }
 
-  Widget titleWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          "Crear Cuestionario",
-          color: colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        CustomText(
-          "Elije como empezar",
-          fontType: FontType.h6,
-          color: colors.white,
-        ),
-      ],
-    );
-  }
+  Widget titleWidget = Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      CustomText(
+        "Crear Cuestionario",
+        color: colors.white,
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+      ),
+      CustomText(
+        "Elije como empezar",
+        fontSize: 14,
+        color: colors.white,
+      ),
+    ],
+  );
 }

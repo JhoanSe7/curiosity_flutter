@@ -43,7 +43,11 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     ),
                     TextSpan(
                       text: "Aprende ● Juega ● Descubre",
-                      style: styles.poppins(color: colors.white, fontType: FontType.b),
+                      style: styles.poppins(
+                        color: colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     TextSpan(
                       text: " ★",
@@ -55,7 +59,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               height.s,
               CustomText(
                 "Tu aventura educativa comienza aqui",
-                fontType: FontType.h6,
+                fontSize: 14,
                 color: colors.white,
               ),
             ],
@@ -67,7 +71,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               children: [
                 CustomText(
                   "¡Bienvenido de vuelta!",
-                  fontType: FontType.h2,
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                 ),
                 CustomText(
@@ -106,7 +110,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      CustomIcon(
                         Icons.emoji_events_outlined,
                         size: 16,
                         color: colors.white,
@@ -119,7 +123,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                         color: colors.white,
                       ),
                       height.m,
-                      Icon(
+                      CustomIcon(
                         Icons.star_border,
                         size: 16,
                         color: colors.white,
@@ -147,7 +151,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                       color: colors.background,
                       child: CustomText(
                         "o",
-                        fontType: FontType.h6,
+                        fontSize: 14,
                         color: colors.paragraph,
                       ),
                     )

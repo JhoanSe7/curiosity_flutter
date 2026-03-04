@@ -13,6 +13,8 @@ class CustomButton extends StatelessWidget {
   final double? height;
   final bool enable;
   final bool isGradient;
+  final BoxBorder? border;
+  final bool large;
 
   const CustomButton({
     super.key,
@@ -27,6 +29,8 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.enable = true,
     this.isGradient = false,
+    this.border,
+    this.large = false,
   });
 
   @override
@@ -35,20 +39,22 @@ class CustomButton extends StatelessWidget {
       onTap: enable ? onTap : () {},
       child: Container(
         padding: EdgeInsets.symmetric(vertical: height ?? 10, horizontal: width ?? 10),
+        width: large ? double.infinity : null,
         decoration: BoxDecoration(
           gradient: isGradient ? LinearGradient(colors: gradientColor ?? colors.gradientPrimary) : null,
           color: !isGradient
               ? enable
-                  ? color
+                  ? color ?? colors.primary
                   : colors.inactiveButton
               : null,
           borderRadius: BorderRadius.circular(14),
+          border: border,
         ),
         child: child ??
             CustomText(
               text ?? "",
               fontWeight: FontWeight.w700,
-              fontSize: fontSize ?? 16,
+              fontSize: fontSize ?? 14,
               color: textColor ?? colors.white,
             ),
       ),

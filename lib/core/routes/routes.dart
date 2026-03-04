@@ -1,12 +1,14 @@
 import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_page.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_page.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_page.dart';
-import 'package:curiosity_flutter/features/lobbie/presentation/lobby/lobby_page.dart';
 import 'package:curiosity_flutter/features/main/presentation/splash_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_question_view.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_quiz_view.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/generate_quiz_view.dart';
+import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_list_view.dart';
+import 'package:curiosity_flutter/features/room/presentation/lobby/lobby_page.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,7 +23,9 @@ class Routes {
   static String createQuiz = "/create-quiz";
   static String createQuestion = "/create-question";
   static String generateQuiz = "/generate-quiz";
-  static String lobbyGuest =  "/lobby-guest";
+  static String lobby = "/lobby";
+  static String quizzesList = "/quizzes-list";
+  static String room = "/room";
 }
 
 final router = GoRouter(
@@ -60,9 +64,16 @@ final router = GoRouter(
       builder: (context, state) => const GenerateQuizView(),
     ),
     GoRoute(
-      path: Routes.lobbyGuest,
+      path: Routes.lobby,
       builder: (context, state) => const LobbyScreen(),
     ),
-
+    GoRoute(
+      path: Routes.quizzesList,
+      builder: (context, state) => const QuizzesListView(),
+    ),
+    GoRoute(
+      path: Routes.room,
+      builder: (context, state) => const RoomPage(),
+    ),
   ],
 );

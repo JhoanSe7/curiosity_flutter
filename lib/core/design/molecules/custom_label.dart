@@ -26,7 +26,7 @@ class CustomLabel extends StatelessWidget {
               gradient: LinearGradient(colors: iconBackground),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: iconColor ?? colors.white, size: 14),
+            child: CustomIcon(icon, color: iconColor ?? colors.white, size: 14),
           ),
           width.m
         ],

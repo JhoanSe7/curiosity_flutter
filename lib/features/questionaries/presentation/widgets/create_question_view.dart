@@ -254,6 +254,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
           "${e}s",
           color: timeSelected == e ? colors.white : colors.paragraph,
           fontWeight: FontWeight.w600,
+          fontSize: 14,
         ),
       ),
     );
@@ -308,7 +309,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
           color: enable ? colors.primary : colors.inputBorder,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(
+        child: CustomIcon(
           Icons.check,
           color: colors.white,
         ),
@@ -397,7 +398,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: textColor),
+            CustomIcon(icon, color: textColor),
             width.m,
             CustomText(
               text,

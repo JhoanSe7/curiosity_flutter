@@ -30,9 +30,12 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               backgroundColor: colors.white,
             ),
           ),
-          SizedBox(height: 32),
-          CustomText("${state.user?.firstName} ${state.user?.lastName}"),
-          SizedBox(height: 32),
+          height.xl,
+          CustomText(
+            "${state.user?.firstName} ${state.user?.lastName}",
+            fontSize: 14,
+          ),
+          height.xl,
           CustomButton(
             text: "Cerrar Sesion",
             color: colors.secondary,

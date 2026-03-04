@@ -40,7 +40,7 @@ class QuizModel {
         "userId": userId,
         "title": title,
         "description": description,
-        "questions": questions?.map((e) => e.toJson()),
+        "questions": questions,
         "category": category,
         "difficulty": difficulty,
         "isPublic": isPublic,

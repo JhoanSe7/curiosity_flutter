@@ -36,7 +36,7 @@ class CustomHeader extends StatelessWidget {
               child: Container(
                 alignment: Alignment.topLeft,
                 margin: EdgeInsets.all(8),
-                child: Icon(
+                child: CustomIcon(
                   Icons.arrow_back,
                   size: 30,
                   color: colors.white,
@@ -88,7 +88,7 @@ class CustomHeader extends StatelessWidget {
                       BoxShadow(color: colors.greyLight, offset: Offset(0, -3), blurRadius: 10),
                     ],
                   ),
-                  child: Icon(Icons.blur_circular, color: colors.white, size: 14),
+                  child: CustomIcon(Icons.blur_circular, color: colors.white, size: 14),
                 ),
               )
             ],

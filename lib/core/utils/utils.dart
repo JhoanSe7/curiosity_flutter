@@ -5,6 +5,8 @@ export 'extensions/router_extension.dart';
 export 'extensions/text_extension.dart';
 
 export 'formatters/phone_formatter.dart';
+export 'formatters/upper_input_formatter.dart';
+
 
 export 'filters/input_filters.dart';
 

@@ -36,42 +36,18 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
 
   int get sumQuestions => summary.reduce((a, b) => a + b);
 
-  List<QuestionDataType> element = [
-    QuestionDataType(
-      "Selección Única",
-      "",
-      colors.gradientBlue,
-      Icons.circle_outlined,
-      QuestionType.SINGLE_SELECTION,
-    ),
-    QuestionDataType(
-      "Múltiple Selección",
-      "",
-      colors.gradientPurple,
-      Icons.check_box_outlined,
-      QuestionType.MULTIPLE_SELECTION,
-    ),
-    QuestionDataType(
-      "Verdadero o Falso",
-      "",
-      colors.gradientPrimary,
-      Icons.help_outline_sharp,
-      QuestionType.TRUE_FALSE,
-    ),
-    QuestionDataType(
-      "Completar Espacios",
-      "",
-      colors.gradientYellow,
-      Icons.square_outlined,
-      QuestionType.FILL_IN_THE_BLANK,
-    ),
-  ];
+  List<QuestionDataType> get element {
+    var element = ref.read(questionaryController.notifier).element;
+    var list = List<QuestionDataType>.from(element);
+    list.removeWhere((e) => e.type == QuestionType.OPEN_ANSWER);
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
     return CustomPageBuilder(
       scrollController: scrollController,
-      customTitle: titleWidget(),
+      customTitle: titleWidget,
       appbarColor: colors.gradientPurple,
       body: Padding(
         padding: EdgeInsets.all(16),
@@ -89,24 +65,22 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     );
   }
 
-  Widget titleWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          "Generar con IA",
-          color: colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        CustomText(
-          "Configura tu cuestionario",
-          fontType: FontType.h6,
-          color: colors.white,
-        ),
-      ],
-    );
-  }
+  Widget titleWidget = Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      CustomText(
+        "Generar con IA",
+        color: colors.white,
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+      ),
+      CustomText(
+        "Configura tu cuestionario",
+        fontSize: 14,
+        color: colors.white,
+      ),
+    ],
+  );
 
   Widget infoQuestionary() {
     return elementCard(
@@ -172,11 +146,14 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
               CustomText(
                 title,
                 fontWeight: FontWeight.w600,
+                fontSize: 14,
+                textAlign: TextAlign.start,
               ),
               CustomText(
                 subtitle,
                 color: colors.paragraph,
-                fontSize: 14,
+                fontSize: 12,
+                textAlign: TextAlign.start,
               ),
             ],
           ),
@@ -219,7 +196,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
           end: Alignment.bottomRight,
         ),
       ),
-      child: Icon(
+      child: CustomIcon(
         icon,
         size: 25,
         color: colors.white,
@@ -260,7 +237,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
           color: colors.inputBorder.withValues(alpha: .6),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(icon),
+        child: CustomIcon(icon),
       ),
     );
   }
@@ -355,14 +332,14 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     return Expanded(
       child: CustomButton(
         onTap: () => _selectLanguage(value),
-        height: 18,
+        height: 14,
         isGradient: true,
         gradientColor: spanish == value ? color : colors.gradientInactive,
         child: CustomText(
           text,
           color: textColor,
           fontWeight: FontWeight.w700,
-          fontSize: 18,
+          fontSize: 16,
         ),
       ),
     );
@@ -432,6 +409,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
                 q.title,
                 fontWeight: FontWeight.w600,
                 textAlign: TextAlign.start,
+                fontSize: 14,
               ),
             ],
           ),
@@ -449,7 +427,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
         borderRadius: BorderRadius.circular(12),
         gradient: LinearGradient(colors: q.color, begin: Alignment.topLeft, end: Alignment.bottomRight),
       ),
-      child: Icon(
+      child: CustomIcon(
         q.icon,
         color: colors.white,
         size: 20,
@@ -497,7 +475,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: q.color.last),
         ),
-        child: Icon(
+        child: CustomIcon(
           icon,
           color: q.color.last,
         ),
@@ -529,16 +507,18 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
       ),
       child: Row(
         children: [
-          Icon(
+          CustomIcon(
             Icons.info_outline,
             color: colors.orange,
-            size: 25,
+            size: 20,
           ),
           width.l,
           CustomText(
             "Seleeciona $total ${total > 1 ? "tipos" : "tipo"} más",
             color: colors.orange,
             fontWeight: FontWeight.w500,
+            fontSize: 14,
+            textAlign: TextAlign.start,
           )
         ],
       ),
@@ -563,7 +543,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
               fontSize: 16,
               color: colors.white,
             ),
-            SizedBox(width: 20)
+            width.l,
           ],
         ),
       ),

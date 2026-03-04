@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -22,8 +23,8 @@ class CustomSvg extends StatelessWidget {
   Widget build(BuildContext context) {
     return SvgPicture.asset(
       path,
-      width: width ?? size,
-      height: height ?? size,
+      width: context.scale(width ?? size),
+      height: context.scale(height ?? size),
       colorFilter: ColorFilter.mode(
         color ?? colors.white,
         BlendMode.srcIn,

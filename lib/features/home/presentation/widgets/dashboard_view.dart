@@ -2,12 +2,18 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
-import 'package:curiosity_flutter/features/lobbie/presentation/lobby/lobby_controller.dart';
+import 'package:curiosity_flutter/features/qr_scanner/data/models/qr_scanner_model.dart';
+import 'package:curiosity_flutter/features/qr_scanner/presentation/qr_scanner.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
-import 'package:curiosity_flutter/features/questionaries/presentation/questionary_controller.dart';
+import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_card_widget.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+
+import 'show_more_widget.dart';
+import 'subtitle_widget.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
@@ -17,29 +23,19 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
-  List<Color> allColors = [
-    colors.blue,
-    colors.green,
-    colors.purple,
-  ];
-
-  List<Color> colorCard = [];
+  final TextEditingController _codeInput = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    Future.microtask(() => ref.read(homeController.notifier).setLoading(true));
     Future.microtask(_loadData);
   }
 
   _loadData() async {
     await ref.read(homeController.notifier).loadQuizzes(context);
-    colorCard = List.generate(
-      ref.read(homeController).quizzes.length,
-      (index) => allColors[index % allColors.length],
-    );
+    ref.read(homeController.notifier).setLoading(false);
   }
-
-  final TextEditingController _codeInput = TextEditingController();
 
   @override
   void dispose() {
@@ -49,19 +45,23 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.read(homeController);
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        children: [
-          quickAccessWidget(),
-          SizedBox(height: 32),
-          if (state.user?.createdQuizzes?.isEmpty ?? true) ...[
-            beginWidget(),
-            SizedBox(height: 32),
+    final state = ref.watch(homeController);
+    return Skeletonizer(
+      enabled: state.isLoading,
+      justifyMultiLineText: true,
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            quickAccessWidget(),
+            height.xl,
+            if (state.user?.createdQuizzes?.isEmpty ?? true) ...[
+              beginWidget(),
+              height.xl,
+            ],
+            questionnairesWidget(state.quizzes),
           ],
-          questionnairesWidget(state.quizzes),
-        ],
+        ),
       ),
     );
   }
@@ -69,8 +69,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Widget quickAccessWidget() {
     return Column(
       children: [
-        subtitleWidget("Acciones Rápidas", Icons.electric_bolt_outlined, colors.yellow),
-        SizedBox(height: 16),
+        SubtitleWidget("Acciones Rápidas", Icons.electric_bolt_outlined, colors.yellow),
+        height.l,
         Row(
           children: [
             quickAccessButton(
@@ -80,32 +80,16 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               colors.gradientSecondary,
               () => context.push(Routes.questionary),
             ),
-            SizedBox(width: 16),
+            width.l,
             quickAccessButton(
               "Unirse",
               "Código de quiz",
               Icons.numbers,
               colors.gradientPrimary,
-              () => _showCodeModal(),
+              () => _joinRoomBottomSheet(),
             ),
           ],
         )
-      ],
-    );
-  }
-
-  Widget subtitleWidget(String text, IconData icon, Color color) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: color,
-        ),
-        SizedBox(width: 8),
-        CustomText(
-          text,
-          fontType: FontType.title,
-        ),
       ],
     );
   }
@@ -122,7 +106,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         onTap: onTap,
         child: Container(
           height: context.height * .18,
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
@@ -143,22 +127,23 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   borderRadius: BorderRadius.circular(16),
                   color: colors.white.withValues(alpha: .3),
                 ),
-                child: Icon(
+                child: CustomIcon(
                   icon,
                   color: colors.white,
                 ),
               ),
-              SizedBox(height: 8),
+              height.m,
               CustomText(
                 title,
                 color: colors.white,
                 fontWeight: FontWeight.w700,
+                fontSize: 14,
               ),
-              SizedBox(height: 4),
+              height.s,
               CustomText(
                 desc,
                 color: colors.white,
-                fontType: FontType.h6,
+                fontSize: 14,
               ),
             ],
           ),
@@ -170,8 +155,8 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Widget beginWidget() {
     return Column(
       children: [
-        subtitleWidget("¿Cómo empezar?", Icons.star_border, colors.yellow),
-        SizedBox(height: 16),
+        SubtitleWidget("¿Cómo empezar?", Icons.star_border, colors.yellow),
+        height.l,
         CustomCard(
           subtitle: "Paso 1",
           title: "Crea tu primer quiz",
@@ -181,7 +166,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           color: colors.purple,
           enableShadow: true,
         ),
-        SizedBox(height: 16),
+        height.l,
         CustomCard(
           subtitle: "Paso 2",
           title: "Comparte el código",
@@ -191,7 +176,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           color: colors.aquamarine,
           enableShadow: true,
         ),
-        SizedBox(height: 16),
+        height.l,
         CustomCard(
           subtitle: "Paso 3",
           title: "Juega y aprende",
@@ -206,10 +191,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   }
 
   Widget questionnairesWidget(List<QuizModel> quizzes) {
+    var shortList = quizzes.length > 2 ? quizzes.sublist(0, 2) : quizzes;
+    var less = quizzes.length - 2;
     return Column(
       children: [
-        subtitleWidget("Mis Cuestionarios", Icons.menu_book, colors.purple),
-        SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SubtitleWidget("Mis Cuestionarios", Icons.menu_book, colors.purple),
+            if (quizzes.isNotEmpty) ShowMoreWidget("Ver todos"),
+          ],
+        ),
+        height.l,
         quizzes.isEmpty
             ? Container(
                 padding: EdgeInsets.all(32),
@@ -220,7 +213,21 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 ),
                 child: creationQuizWidget(),
               )
-            : quizzesListWidget(quizzes),
+            : Column(
+                children: shortList.asMap().entries.map((e) => QuizzesCardWidget(e.key, e.value)).toList(),
+              ),
+        if (less > 0)
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(color: colors.greyLight.withValues(alpha: .5), offset: Offset(0, 3), blurRadius: 1),
+              ],
+            ),
+            child: ShowMoreWidget("Ver los${less > 1 ? " $less " : " "}cuestionarios restantes"),
+          )
       ],
     );
   }
@@ -229,19 +236,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     return Column(
       children: [
         GenericLogo(),
-        SizedBox(height: 16),
+        height.l,
         CustomText(
           "¡Tu primer custionario te espera!",
           fontWeight: FontWeight.w700,
           fontSize: 18,
         ),
-        SizedBox(height: 16),
+        height.l,
         CustomText(
           "Crea cuestionarios increibles y comparte tu conocimiento con el mundo",
-          fontType: FontType.h5,
           color: colors.paragraph,
+          fontSize: 16,
         ),
-        SizedBox(height: 16),
+        height.l,
         CustomButton(
           onTap: () => context.push(Routes.questionary),
           width: 24,
@@ -252,11 +259,11 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              CustomIcon(
                 Icons.add,
                 color: colors.white,
               ),
-              SizedBox(width: 16),
+              width.l,
               CustomText(
                 "Crear mi primer quiz",
                 color: colors.white,
@@ -270,238 +277,82 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
   }
 
-  Widget quizzesListWidget(List<QuizModel> quizzes) {
-    return Column(children: quizzes.asMap().entries.map((e) => quizCard(e.key, e.value)).toList());
-  }
-
-  Widget quizCard(int i, QuizModel q) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colors.white,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(color: colorCard[i], offset: Offset(0, -5)),
-          BoxShadow(color: colors.greyLight.withValues(alpha: .5), offset: Offset(0, 5), blurRadius: 10),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [titleQuiz(q), moreOptions(q)],
-          ),
-          CustomText(
-            q.description ?? "",
-            textAlign: TextAlign.start,
-            fontWeight: FontWeight.w500,
-            color: colors.paragraph,
-            overflow: TextOverflow.ellipsis,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [questionsSizeText(q), startQuizButton(i)],
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget titleQuiz(QuizModel q) {
-    return Row(
-      children: [
-        CustomText(
-          q.title ?? "",
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
-        width.m,
-        statusQuiz()
-      ],
-    );
-  }
-
-  Widget statusQuiz() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
-      decoration: BoxDecoration(
-        color: colors.green.withValues(alpha: .2),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: CustomText(
-        "Activo",
-        color: colors.green,
-        fontWeight: FontWeight.w700,
-        fontSize: 14,
-      ),
-    );
-  }
-
-  Widget moreOptions(QuizModel q) {
-    return PopupMenuButton(
-      onSelected: (value) => _onSelected(q, value),
-      color: colors.white,
-      itemBuilder: (context) => [
-        PopupMenuItem(
-          value: Option.edit,
-          child: Row(
-            children: [
-              Icon(
-                Icons.edit,
-                size: 24,
-                color: colors.iconPlaceholder,
-              ),
-              width.m,
-              CustomText(
-                "Editar",
-                color: colors.paragraph,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: Option.edit,
-          child: Row(
-            children: [
-              Icon(
-                Icons.delete_forever_outlined,
-                size: 24,
-                color: colors.red,
-              ),
-              width.m,
-              CustomText(
-                "Eliminar",
-                color: colors.red,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  _onSelected(QuizModel q, Option value) {
-    switch (value) {
-      case Option.edit:
-        ref.read(questionaryController.notifier).setQuiz(q);
-        context.push(Routes.createQuiz);
-        break;
-      case Option.delete:
-        break;
-    }
-  }
-
-  Widget questionsSizeText(QuizModel q) {
-    var length = q.questions?.length ?? 0;
-    return Row(
-      children: [
-        Icon(
-          Icons.description_outlined,
-          color: colors.iconPlaceholder,
-          size: 20,
-        ),
-        CustomText(
-          "$length ${length > 1 ? "preguntas" : "pregunta"}",
-          fontSize: 14,
-          color: colors.paragraph,
-        ),
-      ],
-    );
-  }
-
-  Widget startQuizButton(int i) {
-    return CustomGestureDetector(
-      onTap: () {},
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        decoration: BoxDecoration(
-          color: colorCard[i],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.play_arrow,
-              color: colors.white,
-            ),
-            CustomText(
-              "Iniciar",
-              color: colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _showCodeModal() {
-    return context.showModal(
-      widthContainer: .8,
-      icon: Icons.numbers_rounded,
-      iconColor: colors.primary,
+  _joinRoomBottomSheet() async {
+    await context.showBottomSheetModal(
       title: "¡Únete al Quiz!",
-      content: "Ingresa el código único de tu quiz para comenzar a jugar y aprender con tus amigos",
-      actions: Flexible(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Material(
-              color: Colors.transparent,
-              child: CustomTextField(
-                placeHolder: 'EJ: ABC123',
-                controller: _codeInput,
-              ),
+      child: Column(
+        children: [
+          CustomText(
+            "Ingresa el código único de tu quiz para comenzar a jugar y aprender con tus amigos",
+            fontSize: 14,
+          ),
+          height.l,
+          CustomTextField(
+            placeHolder: 'EJ: ABC123',
+            controller: _codeInput,
+            formatters: InputFilters.alphaNumeric(
+              inputLength: 6,
+              allowSpace: false,
+              uppercase: true,
             ),
-            height.l,
-            Row(
+            onSubmit: (_) => _onJoinQuiz(),
+          ),
+          height.l,
+          CustomButton(
+            onTap: _onJoinQuiz,
+            height: 16,
+            text: "Unirse",
+            large: true,
+            color: colors.primary,
+          ),
+          height.l,
+          CustomText(
+            "o escanear código",
+            fontSize: 14,
+          ),
+          height.l,
+          CustomButton(
+            onTap: _scanQr,
+            height: 16,
+            color: colors.whiteSmoke,
+            border: Border.all(color: colors.iconPlaceholder),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: CustomButton(
-                    onTap: _cancelModal,
-                    height: 18,
-                    text: "Cancelar",
-                    textColor: colors.titles,
-                    color: colors.inputBorder,
-                  ),
-                ),
-                width.l,
-                Expanded(
-                  child: CustomButton(
-                    onTap: _onJoinQuiz,
-                    height: 18,
-                    text: "Unirse",
-                    color: colors.primary,
-                  ),
+                CustomIcon(Icons.qr_code_2),
+                width.m,
+                CustomText(
+                  "Escanear código QR",
+                  fontSize: 14,
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   _onJoinQuiz() async {
-    ref.read(lobbyController.notifier).setRoomCode(_codeInput.text.trim());
-    await context.push(Routes.lobbyGuest);
-    _codeInput.clear();
-    if (mounted) context.pop();
-  }
-
-  _cancelModal() {
-    _codeInput.clear();
+    bool invalid = _validateCode();
+    if (invalid) return;
+    ref.read(roomController.notifier).setRoomCode(_codeInput.text.trim());
     context.pop();
+    context.push(Routes.lobby);
+    _codeInput.clear();
   }
-}
 
-enum Option {
-  edit,
-  delete,
+  bool _validateCode() {
+    bool empty = _codeInput.text.trim().isEmpty;
+    if (empty) context.showModal(title: "Atención", content: "El código no es válido");
+    return empty;
+  }
+
+  _scanQr() async {
+    var code = await QrScanner.scan(context);
+    if (code.code == QrScanStatus.success) {
+      _codeInput.text = code.rawValue;
+      _onJoinQuiz();
+    }
+  }
 }

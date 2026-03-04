@@ -2,6 +2,7 @@
 export 'atoms/custom_gesture_detector.dart';
 export 'atoms/custom_text.dart';
 export 'atoms/custom_svg.dart';
+export 'atoms/custom_icon.dart';
 
 //molecules
 export 'molecules/custom_button.dart';

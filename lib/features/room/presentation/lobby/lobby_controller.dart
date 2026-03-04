@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:curiosity_flutter/core/di/injection.dart';
 import 'package:curiosity_flutter/core/services/web_socket_service.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
-import 'package:curiosity_flutter/features/lobbie/data/models/lobby_event_model.dart';
+import 'package:curiosity_flutter/features/room/data/models/lobby_event_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'lobby_state.dart';
@@ -14,9 +14,8 @@ class LobbyController extends StateNotifier<LobbyState> {
   final WebSocketService _wsService;
   StreamSubscription<LobbyEventModel>? _lobbySub;
 
-  Future<void> joinLobby(UserModel user) async {
+  Future<void> joinLobby(UserModel user, String roomCode) async {
     if (mounted) state = state.copyWith(isConnecting: true);
-    var roomCode = state.roomCode ?? "";
 
     try {
       _wsService.connect();
@@ -72,10 +71,7 @@ class LobbyController extends StateNotifier<LobbyState> {
     }
   }
 
-  void leaveLobby(UserModel user) {
-    final roomCode = state.roomCode;
-    if (roomCode == null) return;
-
+  void leaveLobby(UserModel user, String roomCode) {
     _wsService.leaveLobby(roomCode: roomCode, user: user);
 
     _cleanup();
@@ -87,11 +83,6 @@ class LobbyController extends StateNotifier<LobbyState> {
     _lobbySub?.cancel();
     _wsService.unsubscribeLobby();
     _lobbySub = null;
-  }
-
-  ///
-  void setRoomCode(String roomCode) {
-    if (mounted) state = state.copyWith(roomCode: roomCode);
   }
 }
 

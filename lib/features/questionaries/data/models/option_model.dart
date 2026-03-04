@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 class OptionModel {
   String text;
   bool isCorrect;

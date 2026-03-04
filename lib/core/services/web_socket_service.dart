@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
-import 'package:curiosity_flutter/features/lobbie/data/models/lobby_event_model.dart';
+import 'package:curiosity_flutter/features/room/data/models/lobby_event_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logging/logging.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';

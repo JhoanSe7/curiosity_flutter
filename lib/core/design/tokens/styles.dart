@@ -8,59 +8,21 @@ class Styles {
     FontWeight? fontWeight,
     Color? color,
     TextAlign? textAlign,
-    FontType? fontType,
     List<Shadow>? shadows,
+    Paint? foreground,
   }) {
     return GoogleFonts.poppins(
-      fontSize: fontSize ?? _getFontSize(fontType) ?? 16,
-      fontWeight: fontWeight ?? _getFontWeight(fontType) ?? FontWeight.w400,
-      color: color ?? colors.titles,
+      fontSize: fontSize ?? 14,
+      fontWeight: fontWeight ?? FontWeight.w400,
+      color: foreground == null ? (color ?? colors.titles) : null,
       decoration: TextDecoration.none,
       shadows: shadows,
+      foreground: foreground,
     );
-  }
-
-  FontWeight? _getFontWeight(FontType? value) {
-    var data = {
-      FontType.h1: FontWeight.w500,
-      FontType.h2: FontWeight.w500,
-      FontType.h3: FontWeight.w500,
-      FontType.h4: FontWeight.w400,
-      FontType.h5: FontWeight.w400,
-      FontType.h6: FontWeight.w400,
-      FontType.b: FontWeight.w500,
-      FontType.title: FontWeight.w700
-    };
-    return data[value];
-  }
-
-  double? _getFontSize(FontType? value) {
-    var data = {
-      FontType.h1: 24.0,
-      FontType.h2: 20.0,
-      FontType.h3: 18.0,
-      FontType.h4: 18.0,
-      FontType.h5: 16.0,
-      FontType.h6: 14.0,
-      FontType.b: 16.0,
-      FontType.title: 22.0,
-    };
-    return data[value];
   }
 }
 
 final styles = Styles();
-
-enum FontType {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  b,
-  title,
-}
 
 class VerticalSpace {
   SizedBox get xs => SizedBox(height: 2.0);

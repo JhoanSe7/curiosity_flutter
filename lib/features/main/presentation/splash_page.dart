@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/constants/config.dart';
+import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/services/notification_service.dart';
@@ -51,11 +52,27 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       body: Column(
         children: [
           Spacer(),
+          Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                colors: colors.gradientMagenta,
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+              ),
+            ),
+            child: CustomSvg(
+              icons.brain,
+              size: 100,
+            ),
+          ),
+          height.l,
           CustomText(
             "Curiosity",
             fontSize: 32,
             fontWeight: FontWeight.w400,
-            color: colors.primary,
+            color: colors.secondary,
             shadows: [
               BoxShadow(offset: Offset(0, 2), blurRadius: 5, color: colors.paragraph),
             ],
@@ -67,15 +84,15 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             builder: (_, value, e) => Padding(
               padding: EdgeInsets.symmetric(horizontal: 32),
               child: LinearProgressIndicator(
-                color: colors.primary,
+                color: colors.secondary,
                 value: value,
               ),
             ),
           ),
           Spacer(),
           CustomText(
-            "V${Config.versionApp} - ©2025",
-            fontType: FontType.h6,
+            "V${Config.versionApp} - ©2026",
+            fontSize: 14,
             color: colors.paragraph,
           ),
         ],

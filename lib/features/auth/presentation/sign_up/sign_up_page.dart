@@ -113,7 +113,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
             additionalWidget: [
               CustomText(
                 "¡Unete a la aventura!",
-                fontType: FontType.h6,
+                fontSize: 14,
                 color: colors.white,
               ),
             ],
@@ -126,7 +126,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                 children: [
                   CustomText(
                     "¡Crea tu cuenta!",
-                    fontType: FontType.h2,
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
                   ),
                   CustomText(
@@ -165,7 +165,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                CustomIcon(
                                   Icons.emoji_events_outlined,
                                   size: 16,
                                   color: colors.white,
@@ -178,7 +178,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                                   color: colors.white,
                                 ),
                                 height.m,
-                                Icon(
+                                CustomIcon(
                                   Icons.star_border,
                                   size: 16,
                                   color: colors.white,

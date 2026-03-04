@@ -1,6 +1,7 @@
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CustomPageBuilder extends StatelessWidget {
   final Widget body;
@@ -17,6 +18,8 @@ class CustomPageBuilder extends StatelessWidget {
   final List<Color>? appbarColor;
   final Widget? bottomBar;
   final ScrollController? scrollController;
+  final bool loadingPage;
+  final Widget? secondAppbar;
 
   const CustomPageBuilder({
     super.key,
@@ -34,6 +37,8 @@ class CustomPageBuilder extends StatelessWidget {
     this.appbarColor,
     this.bottomBar,
     this.scrollController,
+    this.loadingPage = false,
+    this.secondAppbar,
   });
 
   @override
@@ -42,7 +47,19 @@ class CustomPageBuilder extends StatelessWidget {
       child: Scaffold(
         body: Column(
           children: [
-            if (enableAppbar) customAppbar ?? appBar(context),
+            if (enableAppbar)
+              Skeletonizer(
+                enabled: loadingPage,
+                justifyMultiLineText: true,
+                child: customAppbar ?? appBar(context),
+              ),
+            if (secondAppbar != null)
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: appbarColor ?? colors.gradientPrimary),
+                ),
+                child: secondAppbar,
+              ),
             Expanded(
               child: enableScrollable
                   ? enableScrollBar
@@ -60,7 +77,11 @@ class CustomPageBuilder extends StatelessWidget {
                         )
                   : body,
             ),
-            bottomBar ?? SizedBox(),
+            Skeletonizer(
+              enabled: loadingPage,
+              justifyMultiLineText: true,
+              child: bottomBar ?? SizedBox(),
+            ),
           ],
         ),
       ),
@@ -83,13 +104,14 @@ class CustomPageBuilder extends StatelessWidget {
                     icon: Icons.arrow_back,
                   )
                 : SizedBox(width: 40, height: 40),
-          if (!centerTitle) SizedBox(width: 16),
+          if (!centerTitle) width.l,
           customTitle ??
               Flexible(
                 child: CustomText(
                   title,
                   color: titleColor ?? colors.white,
-                  fontType: FontType.h2,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
           trailing ?? SizedBox(width: 40, height: 40),

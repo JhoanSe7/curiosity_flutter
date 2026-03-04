@@ -16,6 +16,7 @@ extension MessageExtension on BuildContext {
       content: CustomText(
         text,
         color: _color(type),
+        fontSize: 14,
       ),
     );
     final messenger = ScaffoldMessenger.of(this);
@@ -74,7 +75,8 @@ extension MessageExtension on BuildContext {
 
   Future showModal({
     IconData icon = Icons.info_outline,
-    Color iconColor = Colors.cyan,
+    Color? iconColor,
+    Color? buttonColor,
     double widthContainer = 1,
     required String title,
     required String content,
@@ -108,25 +110,28 @@ extension MessageExtension on BuildContext {
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: iconColor.withValues(alpha: .2),
+                    color: (iconColor ?? colors.primary).withValues(alpha: .2),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(
+                  child: CustomIcon(
                     icon,
-                    color: iconColor,
+                    color: iconColor ?? colors.primary,
                     size: 35,
                   ),
                 ),
                 height.xl,
                 CustomText(title, fontWeight: FontWeight.w700, fontSize: 20),
                 height.m,
-                CustomText(content),
+                CustomText(
+                  content,
+                  fontSize: 14,
+                ),
                 height.xl,
                 actions ??
                     CustomButton(
                       text: "Entendido",
-                      color: colors.primary,
-                      height: 18,
+                      color: buttonColor ?? colors.primary,
+                      height: 14,
                       onTap: () => context.pop(true),
                     ),
               ],
@@ -134,6 +139,49 @@ extension MessageExtension on BuildContext {
           ),
         ),
       );
+
+  Future showBottomSheetModal({required String title, required Widget child}) async => await showModalBottomSheet(
+        context: this,
+        builder: (_) => Container(
+          padding: EdgeInsets.all(16),
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _bottomSheetHeader(title),
+                  height.m,
+                  Divider(),
+                  height.m,
+                  child,
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+  Widget _bottomSheetHeader(String text) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CustomText(
+          text,
+          fontWeight: FontWeight.w600,
+          fontSize: 18,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 8),
+          child: CustomCircularButton(
+            icon: Icons.close,
+            color: colors.grey,
+            backgroundColor: colors.greyLight.withValues(alpha: .2),
+            onTap: () => pop(),
+          ),
+        )
+      ],
+    );
+  }
 }
 
 enum MessageType {

@@ -39,7 +39,7 @@ class QuestionModel {
         "type": type,
         "question": question,
         "timeLimit": timeLimit,
-        "options": options?.map((e) => e.toJson()),
+        "options": options,
         "correctAnswer": correctAnswer,
         "correctAnswerText": correctAnswerText,
         "sourceUrl": sourceUrl,

@@ -18,7 +18,7 @@ class InputFilters {
 
   static List<TextInputFormatter> email({int inputLength = 64}) {
     return [
-      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9._@]')),
+      FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z0-9._@!¡#$%&*+-/='¿?^`{|}~]")),
       FilteringTextInputFormatter.deny('[\\S]'),
       LengthLimitingTextInputFormatter(inputLength)
     ];
@@ -31,10 +31,11 @@ class InputFilters {
     ];
   }
 
-  static List<TextInputFormatter> alphaNumeric({int inputLength = 64}) {
+  static List<TextInputFormatter> alphaNumeric({int inputLength = 64, bool allowSpace = true, bool uppercase = false}) {
     return [
-      FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZñÑ0-9 \s]')),
+      FilteringTextInputFormatter.allow(RegExp(allowSpace ? r'[a-zA-ZñÑ0-9 \s]' : r'[a-zA-ZñÑ0-9]')),
       LengthLimitingTextInputFormatter(inputLength),
+      if (uppercase) UpperInputFormatter(),
     ];
   }
 
@@ -43,5 +44,9 @@ class InputFilters {
       PhoneFormatter(),
       LengthLimitingTextInputFormatter(inputLength),
     ];
+  }
+
+  static List<TextInputFormatter> defaultText({int inputLength = 254}) {
+    return [LengthLimitingTextInputFormatter(inputLength)];
   }
 }

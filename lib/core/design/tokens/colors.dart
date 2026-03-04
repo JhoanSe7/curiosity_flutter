@@ -37,6 +37,7 @@ class SystemColors {
 
   final aquamarine = const Color(0xFF12B4A7);
   final green = const Color(0xFF28BD65);
+  final darkGreen = const Color(0xFF00B577);
   final yellow = const Color(0xFFF7DA40);
   final orange = const Color(0xFFF96C03);
   final red = const Color(0xFFF16977);

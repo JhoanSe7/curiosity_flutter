@@ -1,11 +1,13 @@
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/dashboard_view.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'home_controller.dart';
 import 'widgets/bottom_bar_widget.dart';
 import 'widgets/profile_view.dart';
+import 'widgets/quizzes_view.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -15,7 +17,6 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-
   @override
   void initState() {
     super.initState();
@@ -25,26 +26,23 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final state = ref.watch(homeController);
     return CustomPageBuilder(
-      leading: avatarWidget(),
-      trailing: actions(),
+      loadingPage: state.isLoading,
+      leading: avatarWidget,
+      trailing: actions,
       customTitle: titleWidget(state.user?.firstName ?? ""),
-      body: optionMenu(state.menuId),
+      body: optionMenu(state.menuId, state.quizzes),
       bottomBar: BottomBarWidget(state.menuId),
     );
   }
 
-  Widget optionMenu(HomeId id) => switch (id) {
+  Widget optionMenu(HomeId id, List<QuizModel> quizzes) => switch (id) {
         HomeId.init => DashboardView(),
-        HomeId.explore => DashboardView(),
-        HomeId.achievement => DashboardView(),
+        HomeId.quizzes => QuizzesView(quizzes: [], toHome: true),
+        HomeId.achievement => SizedBox.shrink(),
         HomeId.profile => ProfileView(),
       };
 
-  Widget avatarWidget() {
-    return CircleAvatar(
-      backgroundColor: colors.white,
-    );
-  }
+  Widget avatarWidget = CircleAvatar(backgroundColor: colors.white);
 
   Widget titleWidget(String name) {
     return Column(
@@ -58,29 +56,27 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
         CustomText(
           "Listo para aprender",
-          fontType: FontType.h6,
+          fontSize: 14,
           color: colors.white,
         ),
       ],
     );
   }
 
-  Widget actions() {
-    return Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          CustomCircularButton(
-            icon: Icons.notifications_none,
-            onTap: () {},
-          ),
-          SizedBox(width: 8),
-          CustomCircularButton(
-            icon: Icons.settings_outlined,
-            onTap: () {},
-          ),
-        ],
-      ),
-    );
-  }
+  Widget actions = Expanded(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        CustomCircularButton(
+          icon: Icons.notifications_none,
+          onTap: () {},
+        ),
+        width.m,
+        CustomCircularButton(
+          icon: Icons.settings_outlined,
+          onTap: () {},
+        ),
+      ],
+    ),
+  );
 }

@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:flutter/material.dart';
 
 class CustomText extends StatelessWidget {
@@ -7,10 +8,10 @@ class CustomText extends StatelessWidget {
   final FontWeight? fontWeight;
   final Color? color;
   final TextAlign? textAlign;
-  final FontType? fontType;
   final int? maxLines;
   final List<Shadow>? shadows;
   final TextOverflow? overflow;
+  final Paint? foreground;
 
   const CustomText(
     this.text, {
@@ -19,10 +20,10 @@ class CustomText extends StatelessWidget {
     this.fontWeight,
     this.color,
     this.textAlign,
-    this.fontType,
     this.maxLines,
     this.shadows,
     this.overflow,
+    this.foreground,
   });
 
   @override
@@ -33,11 +34,11 @@ class CustomText extends StatelessWidget {
       maxLines: maxLines,
       overflow: overflow,
       style: styles.poppins(
-        fontSize: fontSize,
+        fontSize: context.scale(fontSize),
         fontWeight: fontWeight,
         color: color,
-        fontType: fontType,
         shadows: shadows,
+        foreground: foreground,
       ),
     );
   }

@@ -33,42 +33,42 @@ class CustomCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomGestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: enableBorder ? color.withValues(alpha: .2) : colors.white, width: 2),
-          boxShadow: [
-            BoxShadow(color: colors.greyLight.withValues(alpha: .5), offset: Offset(0, 5), blurRadius: 10),
-            if (enableShadow) BoxShadow(color: color, offset: Offset(-5, 0)),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  colors: bgColor,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Icon(
-                icon,
-                color: colors.white,
-                size: 36,
-              ),
+      child: Stack(
+        children: [
+          Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: enableBorder ? color.withValues(alpha: .2) : colors.white, width: 2),
+              boxShadow: [
+                BoxShadow(color: colors.greyLight.withValues(alpha: .5), offset: Offset(0, 5), blurRadius: 10),
+                if (enableShadow) BoxShadow(color: color, offset: Offset(-5, 0)),
+              ],
             ),
-            SizedBox(width: 16),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                      colors: bgColor,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: CustomIcon(
+                    icon,
+                    color: colors.white,
+                    size: 24,
+                  ),
+                ),
+                width.l,
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -83,41 +83,44 @@ class CustomCard extends StatelessWidget {
                           fontSize: 14,
                         ),
                       ),
-                      if (tag.isNotEmpty) ...[
-                        SizedBox(width: 8),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: (tagColor ?? colors.yellow).withValues(alpha: .5),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: CustomText(
-                            tag,
-                            color: colors.paragraph.withValues(alpha: .5),
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ]
+                      height.m,
+                      CustomText(
+                        title,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      height.m,
+                      CustomText(
+                        desc,
+                        color: colors.paragraph,
+                        textAlign: TextAlign.start,
+                        fontSize: 14,
+                      ),
                     ],
                   ),
-                  SizedBox(height: 8),
-                  CustomText(
-                    title,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  SizedBox(height: 8),
-                  CustomText(
-                    desc,
-                    color: colors.paragraph,
-                    textAlign: TextAlign.start,
-                  ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          if (tag.isNotEmpty)
+            Positioned(
+              right: 8,
+              top: 8,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: (tagColor ?? colors.yellow).withValues(alpha: .5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: CustomText(
+                  tag,
+                  color: colors.paragraph.withValues(alpha: .5),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
