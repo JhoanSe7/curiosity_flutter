@@ -4,7 +4,7 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/room/data/models/lobby_player_model.dart';
-import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/room/room_controller.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/participants_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -6,7 +6,7 @@ import 'package:curiosity_flutter/features/qr_scanner/data/models/qr_scanner_mod
 import 'package:curiosity_flutter/features/qr_scanner/presentation/qr_scanner.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_card_widget.dart';
-import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/room/room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

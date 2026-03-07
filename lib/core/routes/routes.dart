@@ -8,7 +8,7 @@ import 'package:curiosity_flutter/features/questionaries/presentation/widgets/cr
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/generate_quiz_view.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_list_view.dart';
 import 'package:curiosity_flutter/features/room/presentation/lobby/lobby_page.dart';
-import 'package:curiosity_flutter/features/room/presentation/room_page.dart';
+import 'package:curiosity_flutter/features/room/presentation/room/room_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

@@ -4,6 +4,7 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/design/templates/qr_preview.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/widgets/participants_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +13,6 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'room_controller.dart';
-import 'widgets/participants_widget.dart';
 
 class RoomPage extends ConsumerStatefulWidget {
   const RoomPage({super.key});
