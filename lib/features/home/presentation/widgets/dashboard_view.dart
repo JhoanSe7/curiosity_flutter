@@ -105,7 +105,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       child: CustomGestureDetector(
         onTap: onTap,
         child: Container(
-          height: context.height * .18,
+          height: context.scale(context.height * .18),
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
@@ -130,6 +130,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                 child: CustomIcon(
                   icon,
                   color: colors.white,
+                  size: 18,
                 ),
               ),
               height.m,
@@ -143,7 +144,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               CustomText(
                 desc,
                 color: colors.white,
-                fontSize: 14,
+                fontSize: 12,
               ),
             ],
           ),

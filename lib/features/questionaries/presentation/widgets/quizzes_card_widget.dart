@@ -228,9 +228,11 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
       hostFirstName: user?.firstName,
       hostLastName: user?.lastName,
     );
-    var res = await ref.read(questionaryController.notifier).createRoom(context, data: data);
+    var controller = ref.read(questionaryController.notifier);
+    final res = await controller.createRoom(context, data: data);
     String roomCode = res.roomCode ?? "";
     if (roomCode.isNotEmpty) {
+      controller.setQuiz(widget.quiz);
       ref.read(roomController.notifier).setRoomCode(roomCode);
       if (mounted) context.push(Routes.room);
     } else {

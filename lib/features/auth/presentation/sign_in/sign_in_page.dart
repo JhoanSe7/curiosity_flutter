@@ -39,19 +39,19 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   children: [
                     TextSpan(
                       text: "★ ",
-                      style: styles.poppins(color: colors.yellow, fontSize: 18),
+                      style: styles.poppins(color: colors.yellow, fontSize: context.scale(16)),
                     ),
                     TextSpan(
                       text: "Aprende ● Juega ● Descubre",
                       style: styles.poppins(
                         color: colors.white,
-                        fontSize: 16,
+                        fontSize: context.scale(14),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     TextSpan(
                       text: " ★",
-                      style: styles.poppins(color: colors.yellow, fontSize: 18),
+                      style: styles.poppins(color: colors.yellow, fontSize: context.scale(16)),
                     ),
                   ],
                 ),
@@ -59,7 +59,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               height.s,
               CustomText(
                 "Tu aventura educativa comienza aqui",
-                fontSize: 14,
+                fontSize: 12,
                 color: colors.white,
               ),
             ],

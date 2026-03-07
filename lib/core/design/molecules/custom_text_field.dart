@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:curiosity_flutter/core/utils/filters/input_filters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -126,7 +127,7 @@ class CustomTextFieldState extends State<CustomTextField> {
           height.m,
         ],
         Container(
-          height: widget.dense ? 48 : boxHeight,
+          height: context.scale(widget.dense ? 48 : boxHeight),
           alignment: Alignment.center,
           padding: EdgeInsets.fromLTRB(12, 0, widget.password ? 10 : 0, 0),
           decoration: BoxDecoration(
@@ -162,18 +163,13 @@ class CustomTextFieldState extends State<CustomTextField> {
                   inputFormatters: widget.formatters ?? InputFilters.defaultText(),
                   maxLines: widget.maxLines,
                   minLines: widget.maxLines,
-                  style: styles.poppins(
-                    color: colors.paragraph,
-                    fontSize: 14
-                  ),
+                  style: styles.poppins(color: colors.paragraph, fontSize: context.scale(14)),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                     label: _labelWidget(),
                     hintText: widget.placeHolder,
-                    hintStyle: styles.poppins(
-                      color: colors.paragraph,
-                    ),
+                    hintStyle: styles.poppins(color: colors.paragraph, fontSize: context.scale(14)),
                   ),
                 ),
               ),

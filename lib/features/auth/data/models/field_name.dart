@@ -5,7 +5,6 @@ enum FieldName {
   lastName2,
   email,
   phone,
-  rol,
   passwd,
   repass,
 }

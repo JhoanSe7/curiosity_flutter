@@ -1,5 +1,7 @@
+import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
+import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +29,8 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
               border: Border.all(color: colors.primary),
             ),
             child: CircleAvatar(
+              backgroundImage: AssetImage(icons.app),
+              radius: context.scale(20),
               backgroundColor: colors.white,
             ),
           ),

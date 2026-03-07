@@ -110,8 +110,9 @@ class CustomPageBuilder extends StatelessWidget {
                 child: CustomText(
                   title,
                   color: titleColor ?? colors.white,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
           trailing ?? SizedBox(width: 40, height: 40),

@@ -28,8 +28,8 @@ class BottomBarWidget extends ConsumerWidget {
                 onTap: () => ref.read(homeController.notifier).setMenuIndex(e.id),
                 child: Container(
                   padding: EdgeInsets.all(4),
-                  width: 75,
-                  height: 60,
+                  width: context.scale(75),
+                  height: context.scale(60),
                   decoration: BoxDecoration(
                     color: id == e.id ? colors.primary.withValues(alpha: .2) : colors.background,
                     borderRadius: BorderRadius.circular(8),
@@ -40,7 +40,7 @@ class BottomBarWidget extends ConsumerWidget {
                       CustomIcon(
                         e.icon,
                         color: id == e.id ? colors.aquamarine : colors.iconPlaceholder,
-                        size: context.scale(24),
+                        size: 24,
                       ),
                       CustomText(
                         e.text,

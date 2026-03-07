@@ -1,4 +1,6 @@
+import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/dashboard_view.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +29,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final state = ref.watch(homeController);
     return CustomPageBuilder(
       loadingPage: state.isLoading,
-      leading: avatarWidget,
+      leading: avatarWidget(),
       trailing: actions,
       customTitle: titleWidget(state.user?.firstName ?? ""),
       body: optionMenu(state.menuId, state.quizzes),
@@ -42,7 +44,13 @@ class _HomePageState extends ConsumerState<HomePage> {
         HomeId.profile => ProfileView(),
       };
 
-  Widget avatarWidget = CircleAvatar(backgroundColor: colors.white);
+  Widget avatarWidget() {
+    return CircleAvatar(
+      backgroundImage: AssetImage(icons.app),
+      radius: context.scale(20),
+      backgroundColor: colors.white,
+    );
+  }
 
   Widget titleWidget(String name) {
     return Column(

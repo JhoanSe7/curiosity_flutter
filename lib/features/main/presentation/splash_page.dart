@@ -1,14 +1,18 @@
+import 'dart:io';
+
 import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/services/notification_service.dart';
+import 'package:curiosity_flutter/core/utils/util_page.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -26,8 +30,22 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   }
 
   Future<void> _initialize() async {
-    // await notificationSvc.initialize();
+    await _permissionRequest();
+    if (Platform.isAndroid && !(await view.isHuawei)) await notificationSvc.initialize();
     await _validLogin();
+  }
+
+  _permissionRequest() async {
+    var permissions = await [
+      Permission.camera,
+      Permission.storage,
+      Permission.manageExternalStorage,
+      Permission.photos,
+    ].request();
+    print("PermissionRequest Status");
+    for (var e in permissions.entries) {
+      print(e.key.status);
+    }
   }
 
   _validLogin() async {
@@ -92,7 +110,6 @@ class _SplashPageState extends ConsumerState<SplashPage> {
           Spacer(),
           CustomText(
             "V${Config.versionApp} - ©2026",
-            fontSize: 14,
             color: colors.paragraph,
           ),
         ],

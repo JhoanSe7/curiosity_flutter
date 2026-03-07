@@ -433,8 +433,14 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
               text: TextSpan(
                 style: styles.poppins(),
                 children: [
-                  TextSpan(text: "Nota: ", style: styles.poppins(fontWeight: FontWeight.w600)),
-                  TextSpan(text: "Las respuestas abiertas serán revisadas manualmente por ti después del quiz.")
+                  TextSpan(
+                    text: "Nota: ",
+                    style: styles.poppins(fontWeight: FontWeight.w600, fontSize: context.scale(12)),
+                  ),
+                  TextSpan(
+                    text: "Las respuestas abiertas serán revisadas manualmente por ti después del quiz.",
+                    style: styles.poppins(fontSize: context.scale(12)),
+                  )
                 ],
               ),
             ),

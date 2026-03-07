@@ -40,7 +40,8 @@ class CustomDropdownButtonState extends State<CustomDropdownButton> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
-      width: context.width,
+      width: double.infinity,
+      height: context.scale(30),
       decoration: BoxDecoration(
         color: colors.inputPlaceholder,
         borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -87,12 +88,10 @@ class CustomDropdownButtonState extends State<CustomDropdownButton> {
         CustomText(
           item.title ?? "",
           fontWeight: FontWeight.w700,
-          fontSize: 14,
         ),
         if (subtitle.isNotEmpty)
           CustomText(
             subtitle,
-            fontSize: 14,
           ),
       ],
     );
