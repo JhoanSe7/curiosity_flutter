@@ -30,8 +30,13 @@ import '../../features/questionaries/domain/repositories/questionaries_repositor
     as _i664;
 import '../../features/questionaries/domain/use_cases/questionaries_use_case.dart'
     as _i912;
+import '../../features/room/data/data_sources/room_data_source.dart' as _i419;
+import '../../features/room/data/repositories/room_repository_impl.dart'
+    as _i166;
+import '../../features/room/domain/repositories/room_repository.dart' as _i855;
+import '../../features/room/domain/use_cases/room_use_case.dart' as _i834;
 import '../network/client_http.dart' as _i107;
-import '../services/web_socket_service.dart' as _i524;
+import '../services/web_socket/web_socket_service.dart' as _i1055;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -45,9 +50,11 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     gh.factory<_i107.ClientHttp>(() => _i107.ClientHttp());
-    gh.singleton<_i524.WebSocketService>(() => _i524.WebSocketService());
+    gh.singleton<_i1055.WebSocketService>(() => _i1055.WebSocketService());
     gh.factory<_i779.HomeDataSource>(
         () => _i779.HomeDataSourceImpl(gh<_i107.ClientHttp>()));
+    gh.factory<_i419.RoomDataSource>(
+        () => _i419.RoomDataSourceImpl(gh<_i107.ClientHttp>()));
     gh.factory<_i933.AuthDataSource>(
         () => _i933.AuthDataSourceImpl(gh<_i107.ClientHttp>()));
     gh.factory<_i812.QuestionariesDataSource>(
@@ -58,10 +65,14 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i76.HomeRepositoryImpl(gh<_i779.HomeDataSource>()));
     gh.factory<_i912.QuestionariesUseCase>(
         () => _i912.QuestionariesUseCase(gh<_i664.QuestionariesRepository>()));
+    gh.factory<_i855.RoomRepository>(
+        () => _i166.RoomRepositoryImpl(gh<_i419.RoomDataSource>()));
     gh.factory<_i787.AuthRepository>(
         () => _i153.AuthRepositoryImpl(gh<_i933.AuthDataSource>()));
     gh.factory<_i933.HomeUseCase>(
         () => _i933.HomeUseCase(gh<_i0.HomeRepository>()));
+    gh.factory<_i834.RoomUseCase>(
+        () => _i834.RoomUseCase(gh<_i855.RoomRepository>()));
     gh.factory<_i283.AuthUseCase>(
         () => _i283.AuthUseCase(gh<_i787.AuthRepository>()));
     return this;

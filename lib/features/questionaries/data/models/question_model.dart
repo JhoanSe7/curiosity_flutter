@@ -1,6 +1,7 @@
 import 'option_model.dart';
 
 class QuestionModel {
+  String? id;
   String? type;
   String? question;
   int? timeLimit;
@@ -11,6 +12,7 @@ class QuestionModel {
   String? explanation;
 
   QuestionModel({
+    this.id,
     this.type,
     this.question,
     this.timeLimit,
@@ -24,6 +26,7 @@ class QuestionModel {
   factory QuestionModel.fromJson(Map<String, dynamic> json) {
     List options = json["options"] != null && json["options"] is List ? json["options"] : [];
     return QuestionModel(
+      id: json["id"],
       type: json["type"],
       question: json["question"],
       timeLimit: json["timeLimit"],
@@ -36,6 +39,7 @@ class QuestionModel {
   }
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "type": type,
         "question": question,
         "timeLimit": timeLimit,

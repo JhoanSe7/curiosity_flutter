@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/design/templates/qr_preview.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_controller.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/participants_widget.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,21 @@ class RoomPage extends ConsumerStatefulWidget {
 
 class _RoomPageState extends ConsumerState<RoomPage> {
   late QrImage qrImage;
+  late UserModel user;
+
+  String roomCode = "";
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(_loadData);
+  }
+
+  _loadData() {
+    user = ref.read(homeController).user ?? UserModel();
+    roomCode = ref.read(roomController).roomCode;
+    ref.read(roomController.notifier).connect(user, roomCode, isOwner: true);
+  }
 
   @override
   Widget build(BuildContext context) {

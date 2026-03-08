@@ -1,3 +1,5 @@
+import 'package:curiosity_flutter/core/services/web_socket/models/event_type.dart';
+
 extension TextExtension on String {
   bool get isEmail {
     final regExp = RegExp(r'^(?!_)(?!.*[._-]{2})[\w.-]+@(?!.*[._-]{2})[\w.-]+\.[a-zA-Z]{2,}$');
@@ -22,4 +24,13 @@ extension TextExtension on String {
             '')
         .trim();
   }
+
+  EventType get toEventType => switch (this) {
+        'PLAYER_JOINED' => EventType.userJoined,
+        'PLAYER_LEFT' => EventType.userLeft,
+        'QUIZ_STARTED' => EventType.start,
+        'LOBBY_CLOSED' => EventType.close,
+        'LOBBY_ERROR' => EventType.error,
+        String() => EventType.unknown,
+      };
 }

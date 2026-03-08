@@ -41,7 +41,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
 
   _loadData() {
     _setQuestion();
-    if (options.isEmpty) options = List.generate(4, (i) => OptionModel(id: i, isCorrect: false));
+    if (options.isEmpty) options = List.generate(4, (i) => OptionModel(code: i, isCorrect: false));
     optionControllers = List.generate(4, (i) => TextEditingController(text: options[i].text));
     if (mounted) setState(() => isLoading = false);
   }
@@ -156,7 +156,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
       explanation: _explanationController.text,
     );
     ref.read(questionaryController.notifier).addQuestion(data);
-    context.removeByQuantity(2);
+    context.pop();
   }
 
   _validateButton() {
@@ -191,7 +191,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
         return false;
       case QuestionType.SINGLE_SELECTION:
       case QuestionType.MULTIPLE_SELECTION:
-        return options.every((e) => !e.isCorrect || optionControllers[e.id].text.isEmpty);
+        return options.every((e) => !e.isCorrect || optionControllers[e.code].text.isEmpty);
       case QuestionType.FILL_IN_THE_BLANK:
         return _answerController.text.isEmpty;
       case QuestionType.TRUE_FALSE:
@@ -289,8 +289,8 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
         children: [
           Flexible(
             child: CustomTextField(
-              placeHolder: "Opción ${e.id + 1}",
-              controller: optionControllers[e.id],
+              placeHolder: "Opción ${e.code + 1}",
+              controller: optionControllers[e.code],
             ),
           ),
           width.m,
@@ -322,7 +322,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
       setState(() {
         for (int i = 0; i < options.length; i++) {
           var option = options[i];
-          option.isCorrect = o.id == i ? !option.isCorrect : false;
+          option.isCorrect = o.code == i ? !option.isCorrect : false;
         }
       });
     }
@@ -343,7 +343,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
       );
 
   _checkAdd(OptionModel e) {
-    var option = options[e.id];
+    var option = options[e.code];
     if (mounted) {
       setState(() {
         option.isCorrect = !option.isCorrect;

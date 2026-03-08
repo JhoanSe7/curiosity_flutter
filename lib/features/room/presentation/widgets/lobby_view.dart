@@ -1,10 +1,10 @@
 import 'package:curiosity_flutter/core/constants/path_animations.dart';
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
-import 'package:curiosity_flutter/features/room/data/models/lobby_player_model.dart';
-import 'package:curiosity_flutter/features/room/presentation/room/room_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/participants_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,19 +13,17 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import 'lobby_controller.dart';
-
-class LobbyScreen extends ConsumerStatefulWidget {
-  const LobbyScreen({
+class LobbyView extends ConsumerStatefulWidget {
+  const LobbyView({
     super.key,
   });
 
   @override
-  ConsumerState<LobbyScreen> createState() => _LobbyScreenState();
+  ConsumerState<LobbyView> createState() => _LobbyViewState();
 }
 
-class _LobbyScreenState extends ConsumerState<LobbyScreen> {
-  late UserModel user = UserModel();
+class _LobbyViewState extends ConsumerState<LobbyView> {
+  late UserModel user;
   String roomCode = "";
 
   List<List<Color>> allColors = [
@@ -44,110 +42,103 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
   _loadData() {
     user = ref.read(homeController).user ?? UserModel();
     roomCode = ref.read(roomController).roomCode;
-    ref.read(lobbyController.notifier).joinLobby(user, roomCode);
+    ref.read(roomController.notifier).connect(user, roomCode);
   }
 
-  List<LobbyPlayerModel> get fakePlayers => List.generate(
+  List<UserModel> get userFakeList => List.generate(
         4,
-        (i) => LobbyPlayerModel(
-          userId: 'fake_$i',
-          fullName: 'Jugador $i',
+        (i) => UserModel(
+          id: 'fake_$i',
+          firstName: 'Jugador $i',
           email: 'FAKE@GMAIL.COM',
           phoneNumber: '0000000000',
-          role: 'STUDENT',
-          initials: 'J$i',
         ),
       );
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(lobbyController);
+    final state = ref.watch(roomController);
     var quizTitle = state.quizTitle;
 
-    _onStartQuiz(state.quizStarted);
-    return PopScope(
-      onPopInvokedWithResult: (didPop, _) {
-        if (didPop) ref.read(lobbyController.notifier).leaveLobby(user, roomCode);
-      },
-      child: CustomPageBuilder(
-        centerTitle: true,
-        trailing: connectionTick,
-        enableScrollable: false,
-        secondAppbar: Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+    return CustomPageBuilder(
+      centerTitle: true,
+      enableLeading: false,
+      trailing: connectionTick,
+      enableScrollable: false,
+      secondAppbar: Padding(
+        padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                CustomText(
+                  quizTitle.isNotEmpty ? quizTitle : '¡Esta sala se nos escapó!',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: colors.white,
+                ),
+                height.m,
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colors.white.withValues(alpha: .3),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CustomText(
+                        'Código:  ',
+                        color: Colors.white,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                      width.m,
+                      CustomText(
+                        roomCode,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+      body: state.errorMessage.isEmpty
+          ? errorView(state.errorMessage)
+          : Skeletonizer(
+              enabled: state.isConnecting,
+              child: userList(state.isConnecting ? userFakeList : state.users),
+            ),
+      bottomBar: Padding(
+        padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
+        child: CustomButton(
+          textColor: colors.red,
+          border: Border.all(color: colors.red),
+          height: 16,
+          color: colors.red.withValues(alpha: .1),
+          onTap: _onExit,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
-                children: [
-                  CustomText(
-                    quizTitle.isNotEmpty ? quizTitle : '¡Esta sala se nos escapó!',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: colors.white,
-                  ),
-                  height.m,
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: colors.white.withValues(alpha: .3),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomText(
-                          'Código:  ',
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 14,
-                        ),
-                        width.m,
-                        CustomText(
-                          roomCode,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+              CustomIcon(
+                Icons.exit_to_app,
+                color: colors.red,
+                size: 18,
+              ),
+              width.m,
+              CustomText(
+                "Salir de la sala",
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: colors.red,
               ),
             ],
-          ),
-        ),
-        body: state.errorMessage.isEmpty
-            ? errorView(state.errorMessage)
-            : Skeletonizer(
-                enabled: state.isConnecting,
-                child: playersList(state.isConnecting ? fakePlayers : state.players),
-              ),
-        bottomBar: Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
-          child: CustomButton(
-            textColor: colors.red,
-            border: Border.all(color: colors.red),
-            height: 16,
-            color: colors.red.withValues(alpha: .1),
-            onTap: () => context.pop(),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomIcon(
-                  Icons.exit_to_app,
-                  color: colors.red,
-                  size: 18,
-                ),
-                width.m,
-                CustomText(
-                  "Salir de la sala",
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: colors.red,
-                ),
-              ],
-            ),
           ),
         ),
       ),
@@ -156,19 +147,19 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
 
   Widget connectionTick = Lottie.asset(animations.pulseDot, width: 32);
 
-  Widget playersList(List<LobbyPlayerModel> players) {
+  Widget userList(List<UserModel> users) {
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
         children: [
           organizerWait(),
-          ParticipantsWidget(players.length),
+          ParticipantsWidget(users.length),
           Flexible(
             child: Scrollbar(
               thumbVisibility: true,
               child: SingleChildScrollView(
                 child: Column(
-                  children: players.asMap().entries.map((e) => playerCard(e.key, e.value)).toList(),
+                  children: users.asMap().entries.map((e) => playerCard(e.key, e.value)).toList(),
                 ),
               ),
             ),
@@ -235,7 +226,7 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
     );
   }
 
-  Widget playerCard(int index, LobbyPlayerModel player) {
+  Widget playerCard(int index, UserModel user) {
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 16),
@@ -261,7 +252,7 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
             child: CustomText(
-              player.initials,
+              (user.firstName ?? "").substring(0, 2),
               color: colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -272,7 +263,7 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
-                player.fullName,
+                user.firstName ?? "",
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
                 textAlign: TextAlign.start,
@@ -282,7 +273,7 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                   Icon(Icons.email_outlined, size: 14, color: Colors.grey),
                   width.s,
                   CustomText(
-                    player.email,
+                    user.email ?? "",
                     fontSize: 12,
                     color: colors.paragraph,
                     textAlign: TextAlign.start,
@@ -325,9 +316,8 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
     );
   }
 
-  _onStartQuiz(bool started) {
-    if (started) {
-      //TODO:
-    }
+  _onExit() {
+    ref.read(roomController.notifier).userLeave(user, roomCode);
+    context.pop();
   }
 }

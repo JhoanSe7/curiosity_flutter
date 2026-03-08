@@ -1,3 +1,4 @@
+import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
@@ -38,8 +39,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
     }
   }
 
-  QuestionDataType questionData(QuestionModel q) =>
-      ref.read(questionaryController.notifier).element.firstWhere((e) => e.type.name == q.type);
+  QuestionDataType questionData(QuestionModel q) => Config.questionsType.firstWhere((e) => e.type.name == q.type);
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +85,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
               width: 24,
               height: 12,
               isGradient: true,
-              onTap: () => _questionTypeBottomSheet(),
+              onTap:  _questionTypeBottomSheet,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
@@ -149,12 +149,12 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
   _saveQuiz() async {
     bool empty = _validateButton();
     if (empty) return;
-    var data = QuizModel(
-      userId: ref.read(homeController).user?.id,
-      title: _titleController.text,
-      description: _desController.text,
-      questions: ref.read(questionaryController).questions,
-    );
+    final quiz = ref.read(questionaryController).quiz;
+    var data = quiz ?? QuizModel()
+      ..userId = ref.read(homeController).user?.id
+      ..title = _titleController.text
+      ..description = _desController.text
+      ..questions = ref.read(questionaryController).questions;
     var res = await ref.read(questionaryController.notifier).createQuiz(context, data: data);
     if ((res.id ?? "").isNotEmpty) {
       if (mounted) context.showToast(text: "Quiz creado con exito");
@@ -297,7 +297,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
   }
 
   Future<void> _questionTypeBottomSheet() async {
-    var element = ref.read(questionaryController.notifier).element;
+    var element = Config.questionsType;
     await context.showBottomSheetModal(
       title: "Tipo de Pregunta",
       child: Column(
@@ -365,6 +365,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
   _newQuestion(QuestionDataType q) {
     ref.read(questionaryController.notifier).setQuestionType(q);
     ref.read(questionaryController.notifier).clearQuestion();
+    context.pop();
     context.push(Routes.createQuestion);
   }
 }

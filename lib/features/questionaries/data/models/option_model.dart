@@ -1,24 +1,28 @@
 class OptionModel {
+  String? id;
   String text;
   bool isCorrect;
-  int id;
+  int code;
 
   OptionModel({
     this.text = "",
     this.isCorrect = false,
-    required this.id,
+    this.id,
+    required this.code,
   });
 
-  factory OptionModel.fromJson(int id, Map<String, dynamic> json) => OptionModel(
+  factory OptionModel.fromJson(int code, Map<String, dynamic> json) => OptionModel(
+        id: json["id"],
         text: json["text"],
         isCorrect: json["isCorrect"],
-        id: id,
+        code: code,
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "text": text,
         "isCorrect": isCorrect,
       };
 
-  OptionModel copyWith(String text) => OptionModel(text: text, isCorrect: isCorrect, id: id);
+  OptionModel copyWith(String text) => OptionModel(text: text, isCorrect: isCorrect, id: id, code: code);
 }

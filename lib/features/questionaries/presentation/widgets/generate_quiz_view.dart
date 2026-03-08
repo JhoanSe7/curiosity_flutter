@@ -1,3 +1,4 @@
+import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
@@ -37,7 +38,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
   int get sumQuestions => summary.reduce((a, b) => a + b);
 
   List<QuestionDataType> get element {
-    var element = ref.read(questionaryController.notifier).element;
+    var element = Config.questionsType;
     var list = List<QuestionDataType>.from(element);
     list.removeWhere((e) => e.type == QuestionType.OPEN_ANSWER);
     return list;
@@ -532,7 +533,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
         onTap: _onTapGenerate,
         isGradient: true,
         gradientColor: colors.gradientPurple,
-        height: 20,
+        height: 18,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

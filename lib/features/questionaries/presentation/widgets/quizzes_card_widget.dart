@@ -1,3 +1,4 @@
+import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
@@ -6,7 +7,7 @@ import 'package:curiosity_flutter/features/questionaries/data/models/question_da
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/room_model.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_controller.dart';
-import 'package:curiosity_flutter/features/room/presentation/room/room_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -29,8 +30,7 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
     colors.purple,
   ];
 
-  QuestionDataType questionData(String type) =>
-      ref.read(questionaryController.notifier).element.firstWhere((e) => e.type.name == type);
+  QuestionDataType questionData(String type) => Config.questionsType.firstWhere((e) => e.type.name == type);
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +153,7 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
           ),
         ),
         PopupMenuItem(
-          value: Option.edit,
+          value: Option.delete,
           child: Row(
             children: [
               CustomIcon(
@@ -175,13 +175,16 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
     );
   }
 
-  _onSelected(QuizModel q, Option value) {
+  _onSelected(QuizModel q, Option value) async {
     switch (value) {
       case Option.edit:
         ref.read(questionaryController.notifier).setQuiz(q);
         context.push(Routes.createQuiz);
         break;
       case Option.delete:
+        var user = ref.read(homeController).user;
+        await ref.read(questionaryController.notifier).deleteQuiz(context, quizId: q.id ?? "", userId: user?.id ?? "");
+        if (mounted) context.showToast(text: "Quiz eliminado con éxito");
         break;
     }
   }
@@ -225,8 +228,6 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
     var data = RoomModel(
       quizId: widget.quiz.id,
       hostId: user?.id,
-      hostFirstName: user?.firstName,
-      hostLastName: user?.lastName,
     );
     var controller = ref.read(questionaryController.notifier);
     final res = await controller.createRoom(context, data: data);

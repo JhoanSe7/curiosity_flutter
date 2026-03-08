@@ -12,6 +12,8 @@ abstract class QuestionariesDataSource {
   Future<HttpResponseModel> generateQuiz({required GenerateQuizModel data});
 
   Future<HttpResponseModel> createRoom({required RoomModel data});
+
+  Future<HttpResponseModel> deleteQuiz({required String quizId, required String userId});
 }
 
 @Injectable(as: QuestionariesDataSource)
@@ -37,10 +39,21 @@ class QuestionariesDataSourceImpl extends QuestionariesDataSource {
   }
 
   @override
-  Future<HttpResponseModel> createRoom({required RoomModel data}) async{
+  Future<HttpResponseModel> createRoom({required RoomModel data}) async {
     return await clientHttp.post(
       endpoint: "${Config.apiUrl}lobby/create",
       body: data.toJson(),
+    );
+  }
+
+  @override
+  Future<HttpResponseModel> deleteQuiz({required String quizId, required String userId}) async {
+    return await clientHttp.post(
+      endpoint: "${Config.apiUrl}quiz/delete",
+      body: {
+        "quizId": quizId,
+        "userId": userId,
+      },
     );
   }
 }

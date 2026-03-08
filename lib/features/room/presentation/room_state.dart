@@ -1,0 +1,40 @@
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+
+class RoomState {
+  final bool isConnecting;
+  final bool isConnected;
+  final String quizTitle;
+  final List<UserModel> users;
+  final bool quizStarted;
+  final String errorMessage;
+  final String roomCode;
+
+  RoomState({
+    this.isConnecting = false,
+    this.isConnected = false,
+    this.quizTitle = "",
+    this.users = const [],
+    this.quizStarted = false,
+    this.errorMessage = "",
+    this.roomCode = "",
+  });
+
+  RoomState copyWith({
+    bool? isConnecting,
+    bool? isConnected,
+    String? quizTitle,
+    List<UserModel>? users,
+    bool? quizStarted,
+    String? errorMessage,
+    String? roomCode,
+  }) =>
+      RoomState(
+        isConnecting: isConnecting ?? this.isConnecting,
+        isConnected: isConnected ?? this.isConnected,
+        quizTitle: quizTitle ?? this.quizTitle,
+        users: users ?? this.users,
+        quizStarted: quizStarted ?? this.quizStarted,
+        errorMessage: errorMessage ?? this.errorMessage,
+        roomCode: roomCode ?? this.roomCode,
+      );
+}

@@ -18,7 +18,7 @@ class CustomIcon extends StatelessWidget {
     return Icon(
       icon,
       color: color,
-      size: context.scale(size ?? 18),
+      size: context.scale(size ?? 20),
     );
   }
 }

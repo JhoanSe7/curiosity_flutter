@@ -175,7 +175,6 @@ extension MessageExtension on BuildContext {
           child: CustomCircularButton(
             icon: Icons.close,
             color: colors.grey,
-            backgroundColor: colors.greyLight.withValues(alpha: .2),
             onTap: () => pop(),
           ),
         )

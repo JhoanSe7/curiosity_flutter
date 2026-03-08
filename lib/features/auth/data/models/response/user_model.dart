@@ -6,7 +6,6 @@ class UserModel {
   String? secondLastName;
   String? email;
   String? phoneNumber;
-  String? role;
   String? password;
   List<String>? createdQuizzes;
 
@@ -18,7 +17,6 @@ class UserModel {
     this.secondLastName,
     this.email,
     this.phoneNumber,
-    this.role,
     this.password,
     this.createdQuizzes,
   });
@@ -31,7 +29,6 @@ class UserModel {
         secondLastName: json["secondLastName"],
         email: json["email"],
         phoneNumber: json["phoneNumber"],
-        role: json["role"],
         password: json["password"],
         createdQuizzes: List<String>.from(json["createdQuizzes"].map((x) => x)),
       );
@@ -44,7 +41,6 @@ class UserModel {
         "secondLastName": secondLastName,
         "email": email,
         "phoneNumber": phoneNumber,
-        "role": role,
         "password": password,
         "createdQuizzes": createdQuizzes,
       };
@@ -57,7 +53,6 @@ class UserModel {
         secondLastName ?? "",
         email ?? "",
         phoneNumber ?? "",
-        role ?? "",
         password ?? "",
         createdQuizzes?.join(",") ?? ""
       ];
@@ -72,7 +67,6 @@ class UserModel {
       secondLastName: data[4],
       email: data[5],
       phoneNumber: data[6],
-      role: data[7],
       password: data[8],
       createdQuizzes: data[9].split(","),
     );
@@ -86,6 +80,5 @@ class UserModel {
         'secondLastName': secondLastName,
         'email': email,
         'phoneNumber': phoneNumber,
-        'role': role,
       };
 }

@@ -20,6 +20,9 @@ class CustomPageBuilder extends StatelessWidget {
   final ScrollController? scrollController;
   final bool loadingPage;
   final Widget? secondAppbar;
+  final bool enableLeading;
+  final Color? bgColor;
+  final Widget? overlay;
 
   const CustomPageBuilder({
     super.key,
@@ -39,49 +42,58 @@ class CustomPageBuilder extends StatelessWidget {
     this.scrollController,
     this.loadingPage = false,
     this.secondAppbar,
+    this.enableLeading = true,
+    this.bgColor,
+    this.overlay,
   });
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Column(
+        backgroundColor: bgColor,
+        body: Stack(
           children: [
-            if (enableAppbar)
-              Skeletonizer(
-                enabled: loadingPage,
-                justifyMultiLineText: true,
-                child: customAppbar ?? appBar(context),
-              ),
-            if (secondAppbar != null)
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: appbarColor ?? colors.gradientPrimary),
+            Column(
+              children: [
+                if (enableAppbar)
+                  Skeletonizer(
+                    enabled: loadingPage,
+                    justifyMultiLineText: true,
+                    child: customAppbar ?? appBar(context),
+                  ),
+                if (secondAppbar != null)
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: appbarColor ?? colors.gradientPrimary),
+                    ),
+                    child: secondAppbar,
+                  ),
+                Expanded(
+                  child: enableScrollable
+                      ? enableScrollBar
+                          ? Scrollbar(
+                              thumbVisibility: true,
+                              thickness: 10,
+                              child: SingleChildScrollView(
+                                controller: scrollController,
+                                child: body,
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              controller: scrollController,
+                              child: body,
+                            )
+                      : body,
                 ),
-                child: secondAppbar,
-              ),
-            Expanded(
-              child: enableScrollable
-                  ? enableScrollBar
-                      ? Scrollbar(
-                          thumbVisibility: true,
-                          thickness: 10,
-                          child: SingleChildScrollView(
-                            controller: scrollController,
-                            child: body,
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          controller: scrollController,
-                          child: body,
-                        )
-                  : body,
+                Skeletonizer(
+                  enabled: loadingPage,
+                  justifyMultiLineText: true,
+                  child: bottomBar ?? SizedBox(),
+                ),
+              ],
             ),
-            Skeletonizer(
-              enabled: loadingPage,
-              justifyMultiLineText: true,
-              child: bottomBar ?? SizedBox(),
-            ),
+            if (overlay != null) overlay!
           ],
         ),
       ),
@@ -95,15 +107,16 @@ class CustomPageBuilder extends StatelessWidget {
       child: Row(
         mainAxisAlignment: centerTitle ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
         children: [
-          if (leading != null)
-            leading!
+          if (enableLeading)
+            leading ??
+                (context.canPop()
+                    ? CustomCircularButton(
+                        onTap: () => context.pop(),
+                        icon: Icons.arrow_back,
+                      )
+                    : SizedBox(width: 40, height: 40))
           else
-            context.canPop()
-                ? CustomCircularButton(
-                    onTap: () => context.pop(),
-                    icon: Icons.arrow_back,
-                  )
-                : SizedBox(width: 40, height: 40),
+            SizedBox(width: 40, height: 40),
           if (!centerTitle) width.l,
           customTitle ??
               Flexible(

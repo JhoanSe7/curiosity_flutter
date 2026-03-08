@@ -7,8 +7,9 @@ import 'package:curiosity_flutter/features/questionaries/presentation/widgets/cr
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_quiz_view.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/generate_quiz_view.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_list_view.dart';
-import 'package:curiosity_flutter/features/room/presentation/lobby/lobby_page.dart';
-import 'package:curiosity_flutter/features/room/presentation/room/room_page.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_page.dart';
+import 'package:curiosity_flutter/features/room/presentation/widgets/lobby_view.dart';
+import 'package:curiosity_flutter/features/room/presentation/widgets/quiz_flow_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,6 +27,7 @@ class Routes {
   static String lobby = "/lobby";
   static String quizzesList = "/quizzes-list";
   static String room = "/room";
+  static String quizFlow = "/quiz-flow";
 }
 
 final router = GoRouter(
@@ -65,7 +67,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: Routes.lobby,
-      builder: (context, state) => const LobbyScreen(),
+      builder: (context, state) => const LobbyView(),
     ),
     GoRoute(
       path: Routes.quizzesList,
@@ -74,6 +76,10 @@ final router = GoRouter(
     GoRoute(
       path: Routes.room,
       builder: (context, state) => const RoomPage(),
+    ),
+    GoRoute(
+      path: Routes.quizFlow,
+      builder: (context, state) => const QuizFlowView(),
     ),
   ],
 );

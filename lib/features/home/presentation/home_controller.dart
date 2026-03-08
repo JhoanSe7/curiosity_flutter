@@ -31,7 +31,7 @@ class HomeController extends StateNotifier<HomeState> {
 
   ///
   Future<List<QuizModel>> getQuizzes(BuildContext context, {required String userId}) async {
-    final result = await useCase.getQuizzes(userId: userId);
+    final result = await execute<List<QuizModel>>(context, useCase.getQuizzes(userId: userId));
     return result.fold(
       (e) => processError(context, error: e.message) ?? [],
       (res) => res,

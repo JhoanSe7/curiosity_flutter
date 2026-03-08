@@ -62,4 +62,20 @@ class QuestionariesRepositoryImpl extends QuestionariesRepository {
       return left(CommonError(message: "Error generateQuiz: $e"));
     }
   }
+
+  @override
+  Future<Either<CommonError, bool>> deleteQuiz({required String quizId, required String userId}) async {
+    try {
+      final result = await dataSource.deleteQuiz(quizId: quizId, userId: userId);
+      if (result.success) {
+        return right(true);
+      } else if (!result.success && result.body is Map<String, dynamic>) {
+        final error = ErrorResponseModel.fromJson(result.body);
+        return left(CommonError(message: "${error.message}(${error.errorCode})"));
+      }
+      throw (result.message ?? "No se pudo procesar los datos");
+    } catch (e) {
+      return left(CommonError(message: "Error deleteQuiz: $e"));
+    }
+  }
 }

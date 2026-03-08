@@ -20,4 +20,7 @@ class QuestionariesUseCase {
 
   Future<Either<CommonError, RoomModel>> createRoom({required RoomModel data}) async =>
       await repository.createRoom(data: data);
+
+  Future<Either<CommonError, bool>> deleteQuiz({required String quizId, required String userId}) async =>
+      await repository.deleteQuiz(quizId: quizId, userId: userId);
 }

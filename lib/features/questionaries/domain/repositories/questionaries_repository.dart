@@ -10,4 +10,6 @@ abstract class QuestionariesRepository {
   Future<Either<CommonError, QuizModel>> generateQuiz({required GenerateQuizModel data});
 
   Future<Either<CommonError, RoomModel>> createRoom({required RoomModel data});
+
+  Future<Either<CommonError, bool>> deleteQuiz({required String quizId, required String userId});
 }

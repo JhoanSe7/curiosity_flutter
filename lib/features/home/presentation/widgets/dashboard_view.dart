@@ -6,7 +6,7 @@ import 'package:curiosity_flutter/features/qr_scanner/data/models/qr_scanner_mod
 import 'package:curiosity_flutter/features/qr_scanner/presentation/qr_scanner.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_card_widget.dart';
-import 'package:curiosity_flutter/features/room/presentation/room/room_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -337,9 +337,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   _onJoinQuiz() async {
     bool invalid = _validateCode();
     if (invalid) return;
-    ref.read(roomController.notifier).setRoomCode(_codeInput.text.trim());
+    final controller = ref.read(roomController.notifier);
+    var code = _codeInput.text.trim();
     context.pop();
-    context.push(Routes.lobby);
+    var res = await controller.validateRoom(context, roomCode: code);
+    if (res && mounted) {
+      controller.setRoomCode(code);
+      context.push(Routes.lobby);
+    }
     _codeInput.clear();
   }
 

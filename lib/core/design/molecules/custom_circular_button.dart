@@ -24,7 +24,7 @@ class CustomCircularButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: backgroundColor ?? colors.white.withValues(alpha: .3),
+          color: (color ?? colors.white).withValues(alpha: .3),
           shape: BoxShape.circle,
         ),
         child: CustomIcon(
