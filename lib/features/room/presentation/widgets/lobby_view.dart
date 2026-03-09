@@ -1,5 +1,4 @@
 import 'package:curiosity_flutter/core/constants/path_animations.dart';
-import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
@@ -8,10 +7,12 @@ import 'package:curiosity_flutter/features/room/presentation/room_controller.dar
 import 'package:curiosity_flutter/features/room/presentation/widgets/participants_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+
+import 'user_card_widget.dart';
+import 'waiting_list_widget.dart';
 
 class LobbyView extends ConsumerStatefulWidget {
   const LobbyView({
@@ -25,13 +26,6 @@ class LobbyView extends ConsumerStatefulWidget {
 class _LobbyViewState extends ConsumerState<LobbyView> {
   late UserModel user;
   String roomCode = "";
-
-  List<List<Color>> allColors = [
-    colors.gradientBlue,
-    colors.gradientGreen,
-    colors.gradientViolet,
-    colors.gradientOrange,
-  ];
 
   @override
   void initState() {
@@ -70,46 +64,49 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Column(
-              children: [
-                CustomText(
-                  quizTitle.isNotEmpty ? quizTitle : '¡Esta sala se nos escapó!',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: colors.white,
-                ),
-                height.m,
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: colors.white.withValues(alpha: .3),
-                    borderRadius: BorderRadius.circular(12),
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomText(
+                    quizTitle.isNotEmpty ? quizTitle : '¡Esta sala se nos escapó!',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: colors.white,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CustomText(
-                        'Código:  ',
-                        color: Colors.white,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14,
-                      ),
-                      width.m,
-                      CustomText(
-                        roomCode,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                  height.m,
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: colors.white.withValues(alpha: .3),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CustomText(
+                          'Código:  ',
+                          color: Colors.white,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
+                        ),
+                        width.m,
+                        CustomText(
+                          roomCode,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ],
         ),
       ),
-      body: state.errorMessage.isEmpty
+      body: state.errorMessage.isNotEmpty
           ? errorView(state.errorMessage)
           : Skeletonizer(
               enabled: state.isConnecting,
@@ -152,135 +149,20 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
       padding: EdgeInsets.all(16),
       child: Column(
         children: [
-          organizerWait(),
+          WaitingListWidget(
+            title: 'Esperando al organizador . . .',
+            text: '¡Paciencia, el quiz comenzará pronto!',
+          ),
           ParticipantsWidget(users.length),
           Flexible(
             child: Scrollbar(
               thumbVisibility: true,
               child: SingleChildScrollView(
                 child: Column(
-                  children: users.asMap().entries.map((e) => playerCard(e.key, e.value)).toList(),
+                  children: users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
                 ),
               ),
             ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget organizerWait() {
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: colors.greyLight.withValues(alpha: .3), offset: Offset(0, 2), blurRadius: 6),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: colors.gradientOrange),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(8),
-              child: SvgPicture.asset(
-                icons.king,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(colors.white, BlendMode.srcIn),
-              ),
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText(
-                'Esperando al organizador . . .',
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: colors.titles,
-                textAlign: TextAlign.start,
-              ),
-              CustomText(
-                '¡Paciencia, el quiz comenzará pronto!',
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: colors.titles,
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-          Lottie.asset(
-            animations.loadingSmaller,
-            width: 32,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget playerCard(int index, UserModel user) {
-    return Container(
-      padding: EdgeInsets.all(8),
-      margin: EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(color: colors.greyLight.withValues(alpha: .3), offset: Offset(0, 2), blurRadius: 6),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            alignment: Alignment.center,
-            width: 45,
-            height: 45,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: allColors[index % allColors.length],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: CustomText(
-              (user.firstName ?? "").substring(0, 2),
-              color: colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-          width.l,
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomText(
-                user.firstName ?? "",
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                textAlign: TextAlign.start,
-              ),
-              Row(
-                children: [
-                  Icon(Icons.email_outlined, size: 14, color: Colors.grey),
-                  width.s,
-                  CustomText(
-                    user.email ?? "",
-                    fontSize: 12,
-                    color: colors.paragraph,
-                    textAlign: TextAlign.start,
-                  ),
-                ],
-              ),
-            ],
           )
         ],
       ),

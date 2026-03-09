@@ -107,6 +107,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 CustomButton(
                   onTap: _userLogin,
                   isGradient: true,
+                  height: 16,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

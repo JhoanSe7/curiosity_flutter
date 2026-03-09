@@ -6,14 +6,10 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/services/notification_service.dart';
 import 'package:curiosity_flutter/core/utils/util_page.dart';
-import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
-import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -32,7 +28,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   Future<void> _initialize() async {
     await _permissionRequest();
     if (Platform.isAndroid && !(await view.isHuawei)) await notificationSvc.initialize();
-    await _validLogin();
+    if (mounted) context.go(Routes.signIn);
   }
 
   _permissionRequest() async {
@@ -48,28 +44,14 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     }
   }
 
-  _validLogin() async {
-    if (kDebugMode) {
-      final pref = await SharedPreferences.getInstance();
-      var user = pref.getStringList("user") ?? [];
-      if (user.isNotEmpty) {
-        final data = UserModel.fromList(user);
-        ref.read(homeController.notifier).setUser(data: data);
-        if (mounted) context.go(Routes.home);
-        return;
-      }
-    }
-    if (mounted) context.go(Routes.signIn);
-  }
-
   @override
   Widget build(BuildContext context) {
     return CustomPageBuilder(
       enableAppbar: false,
       enableScrollable: false,
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Spacer(),
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -106,11 +88,6 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                 value: value,
               ),
             ),
-          ),
-          Spacer(),
-          CustomText(
-            "V${Config.versionApp} - ©2026",
-            color: colors.paragraph,
           ),
         ],
       ),

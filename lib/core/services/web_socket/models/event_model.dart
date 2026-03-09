@@ -32,7 +32,7 @@ class EventModel {
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
-      event: (json['event'] as String? ?? '').toEventType,
+      event: (json['event'] as String? ?? '').toEvent(),
       roomCode: json['roomCode'] ?? '',
       quizId: json['quizId'] ?? '',
       quizTitle: json['quizTitle'] ?? '',

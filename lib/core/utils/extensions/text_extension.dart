@@ -25,12 +25,20 @@ extension TextExtension on String {
         .trim();
   }
 
-  EventType get toEventType => switch (this) {
-        'PLAYER_JOINED' => EventType.userJoined,
-        'PLAYER_LEFT' => EventType.userLeft,
-        'QUIZ_STARTED' => EventType.start,
-        'LOBBY_CLOSED' => EventType.close,
-        'LOBBY_ERROR' => EventType.error,
-        String() => EventType.unknown,
-      };
+  EventType toEvent() {
+    switch (this) {
+      case 'PLAYER_JOINED':
+        return EventType.userJoined;
+      case 'PLAYER_LEFT':
+        return EventType.userLeft;
+      case 'QUIZ_STARTED':
+        return EventType.start;
+      case 'LOBBY_CLOSED':
+        return EventType.close;
+      case 'LOBBY_ERROR':
+        return EventType.error;
+      default:
+        return EventType.unknown;
+    }
+  }
 }

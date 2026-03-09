@@ -146,7 +146,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                     CustomButton(
                       onTap: _register,
                       isGradient: true,
-                      width: 16,
+                      height: 16,
                       enable: btnEnable,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

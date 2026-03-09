@@ -21,17 +21,20 @@ class UserModel {
     this.createdQuizzes,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json["id"],
-        firstName: json["firstName"],
-        secondName: json["secondName"],
-        lastName: json["lastName"],
-        secondLastName: json["secondLastName"],
-        email: json["email"],
-        phoneNumber: json["phoneNumber"],
-        password: json["password"],
-        createdQuizzes: List<String>.from(json["createdQuizzes"].map((x) => x)),
-      );
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    List questions = json["createdQuizzes"] != null && json["createdQuizzes"] is List ? json["createdQuizzes"] : [];
+    return UserModel(
+      id: json["id"],
+      firstName: json["firstName"],
+      secondName: json["secondName"],
+      lastName: json["lastName"],
+      secondLastName: json["secondLastName"],
+      email: json["email"],
+      phoneNumber: json["phoneNumber"],
+      password: json["password"],
+      createdQuizzes: List<String>.from(questions.map((x) => x)),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -43,6 +46,12 @@ class UserModel {
         "phoneNumber": phoneNumber,
         "password": password,
         "createdQuizzes": createdQuizzes,
+      };
+
+  Map<UserParam, String> information() => {
+        UserParam.name: "${firstName ?? ""} ${secondName ?? ""} ${lastName ?? ""} ${secondLastName ?? ""}",
+        UserParam.email: email ?? "",
+        UserParam.phone: phoneNumber ?? "",
       };
 
   List<String> toList() => [
@@ -81,4 +90,10 @@ class UserModel {
         'email': email,
         'phoneNumber': phoneNumber,
       };
+}
+
+enum UserParam {
+  name,
+  email,
+  phone,
 }

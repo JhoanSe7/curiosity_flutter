@@ -15,6 +15,8 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'room_controller.dart';
+import 'widgets/user_card_widget.dart';
+import 'widgets/waiting_list_widget.dart';
 
 class RoomPage extends ConsumerStatefulWidget {
   const RoomPage({super.key});
@@ -48,6 +50,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     return CustomPageBuilder(
       title: quiz?.title ?? "",
       appbarColor: colors.gradientBlue,
+      enableScrollable: false,
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -60,8 +63,33 @@ class _RoomPageState extends ConsumerState<RoomPage> {
               gradientColor: colors.gradientBlue,
               onTap: () => _inviteBottomSheet(state.roomCode),
             ),
-            ParticipantsWidget(0),
+            height.l,
+            WaitingListWidget(
+              title: 'Esperando participantes . . .',
+              text: 'Inicia el quiz cuando todos los participantes estén listos',
+            ),
+            if (state.users.isEmpty) ParticipantsWidget(state.users.length),
+            Flexible(
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: state.users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
+                  ),
+                ),
+              ),
+            )
           ],
+        ),
+      ),
+      bottomBar: Padding(
+        padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
+        child: CustomButton(
+          text: "Empezar",
+          height: 16,
+          color: colors.green,
+          large: true,
+          onTap: _initializeQuiz,
         ),
       ),
     );
@@ -256,4 +284,6 @@ class _RoomPageState extends ConsumerState<RoomPage> {
       context.showToast(text: "Código copiado exitosamente");
     }
   }
+
+  _initializeQuiz() {}
 }

@@ -1,10 +1,12 @@
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/dashboard_view.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'home_controller.dart';
 import 'widgets/bottom_bar_widget.dart';
@@ -25,7 +27,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     return CustomPageBuilder(
       loadingPage: state.isLoading,
       leading: avatarWidget(),
-      trailing: actions,
+      trailing: actions(),
       customTitle: titleWidget(state.user?.firstName ?? ""),
       body: optionMenu(state.menuId, state.quizzes),
       bottomBar: BottomBarWidget(state.menuId),
@@ -40,10 +42,18 @@ class _HomePageState extends ConsumerState<HomePage> {
       };
 
   Widget avatarWidget() {
-    return CircleAvatar(
-      backgroundImage: AssetImage(icons.app),
-      radius: context.scale(20),
-      backgroundColor: colors.white,
+    return Container(
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(colors: colors.gradientOrange),
+        border: Border.all(color: colors.yellow, width: 2),
+      ),
+      child: CustomSvg(
+        icons.king,
+        color: colors.white,
+        size: 20,
+      ),
     );
   }
 
@@ -66,20 +76,22 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget actions = Expanded(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        CustomCircularButton(
-          icon: Icons.notifications_none,
-          onTap: () {},
-        ),
-        width.m,
-        CustomCircularButton(
-          icon: Icons.settings_outlined,
-          onTap: () {},
-        ),
-      ],
-    ),
-  );
+  Widget actions() {
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          CustomCircularButton(
+            icon: Icons.notifications_none,
+            onTap: () => context.push(Routes.notifications),
+          ),
+          width.m,
+          CustomCircularButton(
+            icon: Icons.help_outline,
+            onTap: () => context.push(Routes.support),
+          ),
+        ],
+      ),
+    );
+  }
 }

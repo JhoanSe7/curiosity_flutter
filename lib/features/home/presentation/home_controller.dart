@@ -25,11 +25,6 @@ class HomeController extends StateNotifier<HomeState> {
   }
 
   ///
-  void resetData() {
-    if (mounted) state = state.copyWith(menuId: HomeId.init, user: null);
-  }
-
-  ///
   Future<List<QuizModel>> getQuizzes(BuildContext context, {required String userId}) async {
     final result = await execute<List<QuizModel>>(context, useCase.getQuizzes(userId: userId));
     return result.fold(

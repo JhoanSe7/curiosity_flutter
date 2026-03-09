@@ -78,6 +78,7 @@ class RoomController extends StateNotifier<RoomState> {
           isConnected: true,
           users: event.user,
           quizTitle: event.quizTitle,
+          errorMessage: "",
         );
       case EventType.error:
         state = state.copyWith(
@@ -100,6 +101,17 @@ class RoomController extends StateNotifier<RoomState> {
   ///
   void userLeave(UserModel user, String roomCode) {
     wsService.emit(channel: '/app/lobby.leave/$roomCode', data: user.toMap());
+    if (mounted) {
+      state = state.copyWith(
+        isConnecting: true,
+        isConnected: false,
+        errorMessage: "",
+        quizStarted: false,
+        quizTitle: "",
+        roomCode: "",
+        users: [],
+      );
+    }
   }
 
   /// Setter para el código del room
