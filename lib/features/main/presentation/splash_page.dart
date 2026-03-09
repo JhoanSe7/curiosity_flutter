@@ -27,7 +27,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   Future<void> _initialize() async {
     await _permissionRequest();
-    if (Platform.isAndroid && !(await view.isHuawei)) await notificationSvc.initialize();
+    if (!(await view.isHuawei)) await notificationSvc.initialize();
     if (mounted) context.go(Routes.signIn);
   }
 

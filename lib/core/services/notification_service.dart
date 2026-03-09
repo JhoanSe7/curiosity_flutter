@@ -7,9 +7,13 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
   Future<void> initialize() async {
-    await _initializeLocalNotifications();
-    await requestPermissionNotification();
-    _onForegroundMessage();
+    try {
+      await _initializeLocalNotifications();
+      await requestPermissionNotification();
+      _onForegroundMessage();
+    }catch(e){
+      print("No se pudo inicializar el servicio de notificaciones $e");
+    }
   }
 
   Future<void> _initializeLocalNotifications() async {
