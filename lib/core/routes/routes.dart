@@ -3,6 +3,7 @@ import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_pag
 import 'package:curiosity_flutter/features/home/presentation/home_page.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/about_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/info_profile_view.dart';
+import 'package:curiosity_flutter/features/home/presentation/widgets/profile/notifications_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/support_view.dart';
 import 'package:curiosity_flutter/features/main/presentation/splash_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_page.dart';
@@ -99,6 +100,10 @@ final router = GoRouter(
     GoRoute(
       path: Routes.about,
       builder: (context, state) => const AboutView(),
+    ),
+    GoRoute(
+      path: Routes.notifications,
+      builder: (context, state) => const NotificationsView(),
     ),
   ],
 );

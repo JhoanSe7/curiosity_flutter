@@ -29,6 +29,11 @@ class CustomSvg extends StatelessWidget {
         color ?? colors.white,
         BlendMode.srcIn,
       ),
+      placeholderBuilder: (_) => CustomIcon(
+        Icons.image,
+        color: colors.primary,
+        size: (size ?? 0) / 2,
+      ),
     );
   }
 }

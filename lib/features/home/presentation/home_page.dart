@@ -1,7 +1,6 @@
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
-import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/dashboard_view.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:flutter/material.dart';

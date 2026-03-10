@@ -1,6 +1,5 @@
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
-import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,7 @@
 import 'package:curiosity_flutter/core/di/injection.dart';
 import 'package:curiosity_flutter/core/utils/util_processor.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/home/data/models/support_model.dart';
 import 'package:curiosity_flutter/features/home/domain/use_cases/home_use_case.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_state.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
@@ -43,6 +44,11 @@ class HomeController extends StateNotifier<HomeState> {
   ///
   void setLoading(bool value) {
     if (mounted) state = state.copyWith(isLoading: value);
+  }
+
+  ///
+  void sendReport({required SupportModel data}) {
+    print(data.toJson());
   }
 }
 

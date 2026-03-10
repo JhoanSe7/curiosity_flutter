@@ -32,7 +32,7 @@ class CustomLabel extends StatelessWidget {
         ],
         CustomText(
           text,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
       ],

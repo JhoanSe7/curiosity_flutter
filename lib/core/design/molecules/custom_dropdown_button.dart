@@ -6,12 +6,16 @@ class CustomDropdownButton extends StatefulWidget {
   final List<ItemModel> items;
   final String hintText;
   final Function(String?) onSelect;
+  final Color? borderColor;
+  final double? height;
 
   const CustomDropdownButton({
     super.key,
     required this.items,
     this.hintText = "Seleccione",
     required this.onSelect,
+    this.borderColor,
+    this.height,
   });
 
   @override
@@ -41,11 +45,11 @@ class CustomDropdownButtonState extends State<CustomDropdownButton> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10),
       width: double.infinity,
-      height: context.scale(30),
+      height: context.scale(widget.height ?? 30),
       decoration: BoxDecoration(
         color: colors.inputPlaceholder,
         borderRadius: BorderRadius.all(Radius.circular(12)),
-        border: Border.all(color: focusNode.hasFocus ? colors.yellow : colors.inputBorder),
+        border: Border.all(color: focusNode.hasFocus ? widget.borderColor ?? colors.yellow : colors.inputBorder),
       ),
       child: DropdownButton(
         focusNode: focusNode,
