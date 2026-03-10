@@ -10,10 +10,23 @@ final log = Logger('WebSocketService');
 @singleton
 class WebSocketService {
   late StompClient _client;
-  late bool _isConnected = false;
+  bool _isConnected = false;
 
-  void connect() {
-    if (_isConnected) return;
+  // Callbacks pendientes que se ejecutan cuando la conexión esté lista
+  final List<void Function()> _onConnectCallbacks = [];
+
+  void connect({void Function()? onConnected}) {
+    // Si ya está conectado, ejecutar callback inmediatamente
+    if (_isConnected) {
+      onConnected?.call();
+      return;
+    }
+
+    // Guardar el callback para ejecutarlo cuando conecte
+    if (onConnected != null) _onConnectCallbacks.add(onConnected);
+
+    // Evitar activar múltiples clientes
+    if (_onConnectCallbacks.length > 1) return;
 
     _client = StompClient(
       config: StompConfig.sockJS(
@@ -51,6 +64,12 @@ class WebSocketService {
   void _onConnect(StompFrame frame) {
     _isConnected = true;
     log.info('WebSocket status connected ✓');
+
+    // Ejecutar todos los callbacks pendientes
+    for (final callback in _onConnectCallbacks) {
+      callback();
+    }
+    _onConnectCallbacks.clear();
   }
 
   void _onDisconnect(StompFrame frame) {

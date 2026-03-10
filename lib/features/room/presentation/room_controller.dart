@@ -27,13 +27,15 @@ class RoomController extends StateNotifier<RoomState> {
     if (mounted) state = state.copyWith(isConnecting: true);
 
     try {
-      await Future.microtask(wsService.connect);
       final action = isOwner ? 'host' : 'join';
-      onSubscribe(
-        '/topic/lobby/${isOwner ? '$roomCode/host' : roomCode}',
-        '/app/lobby.$action/$roomCode',
-        user,
-      );
+      final channelSub = '/topic/lobby/${isOwner ? '$roomCode/host' : roomCode}';
+      final channelEmit = '/app/lobby.$action/$roomCode';
+
+      // Conectar y ejecutar suscripción + emit solo cuando esté listo
+      wsService.connect(onConnected: () {
+        onSubscribe(channelSub, channelEmit, user);
+      });
+
     } catch (e) {
       if (mounted) {
         state = state.copyWith(
@@ -47,9 +49,7 @@ class RoomController extends StateNotifier<RoomState> {
   ///
   void onSubscribe(String channelSub, String channelEmit, UserModel user) {
     wsService.subscribe(channel: channelSub, callback: callbackSub);
-
     _eventController.stream.listen(_eventReceived);
-
     wsService.emit(channel: channelEmit, data: user.toMap());
   }
 
@@ -123,13 +123,13 @@ class RoomController extends StateNotifier<RoomState> {
   Future<bool> validateRoom(BuildContext context, {required String roomCode}) async {
     final result = await execute<bool>(context, useCase.validateRoom(roomCode: roomCode));
     return result.fold(
-      (e) => processError(context, error: e.message) ?? false,
-      (data) => data,
+          (e) => processError(context, error: e.message) ?? false,
+          (data) => data,
     );
   }
 }
 
 final roomController = StateNotifierProvider<RoomController, RoomState>((ref) => RoomController(
-      getIt.get(),
-      getIt.get(),
-    ));
+  getIt.get(),
+  getIt.get(),
+));
