@@ -8,28 +8,31 @@ extension TextExtension on String {
 
   String get cleaned {
     return replaceAll(
-            RegExp(
-              r'[^\w\s]',
-            ),
-            '')
+        RegExp(
+          r'[^\w\s]',
+        ),
+        '')
         .replaceAll(
-            RegExp(
-              r'[\u{1F600}-\u{1F64F}]|' // emoticonos
-              r'[\u{1F300}-\u{1F5FF}]|' // símbolos y pictogramas
-              r'[\u{1F680}-\u{1F6FF}]|' // transporte y mapas
-              r'[\u{2600}-\u{26FF}]|' // símbolos misceláneos
-              r'[\u{2700}-\u{27BF}]', // símbolos Dingbats
-              unicode: true,
-            ),
-            '')
+        RegExp(
+          r'[\u{1F600}-\u{1F64F}]|' // emoticonos
+          r'[\u{1F300}-\u{1F5FF}]|' // símbolos y pictogramas
+          r'[\u{1F680}-\u{1F6FF}]|' // transporte y mapas
+          r'[\u{2600}-\u{26FF}]|' // símbolos misceláneos
+          r'[\u{2700}-\u{27BF}]', // símbolos Dingbats
+          unicode: true,
+        ),
+        '')
         .trim();
   }
 
   EventType toEvent() {
     switch (this) {
       case 'PLAYER_JOINED':
+      case 'HOST_PLAYER_JOINED':
+      case 'HOST_CONNECTED':
         return EventType.userJoined;
       case 'PLAYER_LEFT':
+      case 'HOST_PLAYER_LEFT':
         return EventType.userLeft;
       case 'QUIZ_STARTED':
         return EventType.start;
