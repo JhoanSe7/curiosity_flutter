@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 
 class RoomState {
   final bool isConnecting;
@@ -8,6 +9,8 @@ class RoomState {
   final bool quizStarted;
   final String errorMessage;
   final String roomCode;
+  final String quizId;
+  final QuizModel? quiz;
 
   RoomState({
     this.isConnecting = false,
@@ -17,6 +20,8 @@ class RoomState {
     this.quizStarted = false,
     this.errorMessage = "",
     this.roomCode = "",
+    this.quizId = "",
+    this.quiz,
   });
 
   RoomState copyWith({
@@ -27,6 +32,8 @@ class RoomState {
     bool? quizStarted,
     String? errorMessage,
     String? roomCode,
+    String? quizId,
+    QuizModel? quiz,
   }) =>
       RoomState(
         isConnecting: isConnecting ?? this.isConnecting,
@@ -36,5 +43,7 @@ class RoomState {
         quizStarted: quizStarted ?? this.quizStarted,
         errorMessage: errorMessage ?? this.errorMessage,
         roomCode: roomCode ?? this.roomCode,
+        quizId: quizId ?? this.quizId,
+        quiz: quiz ?? this.quiz,
       );
 }

@@ -2,12 +2,14 @@ import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
+import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/option_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_data_type.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_type.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/countdown_overlay_timer.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/question_timer.dart';
 import 'package:flutter/material.dart';
@@ -40,8 +42,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
   }
 
   _loadData() {
-    ///TODO: cambiar por el quiz que se recibe
-    quiz = ref.read(homeController).quizzes.first;
+    quiz = ref.read(roomController).quiz;
     var questions = quiz?.questions ?? [];
     if (questions.isEmpty) return;
     setState(() {
@@ -359,7 +360,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: CustomButton(
         onTap: _nextQuestion,
-        text: "Siguiente",
+        text: quiz?.questions?.length == indexQuestion + 1 ? "Siguiente" : "Finalizar",
         isGradient: true,
         gradientColor: colors.gradientPrimary,
         height: 18,
@@ -400,6 +401,9 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
   }
 
   _onExit() {
+    var user = ref.read(homeController).user ?? UserModel();
+    var roomCode = ref.read(roomController).roomCode;
+    ref.read(roomController.notifier).userLeave(user, roomCode);
     context.pop();
     context.go(Routes.home);
   }

@@ -22,53 +22,51 @@ class WaitingListWidget extends StatelessWidget {
           BoxShadow(color: colors.greyLight.withValues(alpha: .3), offset: Offset(0, 2), blurRadius: 6),
         ],
       ),
-      child: Flexible(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: colors.gradientOrange),
-                borderRadius: BorderRadius.circular(12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: colors.gradientOrange),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: SvgPicture.asset(
+                icons.king,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(colors.white, BlendMode.srcIn),
               ),
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: SvgPicture.asset(
-                  icons.king,
-                  width: 24,
-                  height: 24,
-                  colorFilter: ColorFilter.mode(colors.white, BlendMode.srcIn),
+            ),
+          ),
+          width.l,
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomText(
+                  title,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: colors.titles,
+                  textAlign: TextAlign.start,
                 ),
-              ),
+                CustomText(
+                  text,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: colors.titles,
+                  textAlign: TextAlign.start,
+                ),
+              ],
             ),
-            width.l,
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomText(
-                    title ,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: colors.titles,
-                    textAlign: TextAlign.start,
-                  ),
-                  CustomText(
-                    text,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: colors.titles,
-                    textAlign: TextAlign.start,
-                  ),
-                ],
-              ),
-            ),
-            Lottie.asset(
-              animations.loadingSmaller,
-              width: 32,
-            ),
-          ],
-        ),
+          ),
+          Lottie.asset(
+            animations.loadingSmaller,
+            width: 32,
+          ),
+        ],
       ),
     );
   }

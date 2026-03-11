@@ -31,6 +31,8 @@ class _RoomPageState extends ConsumerState<RoomPage> {
 
   String roomCode = "";
 
+  bool started = false;
+
   @override
   void initState() {
     super.initState();
@@ -85,9 +87,9 @@ class _RoomPageState extends ConsumerState<RoomPage> {
       bottomBar: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
         child: CustomButton(
-          text: "Empezar",
+          text: started ? "Terminar quiz" : "Empezar quiz",
           height: 16,
-          color: colors.green,
+          color: started ? colors.red : colors.green,
           large: true,
           onTap: _initializeQuiz,
         ),
@@ -285,5 +287,15 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     }
   }
 
-  _initializeQuiz() {}
+  _initializeQuiz() async {
+    var state = ref.read(roomController);
+    if (state.users.isEmpty) {
+      context.showToast(text: "No hay participantes en la sala", type: MessageType.warning);
+      return;
+    }
+    var res = await ref.read(roomController.notifier).startQuiz(context, roomCode: roomCode, userId: user.id ?? "");
+    setState(() {
+      started = res;
+    });
+  }
 }

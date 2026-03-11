@@ -4,6 +4,7 @@ import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_state.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/participants_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,7 +54,7 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
   Widget build(BuildContext context) {
     final state = ref.watch(roomController);
     var quizTitle = state.quizTitle;
-
+    ref.listen(roomController, _getQuizAndStart);
     return CustomPageBuilder(
       centerTitle: true,
       enableLeading: false,
@@ -145,26 +146,28 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
   Widget connectionTick = Lottie.asset(animations.pulseDot, width: 32);
 
   Widget userList(List<UserModel> users) {
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        children: [
-          WaitingListWidget(
-            title: 'Esperando al organizador . . .',
-            text: '¡Paciencia, el quiz comenzará pronto!',
-          ),
-          ParticipantsWidget(users.length),
-          Flexible(
-            child: Scrollbar(
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
+    return Flexible(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            WaitingListWidget(
+              title: 'Esperando al organizador . . .',
+              text: '¡Paciencia, el quiz comenzará pronto!',
+            ),
+            ParticipantsWidget(users.length),
+            Flexible(
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -201,5 +204,12 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
   _onExit() {
     ref.read(roomController.notifier).userLeave(user, roomCode);
     context.pop();
+  }
+
+  _getQuizAndStart(RoomState? previous, RoomState next) async {
+    if (previous?.quizStarted != true && next.quizStarted) {
+      await ref.read(roomController.notifier).loadQuiz(context, quizId: next.quizId);
+      if (mounted) context.pushReplacement(Routes.quizFlow);
+    }
   }
 }

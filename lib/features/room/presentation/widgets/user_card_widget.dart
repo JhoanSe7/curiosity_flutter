@@ -17,6 +17,10 @@ class UserCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var fullName =
+        ("${user.firstName ?? ""} ${user.secondName ?? ""} ${user.lastName ?? ""} ${user.secondLastName ?? ""}").trim();
+    var email = (user.email ?? "");
+    var initials = email.isNotEmpty && email.length > 2 ? email.toUpperCase().substring(0, 2) : "A1";
     return Container(
       padding: EdgeInsets.all(8),
       margin: EdgeInsets.only(bottom: 16),
@@ -42,7 +46,7 @@ class UserCardWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: CustomText(
-              (user.email ?? "").toUpperCase().substring(0, 2),
+              initials,
               color: colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -53,7 +57,7 @@ class UserCardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
-                user.firstName ?? "",
+                fullName,
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
                 textAlign: TextAlign.start,

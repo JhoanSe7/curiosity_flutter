@@ -5,6 +5,10 @@ import 'package:injectable/injectable.dart';
 
 abstract class RoomDataSource {
   Future<HttpResponseModel> validateRoom({required String roomCode});
+
+  Future<HttpResponseModel> startQuiz({required String roomCode, required String userId});
+
+  Future<HttpResponseModel> getQuizById({required String quizId});
 }
 
 @Injectable(as: RoomDataSource)
@@ -15,6 +19,26 @@ class RoomDataSourceImpl implements RoomDataSource {
 
   @override
   Future<HttpResponseModel> validateRoom({required String roomCode}) async {
-    return await clientHttp.get(endpoint: "${Config.apiUrl}lobby/exists/$roomCode");
+    return await clientHttp.get(
+      endpoint: "${Config.apiUrl}lobby/exists/$roomCode",
+    );
+  }
+
+  @override
+  Future<HttpResponseModel> startQuiz({required String roomCode, required String userId}) async {
+    return await clientHttp.post(
+      endpoint: "${Config.apiUrl}game/start",
+      body: {
+        "roomCode": roomCode,
+        "startedBy": userId,
+      },
+    );
+  }
+
+  @override
+  Future<HttpResponseModel> getQuizById({required String quizId}) async {
+    return await clientHttp.get(
+      endpoint: "${Config.apiUrl}quiz/$quizId",
+    );
   }
 }

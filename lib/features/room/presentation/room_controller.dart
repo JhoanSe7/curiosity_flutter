@@ -7,6 +7,7 @@ import 'package:curiosity_flutter/core/services/web_socket/models/event_type.dar
 import 'package:curiosity_flutter/core/services/web_socket/web_socket_service.dart';
 import 'package:curiosity_flutter/core/utils/util_processor.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/room/domain/use_cases/room_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,7 +36,6 @@ class RoomController extends StateNotifier<RoomState> {
       wsService.connect(onConnected: () {
         onSubscribe(channelSub, channelEmit, user);
       });
-
     } catch (e) {
       if (mounted) {
         state = state.copyWith(
@@ -87,7 +87,7 @@ class RoomController extends StateNotifier<RoomState> {
           errorMessage: event.message,
         );
       case EventType.start:
-        state = state.copyWith(quizStarted: true);
+        state = state.copyWith(quizStarted: true, quizId: event.quizId);
       case EventType.close:
         state = state.copyWith(
           isConnected: false,
@@ -101,6 +101,11 @@ class RoomController extends StateNotifier<RoomState> {
   ///
   void userLeave(UserModel user, String roomCode) {
     wsService.emit(channel: '/app/lobby.leave/$roomCode', data: user.toMap());
+    clearState();
+  }
+
+  ///
+  void clearState() {
     if (mounted) {
       state = state.copyWith(
         isConnecting: true,
@@ -123,13 +128,39 @@ class RoomController extends StateNotifier<RoomState> {
   Future<bool> validateRoom(BuildContext context, {required String roomCode}) async {
     final result = await execute<bool>(context, useCase.validateRoom(roomCode: roomCode));
     return result.fold(
-          (e) => processError(context, error: e.message) ?? false,
-          (data) => data,
+      (e) => processError(context, error: e.message) ?? false,
+      (data) => data,
     );
+  }
+
+  ///
+  Future<bool> startQuiz(BuildContext context, {required String roomCode, required String userId}) async {
+    final result = await execute<bool>(context, useCase.startQuiz(roomCode: roomCode, userId: userId));
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? false,
+      (data) => data,
+    );
+  }
+
+  ///
+  Future<QuizModel> getQuizById(BuildContext context, {required String quizId}) async {
+    final result = await execute<QuizModel>(context, useCase.getQuizById(quizId: quizId));
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? QuizModel(),
+      (data) => data,
+    );
+  }
+
+  ///
+  Future<void> loadQuiz(BuildContext context, {required String quizId}) async {
+    var res = await getQuizById(context, quizId: quizId);
+    if (mounted) state = state.copyWith(quiz: res);
   }
 }
 
-final roomController = StateNotifierProvider<RoomController, RoomState>((ref) => RoomController(
-  getIt.get(),
-  getIt.get(),
-));
+final roomController = StateNotifierProvider<RoomController, RoomState>(
+  (ref) => RoomController(
+    getIt.get(),
+    getIt.get(),
+  ),
+);
