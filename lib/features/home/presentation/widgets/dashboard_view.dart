@@ -2,11 +2,8 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
-import 'package:curiosity_flutter/features/qr_scanner/data/models/qr_scanner_model.dart';
-import 'package:curiosity_flutter/features/qr_scanner/presentation/qr_scanner.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_card_widget.dart';
-import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,8 +20,6 @@ class DashboardView extends ConsumerStatefulWidget {
 }
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
-  final TextEditingController _codeInput = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -35,12 +30,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   _loadData() async {
     await ref.read(homeController.notifier).loadQuizzes(context);
     ref.read(homeController.notifier).setLoading(false);
-  }
-
-  @override
-  void dispose() {
-    _codeInput.dispose();
-    super.dispose();
   }
 
   @override
@@ -86,7 +75,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
               "Código de quiz",
               Icons.numbers,
               colors.gradientPrimary,
-              () => _joinRoomBottomSheet(),
+              () => context.push(Routes.joinRoom),
             ),
           ],
         )
@@ -276,89 +265,5 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         )
       ],
     );
-  }
-
-  _joinRoomBottomSheet() async {
-    await context.showBottomSheetModal(
-      title: "¡Únete al Quiz!",
-      child: Column(
-        children: [
-          CustomText(
-            "Ingresa el código único de tu quiz para comenzar a jugar y aprender con tus amigos",
-            fontSize: 14,
-          ),
-          height.l,
-          CustomTextField(
-            placeHolder: 'EJ: ABC123',
-            controller: _codeInput,
-            formatters: InputFilters.alphaNumeric(
-              inputLength: 6,
-              allowSpace: false,
-              uppercase: true,
-            ),
-            onSubmit: (_) => _onJoinQuiz(),
-          ),
-          height.l,
-          CustomButton(
-            onTap: _onJoinQuiz,
-            height: 16,
-            text: "Unirse",
-            large: true,
-            color: colors.primary,
-          ),
-          height.l,
-          CustomText(
-            "o escanear código",
-            fontSize: 14,
-          ),
-          height.l,
-          CustomButton(
-            onTap: _scanQr,
-            height: 16,
-            color: colors.whiteSmoke,
-            border: Border.all(color: colors.iconPlaceholder),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CustomIcon(Icons.qr_code_2),
-                width.m,
-                CustomText(
-                  "Escanear código QR",
-                  fontSize: 14,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _onJoinQuiz() async {
-    bool invalid = _validateCode();
-    if (invalid) return;
-    final controller = ref.read(roomController.notifier);
-    var code = _codeInput.text.trim();
-    context.pop();
-    var res = await controller.validateRoom(context, roomCode: code);
-    if (res && mounted) {
-      controller.setRoomCode(code);
-      context.push(Routes.lobby);
-    }
-    _codeInput.clear();
-  }
-
-  bool _validateCode() {
-    bool empty = _codeInput.text.trim().isEmpty;
-    if (empty) context.showModal(title: "Atención", content: "El código no es válido");
-    return empty;
-  }
-
-  _scanQr() async {
-    var code = await QrScanner.scan(context);
-    if (code.code == QrScanStatus.success) {
-      _codeInput.text = code.rawValue;
-      _onJoinQuiz();
-    }
   }
 }

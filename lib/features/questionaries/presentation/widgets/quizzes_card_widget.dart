@@ -2,6 +2,7 @@ import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
+import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_data_type.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
@@ -68,7 +69,7 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              questionsSizeText(widget.quiz),
+              questionsText(widget.quiz),
               CustomButton(
                 height: 6,
                 color: allColors[widget.index % allColors.length],
@@ -89,7 +90,8 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
                 ),
               )
             ],
-          )
+          ),
+          averageTime()
         ],
       ),
     );
@@ -189,7 +191,7 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
     }
   }
 
-  Widget questionsSizeText(QuizModel q) {
+  Widget questionsText(QuizModel q) {
     var length = q.questions?.length ?? 0;
     return Row(
       children: [
@@ -244,6 +246,46 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
         );
       }
     }
+  }
+
+  Widget averageTime() {
+    var list = widget.quiz.questions ?? [];
+    if (list.isEmpty) return SizedBox.shrink();
+    var total = [];
+    for (var q in list) {
+      var time = q.timeLimit ?? 0;
+      if (time > 0) total.add(time + 3);
+    }
+    int time = total.reduce((a, b) => a + b);
+    return Tooltip(
+      message: "Tiempo estimado para responder todas las preguntas",
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomIcon(
+            Icons.info_outline,
+            color: colors.info,
+            size: 20,
+          ),
+          width.s,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText(
+                "Tiempo estimado:",
+                color: colors.paragraph,
+                fontSize: 12,
+              ),
+              CustomText(
+                "~ ${time.toTime(withUnit: true)}",
+                color: colors.paragraph,
+                fontSize: 12,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 

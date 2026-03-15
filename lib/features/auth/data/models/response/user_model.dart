@@ -9,6 +9,8 @@ class UserModel {
   String? password;
   List<String>? createdQuizzes;
 
+  String? quizStatus;
+
   UserModel({
     this.id,
     this.firstName,
@@ -19,6 +21,7 @@ class UserModel {
     this.phoneNumber,
     this.password,
     this.createdQuizzes,
+    this.quizStatus,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +36,7 @@ class UserModel {
       phoneNumber: json["phoneNumber"],
       password: json["password"],
       createdQuizzes: List<String>.from(questions.map((x) => x)),
+      quizStatus: json["quizStatus"],
     );
   }
 
@@ -46,10 +50,11 @@ class UserModel {
         "phoneNumber": phoneNumber,
         "password": password,
         "createdQuizzes": createdQuizzes,
+        "quizStatus": quizStatus,
       };
 
   Map<UserParam, String> information() => {
-        UserParam.name: "${firstName ?? ""} ${secondName ?? ""} ${lastName ?? ""} ${secondLastName ?? ""}",
+        UserParam.name: fullName(),
         UserParam.email: email ?? "",
         UserParam.phone: phoneNumber ?? "",
       };
@@ -81,6 +86,11 @@ class UserModel {
     );
   }
 
+  String fullName() {
+    var data = [firstName, secondName, lastName, secondLastName].where((e) => e != null && e.isNotEmpty).toList();
+    return data.join(" ");
+  }
+
   Map<String, dynamic> toMap() => {
         'userId': id,
         'firstName': firstName,
@@ -89,6 +99,7 @@ class UserModel {
         'secondLastName': secondLastName,
         'email': email,
         'phoneNumber': phoneNumber,
+        'quizStatus': quizStatus,
       };
 }
 

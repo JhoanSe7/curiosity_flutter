@@ -35,6 +35,8 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
   bool showCountdown = true;
   bool starQuiz = false;
 
+  List<QuestionModel> answers = [];
+
   @override
   void initState() {
     super.initState();
@@ -47,8 +49,19 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     if (questions.isEmpty) return;
     setState(() {
       question = questions.first;
+      var data = _clearAnswer(question);
+      answers.add(data ?? QuestionModel());
       _loadOptions();
     });
+  }
+
+  QuestionModel? _clearAnswer(QuestionModel? answer) {
+    answer?.correctAnswer = null;
+    answer?.correctAnswerText = null;
+    for (var opt in answer?.options ?? <OptionModel>[]) {
+      opt.isCorrect = false;
+    }
+    return answer;
   }
 
   _loadOptions() {
@@ -60,17 +73,9 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
 
   QuestionDataType questionData(String type) => Config.questionsType.firstWhere((e) => e.type.name == type);
 
-  String get time {
-    var time = question?.timeLimit ?? 0;
-    var minutes = time ~/ 60;
-    var seconds = time % 60;
-    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
-  }
-
   @override
   Widget build(BuildContext context) {
     var time = question?.timeLimit ?? 0;
-    var type = QuestionType.values.firstWhere((e) => e.name == question?.type);
     return CustomPageBuilder(
       trailing: timerQuestion(),
       centerTitle: true,
@@ -133,7 +138,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
                 textAlign: TextAlign.left,
               ),
               height.xl,
-              if (starQuiz) questionTypeOption(type),
+              if (starQuiz) questionTypeOption(),
             ],
           ),
         ),
@@ -159,7 +164,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
           ),
           width.s,
           CustomText(
-            time,
+            (question?.timeLimit ?? 0).toTime(),
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: colors.white,
@@ -198,21 +203,24 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     );
   }
 
-  Widget questionTypeOption(QuestionType q) => switch (q) {
-        QuestionType.SINGLE_SELECTION => simpleQuestion(),
-        QuestionType.MULTIPLE_SELECTION => multipleQuestion(),
-        QuestionType.FILL_IN_THE_BLANK => completeQuestion(),
-        QuestionType.TRUE_FALSE => binaryQuestion(),
-        QuestionType.OPEN_ANSWER => openQuestion(),
-      };
+  Widget questionTypeOption() {
+    var type = QuestionType.values.firstWhere((e) => e.name == question?.type);
+    switch (type) {
+      case QuestionType.SINGLE_SELECTION:
+        return simpleQuestion();
+      case QuestionType.MULTIPLE_SELECTION:
+        return multipleQuestion();
+      case QuestionType.TRUE_FALSE:
+        return binaryQuestion();
+      case QuestionType.FILL_IN_THE_BLANK:
+        return completeQuestion();
+      case QuestionType.OPEN_ANSWER:
+        return openQuestion();
+    }
+  }
 
   Widget simpleQuestion() => Column(
-        children: options
-            .map((e) => questionOption(
-                  e,
-                  () => _checkTap(e),
-                ))
-            .toList(),
+        children: options.map((e) => questionOption(e, () => _checkTap(e))).toList(),
       );
 
   Widget questionOption(OptionModel e, void Function() onTap) {
@@ -246,13 +254,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     );
   }
 
-  Widget multipleQuestion() => Column(
-      children: options
-          .map((e) => questionOption(
-                e,
-                () => _checkAdd(e),
-              ))
-          .toList());
+  Widget multipleQuestion() => Column(children: options.map((e) => questionOption(e, () => _checkAdd(e))).toList());
 
   Widget completeQuestion() => Column(
         children: [
@@ -304,9 +306,14 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
           CustomTextField(
             text: "Escribe tu respuesta",
             controller: _answerController,
+            onChange: _saveResponseText,
           )
         ],
       );
+
+  _saveResponseText(String text) {
+    answers[indexQuestion].correctAnswerText = text;
+  }
 
   _checkTap(OptionModel o) {
     if (mounted) {
@@ -314,6 +321,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
         for (int i = 0; i < options.length; i++) {
           var option = options[i];
           option.isCorrect = o.code == i ? !option.isCorrect : false;
+          answers[indexQuestion].options?[i].isCorrect = o.code == i ? !option.isCorrect : false;
         }
       });
     }
@@ -324,6 +332,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     if (mounted) {
       setState(() {
         option.isCorrect = !option.isCorrect;
+        answers[indexQuestion].options?[e.code].isCorrect = option.isCorrect;
       });
     }
   }
@@ -332,6 +341,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     if (mounted) {
       setState(() {
         binarySelected = value;
+        answers[indexQuestion].correctAnswer = value;
       });
     }
   }
@@ -341,11 +351,23 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
       setState(() {
         indexQuestion++;
         question = quiz?.questions?[indexQuestion];
+        var data = _clearAnswer(question);
+        answers.add(data ?? QuestionModel());
         _loadOptions();
         showCountdown = true;
         starQuiz = false;
       });
+    } else {
+      print("fin del quiz");
+      // _sendAnswers();
     }
+  }
+
+  _sendAnswers() {
+    var user = ref.read(homeController).user ?? UserModel();
+    var roomCode = ref.read(roomController).roomCode;
+    ref.read(roomController.notifier).emitMsg('/app/quiz.submit/$roomCode', user);
+    context.go(Routes.home);
   }
 
   _launchQuiz() {
@@ -403,7 +425,8 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
   _onExit() {
     var user = ref.read(homeController).user ?? UserModel();
     var roomCode = ref.read(roomController).roomCode;
-    ref.read(roomController.notifier).userLeave(user, roomCode);
+    ref.read(roomController.notifier).emitMsg('/app/quiz.abandon/$roomCode', user);
+    ref.read(roomController.notifier).clearState();
     context.pop();
     context.go(Routes.home);
   }

@@ -93,15 +93,16 @@ class RoomController extends StateNotifier<RoomState> {
           isConnected: false,
           errorMessage: 'El lobby fue cerrado por el profesor',
         );
+      case EventType.userUpdate:
+        state = state.copyWith(users: event.user);
       case EventType.unknown:
         break;
     }
   }
 
   ///
-  void userLeave(UserModel user, String roomCode) {
-    wsService.emit(channel: '/app/lobby.leave/$roomCode', data: user.toMap());
-    clearState();
+  void emitMsg(String channel, UserModel user) {
+    wsService.emit(channel: channel, data: user.toMap());
   }
 
   ///
@@ -155,6 +156,15 @@ class RoomController extends StateNotifier<RoomState> {
   Future<void> loadQuiz(BuildContext context, {required String quizId}) async {
     var res = await getQuizById(context, quizId: quizId);
     if (mounted) state = state.copyWith(quiz: res);
+  }
+
+  ///
+  Future<bool> finishQuiz(BuildContext context, {required String roomCode, required String userId}) async {
+    final result = await execute<bool>(context, useCase.finishQuiz(roomCode: roomCode, userId: userId));
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? false,
+      (data) => data,
+    );
   }
 }
 

@@ -4,5 +4,6 @@ enum EventType {
   start,
   close,
   error,
+  userUpdate,
   unknown,
 }

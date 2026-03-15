@@ -17,8 +17,6 @@ class UserCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var fullName =
-        ("${user.firstName ?? ""} ${user.secondName ?? ""} ${user.lastName ?? ""} ${user.secondLastName ?? ""}").trim();
     var email = (user.email ?? "");
     var initials = email.isNotEmpty && email.length > 2 ? email.toUpperCase().substring(0, 2) : "A1";
     return Container(
@@ -57,7 +55,7 @@ class UserCardWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomText(
-                fullName,
+                user.fullName(),
                 fontWeight: FontWeight.w600,
                 fontSize: 14,
                 textAlign: TextAlign.start,
@@ -74,10 +72,39 @@ class UserCardWidget extends StatelessWidget {
                   ),
                 ],
               ),
+              if ((user.quizStatus ?? "").isNotEmpty) ...[
+                height.s,
+                userStatus(),
+              ],
             ],
           )
         ],
       ),
     );
+  }
+
+  Widget userStatus() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+      decoration: BoxDecoration(
+        color: colors.green.withValues(alpha: .2),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: CustomText(
+        _getUserStatus(user.quizStatus ?? ""),
+        color: colors.green,
+        fontWeight: FontWeight.w600,
+        fontSize: 12,
+      ),
+    );
+  }
+
+  String _getUserStatus(String status) {
+    var data = {
+      "IN_PROGRESS": "En curso",
+      "FINISHED": "Finalizado",
+      "ABANDONED": "Abandonado",
+    };
+    return data[status] ?? "";
   }
 }

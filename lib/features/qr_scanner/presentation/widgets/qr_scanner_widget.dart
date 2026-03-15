@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:curiosity_flutter/features/qr_scanner/data/models/qr_scanner_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -77,7 +78,7 @@ class _QrScannerWidgetState extends State<QrScannerWidget> with WidgetsBindingOb
                 return QrScanAreaOverlayWidget(
                   width: constraints.maxWidth,
                   height: constraints.maxHeight,
-                  scanAreaSize: 0.70,
+                  scanAreaSize: context.isTablet ? 0.50 : 0.70,
                 );
               }),
           Positioned(
@@ -112,22 +113,19 @@ class _QrScannerWidgetState extends State<QrScannerWidget> with WidgetsBindingOb
             bottom: 24,
             left: 0,
             right: 0,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32.0),
-              child: (widget.showFlash)
-                  ? ValueListenableBuilder(
-                      valueListenable: controller,
-                      builder: (context, value, child) {
-                        final isTorchOn = value.torchState == TorchState.on;
-                        return buildButton(
-                          icon: isTorchOn ? Icons.flashlight_on : Icons.flashlight_off,
-                          label: 'Linterna',
-                          onTap: onToggleFlash,
-                        );
-                      },
-                    )
-                  : width.xl,
-            ),
+            child: (widget.showFlash)
+                ? ValueListenableBuilder(
+                    valueListenable: controller,
+                    builder: (context, value, child) {
+                      final isTorchOn = value.torchState == TorchState.on;
+                      return buildButton(
+                        icon: isTorchOn ? Icons.flashlight_on : Icons.flashlight_off,
+                        label: 'Linterna',
+                        onTap: onToggleFlash,
+                      );
+                    },
+                  )
+                : width.xl,
           ),
         ],
       ),
@@ -139,8 +137,6 @@ class _QrScannerWidgetState extends State<QrScannerWidget> with WidgetsBindingOb
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: size,
-          height: size,
           decoration: BoxDecoration(
             color: colors.black.withValues(alpha: 0.40),
             shape: BoxShape.circle,

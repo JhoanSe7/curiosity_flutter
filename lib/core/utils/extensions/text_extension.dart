@@ -40,6 +40,9 @@ extension TextExtension on String {
         return EventType.close;
       case 'LOBBY_ERROR':
         return EventType.error;
+      case 'STUDENT_ABANDONED':
+      case 'STUDENT_IN_PROGRESS':
+        return EventType.userUpdate;
       default:
         return EventType.unknown;
     }

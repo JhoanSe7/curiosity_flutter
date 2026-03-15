@@ -24,7 +24,7 @@ class RoomRepositoryImpl extends RoomRepository {
       }
       throw (result.message ?? "No se pudo procesar los datos");
     } catch (e) {
-      return left(CommonError(message: "Error deleteQuiz: $e"));
+      return left(CommonError(message: "Error validateRoom: $e"));
     }
   }
 
@@ -57,6 +57,22 @@ class RoomRepositoryImpl extends RoomRepository {
       throw (result.message ?? "No se pudo procesar los datos");
     } catch (e) {
       return left(CommonError(message: "Error startQuiz: $e"));
+    }
+  }
+
+  @override
+  Future<Either<CommonError, bool>> finishQuiz({required String roomCode, required String userId}) async {
+    try {
+      final result = await dataSource.finishQuiz(roomCode: roomCode, userId: userId);
+      if (result.success) {
+        return right(true);
+      } else if (!result.success && result.body is Map<String, dynamic>) {
+        final error = ErrorResponseModel.fromJson(result.body);
+        return left(CommonError(message: "${error.message}(${error.errorCode})"));
+      }
+      throw (result.message ?? "No se pudo procesar los datos");
+    } catch (e) {
+      return left(CommonError(message: "Error finishQuiz: $e"));
     }
   }
 }

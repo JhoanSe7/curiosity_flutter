@@ -18,4 +18,7 @@ class RoomUseCase {
 
   Future<Either<CommonError, QuizModel>> getQuizById({required String quizId}) async =>
       repository.getQuizById(quizId: quizId);
+
+  Future<Either<CommonError, bool>> finishQuiz({required String roomCode, required String userId}) async =>
+      repository.finishQuiz(roomCode: roomCode, userId: userId);
 }

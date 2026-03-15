@@ -8,4 +8,6 @@ abstract class RoomRepository {
   Future<Either<CommonError, bool>> startQuiz({required String roomCode, required String userId});
 
   Future<Either<CommonError, QuizModel>> getQuizById({required String quizId});
+
+  Future<Either<CommonError, bool>> finishQuiz({required String roomCode, required String userId});
 }

@@ -9,6 +9,8 @@ abstract class RoomDataSource {
   Future<HttpResponseModel> startQuiz({required String roomCode, required String userId});
 
   Future<HttpResponseModel> getQuizById({required String quizId});
+
+  Future<HttpResponseModel> finishQuiz({required String roomCode, required String userId});
 }
 
 @Injectable(as: RoomDataSource)
@@ -30,7 +32,7 @@ class RoomDataSourceImpl implements RoomDataSource {
       endpoint: "${Config.apiUrl}game/start",
       body: {
         "roomCode": roomCode,
-        "startedBy": userId,
+        "userId": userId,
       },
     );
   }
@@ -39,6 +41,17 @@ class RoomDataSourceImpl implements RoomDataSource {
   Future<HttpResponseModel> getQuizById({required String quizId}) async {
     return await clientHttp.get(
       endpoint: "${Config.apiUrl}quiz/$quizId",
+    );
+  }
+
+  @override
+  Future<HttpResponseModel> finishQuiz({required String roomCode, required String userId}) async {
+    return await clientHttp.post(
+      endpoint: "${Config.apiUrl}game/finish",
+      body: {
+        "roomCode": roomCode,
+        "userId": userId,
+      },
     );
   }
 }

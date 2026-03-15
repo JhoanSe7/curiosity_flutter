@@ -57,20 +57,23 @@ class _RoomPageState extends ConsumerState<RoomPage> {
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            CustomButton(
-              height: 16,
-              large: true,
-              text: "Invitar participantes",
-              isGradient: true,
-              gradientColor: colors.gradientBlue,
-              onTap: () => _inviteBottomSheet(state.roomCode),
-            ),
-            height.l,
-            WaitingListWidget(
-              title: 'Esperando participantes . . .',
-              text: 'Inicia el quiz cuando todos los participantes estén listos',
-            ),
+            if (!started) ...[
+              CustomButton(
+                height: 16,
+                large: true,
+                text: "Invitar participantes",
+                isGradient: true,
+                gradientColor: colors.gradientBlue,
+                onTap: () => _inviteBottomSheet(state.roomCode),
+              ),
+              height.l,
+              WaitingListWidget(
+                title: 'Esperando participantes . . .',
+                text: 'Inicia el quiz cuando todos los participantes estén listos',
+              ),
+            ],
             if (state.users.isEmpty) ParticipantsWidget(state.users.length),
+            height.l,
             Flexible(
               child: Scrollbar(
                 thumbVisibility: true,
@@ -91,7 +94,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
           height: 16,
           color: started ? colors.red : colors.green,
           large: true,
-          onTap: _initializeQuiz,
+          onTap: started ? _finishQuiz : _initializeQuiz,
         ),
       ),
     );
@@ -297,5 +300,11 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     setState(() {
       started = res;
     });
+  }
+
+  _finishQuiz() async {
+    ref.read(roomController.notifier).finishQuiz(context, roomCode: roomCode, userId: user.id ?? "");
+    await context.showModal(title: "Información", content: "El ha sido terminado para todos los participantes");
+    if (mounted) context.pop();
   }
 }

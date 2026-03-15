@@ -31,7 +31,7 @@ class CustomSvg extends StatelessWidget {
       ),
       placeholderBuilder: (_) => CustomIcon(
         Icons.image,
-        color: colors.primary,
+        color: colors.white,
         size: (size ?? 0) / 2,
       ),
     );

@@ -146,28 +146,26 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
   Widget connectionTick = Lottie.asset(animations.pulseDot, width: 32);
 
   Widget userList(List<UserModel> users) {
-    return Flexible(
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            WaitingListWidget(
-              title: 'Esperando al organizador . . .',
-              text: '¡Paciencia, el quiz comenzará pronto!',
-            ),
-            ParticipantsWidget(users.length),
-            Flexible(
-              child: Scrollbar(
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
-                  ),
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          WaitingListWidget(
+            title: 'Esperando al organizador . . .',
+            text: '¡Paciencia, el quiz comenzará pronto!',
+          ),
+          ParticipantsWidget(users.length),
+          Flexible(
+            child: Scrollbar(
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -202,7 +200,8 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
   }
 
   _onExit() {
-    ref.read(roomController.notifier).userLeave(user, roomCode);
+    ref.read(roomController.notifier).emitMsg('/app/lobby.leave/$roomCode', user);
+    ref.read(roomController.notifier).clearState();
     context.pop();
   }
 
