@@ -101,8 +101,8 @@ class RoomController extends StateNotifier<RoomState> {
   }
 
   ///
-  void emitMsg(String channel, UserModel user) {
-    wsService.emit(channel: channel, data: user.toMap());
+  void emitMsg(String channel, Map<String, dynamic> data) {
+    wsService.emit(channel: channel, data: data);
   }
 
   ///

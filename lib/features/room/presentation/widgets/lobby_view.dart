@@ -200,8 +200,9 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
   }
 
   _onExit() {
-    ref.read(roomController.notifier).emitMsg('/app/lobby.leave/$roomCode', user);
-    ref.read(roomController.notifier).clearState();
+    final controller = ref.read(roomController.notifier);
+    controller.emitMsg('/app/lobby.leave/$roomCode', user.toMap());
+    controller.clearState();
     context.pop();
   }
 

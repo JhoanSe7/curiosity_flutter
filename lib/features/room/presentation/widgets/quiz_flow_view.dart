@@ -10,6 +10,7 @@ import 'package:curiosity_flutter/features/questionaries/data/models/question_mo
 import 'package:curiosity_flutter/features/questionaries/data/models/question_type.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_state.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/countdown_overlay_timer.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/question_timer.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +76,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(roomController, _forceFinishAndResult);
     var time = question?.timeLimit ?? 0;
     return CustomPageBuilder(
       trailing: timerQuestion(),
@@ -261,6 +263,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
           CustomTextField(
             text: "Escribe la respuesta correcta",
             controller: _answerController,
+            onChange: _saveResponseText,
           ),
         ],
       );
@@ -347,27 +350,25 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
   }
 
   _nextQuestion() {
+    indexQuestion++;
     if (indexQuestion < (quiz?.questions?.length ?? 0)) {
       setState(() {
-        indexQuestion++;
         question = quiz?.questions?[indexQuestion];
         var data = _clearAnswer(question);
         answers.add(data ?? QuestionModel());
         _loadOptions();
+        _answerController.text = "";
         showCountdown = true;
         starQuiz = false;
       });
     } else {
-      print("fin del quiz");
-      // _sendAnswers();
+      _sendAnswers();
     }
   }
 
   _sendAnswers() {
-    var user = ref.read(homeController).user ?? UserModel();
-    var roomCode = ref.read(roomController).roomCode;
-    ref.read(roomController.notifier).emitMsg('/app/quiz.submit/$roomCode', user);
-    context.go(Routes.home);
+    ref.read(roomController.notifier).emitMsg('/app/quiz.submit', _result());
+    context.pushReplacement(Routes.finishQuiz);
   }
 
   _launchQuiz() {
@@ -382,7 +383,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: CustomButton(
         onTap: _nextQuestion,
-        text: quiz?.questions?.length == indexQuestion + 1 ? "Siguiente" : "Finalizar",
+        text: (quiz?.questions?.length ?? 0) > (indexQuestion + 1) ? "Siguiente" : "Finalizar",
         isGradient: true,
         gradientColor: colors.gradientPrimary,
         height: 18,
@@ -423,11 +424,27 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
   }
 
   _onExit() {
-    var user = ref.read(homeController).user ?? UserModel();
-    var roomCode = ref.read(roomController).roomCode;
-    ref.read(roomController.notifier).emitMsg('/app/quiz.abandon/$roomCode', user);
+    ref.read(roomController.notifier).emitMsg('/app/quiz.abandon', _result());
     ref.read(roomController.notifier).clearState();
     context.pop();
     context.go(Routes.home);
+  }
+
+  Map<String, dynamic> _result() {
+    var user = ref.read(homeController).user ?? UserModel();
+    var roomCode = ref.read(roomController).roomCode;
+    return {
+      "roomCode": roomCode,
+      "quizId": quiz?.id,
+      "user": user.toMap(),
+      "answers": answers.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  _forceFinishAndResult(RoomState? previous, RoomState next) {
+    if (previous?.forceFinish != true && next.forceFinish) {
+      ref.read(roomController.notifier).emitMsg('/app/quiz.submit', _result());
+      context.pushReplacement(Routes.finishQuiz);
+    }
   }
 }

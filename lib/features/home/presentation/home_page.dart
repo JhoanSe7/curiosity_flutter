@@ -11,6 +11,7 @@ import 'home_controller.dart';
 import 'widgets/bottom_bar_widget.dart';
 import 'widgets/profile_view.dart';
 import 'widgets/quizzes_view.dart';
+import 'widgets/results_view.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -36,7 +37,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget optionMenu(HomeId id, List<QuizModel> quizzes) => switch (id) {
         HomeId.init => DashboardView(),
         HomeId.quizzes => QuizzesView(quizzes: [], toHome: true),
-        HomeId.achievement => SizedBox.shrink(),
+        HomeId.achievement => ResultsView(),
         HomeId.profile => ProfileView(),
       };
 

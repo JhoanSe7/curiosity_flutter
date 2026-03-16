@@ -12,7 +12,7 @@ class BottomBarWidget extends ConsumerWidget {
   final List<ActionsMenu> actions = [
     ActionsMenu(HomeId.init, "Inicio", Icons.home_outlined),
     ActionsMenu(HomeId.quizzes, "Quizzes", Icons.menu_book),
-    ActionsMenu(HomeId.achievement, "Logros", Icons.emoji_events_outlined),
+    ActionsMenu(HomeId.achievement, "Resultados", Icons.emoji_events_outlined),
     ActionsMenu(HomeId.profile, "Perfil", Icons.person_outline),
   ];
 

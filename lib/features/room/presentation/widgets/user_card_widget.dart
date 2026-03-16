@@ -84,15 +84,16 @@ class UserCardWidget extends StatelessWidget {
   }
 
   Widget userStatus() {
+    var color = _getColorStatus(user.quizStatus ?? "");
     return Container(
       padding: EdgeInsets.symmetric(vertical: 2, horizontal: 4),
       decoration: BoxDecoration(
-        color: colors.green.withValues(alpha: .2),
+        color: color.withValues(alpha: .2),
         borderRadius: BorderRadius.circular(16),
       ),
       child: CustomText(
         _getUserStatus(user.quizStatus ?? ""),
-        color: colors.green,
+        color: color,
         fontWeight: FontWeight.w600,
         fontSize: 12,
       ),
@@ -106,5 +107,14 @@ class UserCardWidget extends StatelessWidget {
       "ABANDONED": "Abandonado",
     };
     return data[status] ?? "";
+  }
+
+  Color _getColorStatus(String status) {
+    var data = {
+      "IN_PROGRESS": colors.blue,
+      "FINISHED": colors.green,
+      "ABANDONED": colors.red,
+    };
+    return data[status] ?? colors.orange;
   }
 }

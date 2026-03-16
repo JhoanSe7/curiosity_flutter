@@ -11,6 +11,7 @@ class RoomState {
   final String roomCode;
   final String quizId;
   final QuizModel? quiz;
+  final bool forceFinish;
 
   RoomState({
     this.isConnecting = false,
@@ -22,6 +23,7 @@ class RoomState {
     this.roomCode = "",
     this.quizId = "",
     this.quiz,
+    this.forceFinish = false,
   });
 
   RoomState copyWith({
@@ -34,6 +36,7 @@ class RoomState {
     String? roomCode,
     String? quizId,
     QuizModel? quiz,
+    bool? forceFinish,
   }) =>
       RoomState(
         isConnecting: isConnecting ?? this.isConnecting,
@@ -45,5 +48,6 @@ class RoomState {
         roomCode: roomCode ?? this.roomCode,
         quizId: quizId ?? this.quizId,
         quiz: quiz ?? this.quiz,
+        forceFinish: forceFinish ?? this.forceFinish,
       );
 }

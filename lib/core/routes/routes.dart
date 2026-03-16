@@ -12,6 +12,7 @@ import 'package:curiosity_flutter/features/questionaries/presentation/widgets/cr
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/generate_quiz_view.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_list_view.dart';
 import 'package:curiosity_flutter/features/room/presentation/room_page.dart';
+import 'package:curiosity_flutter/features/room/presentation/widgets/finish_quiz.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/join_room_view.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/lobby_view.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/quiz_flow_view.dart';
@@ -38,6 +39,7 @@ class Routes {
   static String about = "/about";
   static String notifications = "/notifications";
   static String joinRoom = "/join-room";
+  static String finishQuiz = "/finish-quiz";
 }
 
 final router = GoRouter(
@@ -110,6 +112,10 @@ final router = GoRouter(
     GoRoute(
       path: Routes.joinRoom,
       builder: (context, state) => const JoinRoomView(),
+    ),
+    GoRoute(
+      path: Routes.finishQuiz,
+      builder: (context, state) => const FinishQuiz(),
     ),
   ],
 );
