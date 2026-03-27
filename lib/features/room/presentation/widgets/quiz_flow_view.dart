@@ -35,6 +35,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
   int timeReady = 3;
   bool showCountdown = true;
   bool starQuiz = false;
+  int bonus = 0;
 
   List<QuestionModel> answers = [];
 
@@ -44,11 +45,14 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     Future.microtask(_loadData);
   }
 
-  _loadData() {
+  void _loadData() {
+    ref.read(roomController.notifier).setWaiting(true);
     quiz = ref.read(roomController).quiz;
     var questions = quiz?.questions ?? [];
     if (questions.isEmpty) return;
     setState(() {
+      questions.shuffle();
+      quiz?.questions = questions;
       question = questions.first;
       var data = _clearAnswer(question);
       answers.add(data ?? QuestionModel());
@@ -65,7 +69,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     return answer;
   }
 
-  _loadOptions() {
+  void _loadOptions() {
     if ((question?.options ?? []).isNotEmpty) {
       var opt = question?.options ?? [];
       options = opt.asMap().entries.map((e) => OptionModel(code: e.key, text: e.value.text, id: e.value.id)).toList();
@@ -79,6 +83,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     ref.listen(roomController, _forceFinishAndResult);
     var time = question?.timeLimit ?? 0;
     return CustomPageBuilder(
+      enablePadding: false,
       trailing: timerQuestion(),
       centerTitle: true,
       leading: Container(
@@ -105,13 +110,14 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
               color: colors.white,
             ),
             height.m,
-            if (time > 0 && starQuiz)
+            if (time > 0 && starQuiz) ...[
               QuestionTimer(
                 indexQuestion: indexQuestion,
                 timeLimit: time,
                 onTimeFinished: _nextQuestion,
               ),
-            height.l,
+              height.l,
+            ],
           ],
         ),
       ),
@@ -216,8 +222,8 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
         return binaryQuestion();
       case QuestionType.FILL_IN_THE_BLANK:
         return completeQuestion();
-      case QuestionType.OPEN_ANSWER:
-        return openQuestion();
+      // case QuestionType.OPEN_ANSWER:
+      //   return openQuestion();
     }
   }
 
@@ -314,23 +320,23 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
         ],
       );
 
-  _saveResponseText(String text) {
+  void _saveResponseText(String text) {
     answers[indexQuestion].correctAnswerText = text;
   }
 
-  _checkTap(OptionModel o) {
+  void _checkTap(OptionModel o) {
     if (mounted) {
       setState(() {
         for (int i = 0; i < options.length; i++) {
           var option = options[i];
           option.isCorrect = o.code == i ? !option.isCorrect : false;
-          answers[indexQuestion].options?[i].isCorrect = o.code == i ? !option.isCorrect : false;
+          answers[indexQuestion].options?[i].isCorrect = option.isCorrect;
         }
       });
     }
   }
 
-  _checkAdd(OptionModel e) {
+  void _checkAdd(OptionModel e) {
     var option = options[e.code];
     if (mounted) {
       setState(() {
@@ -340,7 +346,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     }
   }
 
-  _binaryTap(bool value) {
+  void _binaryTap(bool value) {
     if (mounted) {
       setState(() {
         binarySelected = value;
@@ -349,7 +355,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     }
   }
 
-  _nextQuestion() {
+  void _nextQuestion() {
     indexQuestion++;
     if (indexQuestion < (quiz?.questions?.length ?? 0)) {
       setState(() {
@@ -358,6 +364,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
         answers.add(data ?? QuestionModel());
         _loadOptions();
         _answerController.text = "";
+        binarySelected = null;
         showCountdown = true;
         starQuiz = false;
       });
@@ -366,12 +373,13 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     }
   }
 
-  _sendAnswers() {
-    ref.read(roomController.notifier).emitMsg('/app/quiz.submit', _result());
+  void _sendAnswers() {
+    final controller = ref.read(roomController.notifier);
+    controller.emitMsg('/app/quiz.submit', _result());
     context.pushReplacement(Routes.finishQuiz);
   }
 
-  _launchQuiz() {
+  void _launchQuiz() {
     setState(() {
       showCountdown = false;
       starQuiz = true;
@@ -392,7 +400,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     );
   }
 
-  _leaveQuiz() async {
+  Future<void> _leaveQuiz() async {
     await context.showModal(
       title: "¿Estas seguro de que quieres abandonar el quiz?",
       content: "Se marcara el quiz como completado y se enviaran las preguntas aun no contestadas.",
@@ -423,9 +431,10 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
     );
   }
 
-  _onExit() {
-    ref.read(roomController.notifier).emitMsg('/app/quiz.abandon', _result());
-    ref.read(roomController.notifier).clearState();
+  void _onExit() {
+    final controller = ref.read(roomController.notifier);
+    controller.emitMsg('/app/quiz.abandon', _result());
+    controller.clearState();
     context.pop();
     context.go(Routes.home);
   }
@@ -438,12 +447,15 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
       "quizId": quiz?.id,
       "user": user.toMap(),
       "answers": answers.map((e) => e.toJson()).toList(),
+      "bonus": bonus,
     };
   }
 
-  _forceFinishAndResult(RoomState? previous, RoomState next) {
+  void _forceFinishAndResult(RoomState? previous, RoomState next) {
     if (previous?.forceFinish != true && next.forceFinish) {
-      ref.read(roomController.notifier).emitMsg('/app/quiz.submit', _result());
+      final controller = ref.read(roomController.notifier);
+      controller.emitMsg('/app/quiz.submit', _result());
+      controller.setWaiting(false);
       context.pushReplacement(Routes.finishQuiz);
     }
   }

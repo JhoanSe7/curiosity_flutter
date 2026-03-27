@@ -5,5 +5,7 @@ enum EventType {
   close,
   error,
   userUpdate,
+  forceFinish,
+  quizResult,
   unknown,
 }

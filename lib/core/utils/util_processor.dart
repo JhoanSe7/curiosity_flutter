@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 dynamic processError(BuildContext context, {required String error}) {
   context.showToast(text: error, type: MessageType.error);
-  print(error);
+  log.warning(error);
 }
 
 Future<Either<CommonError, T>> execute<T>(BuildContext context, Future<Either<CommonError, T>> useCase) async {

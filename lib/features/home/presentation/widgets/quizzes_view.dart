@@ -79,7 +79,7 @@ class _QuizzesViewState extends ConsumerState<QuizzesView> {
     );
   }
 
-  _setSelection(int i) {
+  void _setSelection(int i) {
     setState(() {
       selection = i;
     });

@@ -7,9 +7,11 @@ class UserModel {
   String? email;
   String? phoneNumber;
   String? password;
+  String? tokenPush;
   List<String>? createdQuizzes;
 
   String? quizStatus;
+  double? score;
 
   UserModel({
     this.id,
@@ -22,6 +24,8 @@ class UserModel {
     this.password,
     this.createdQuizzes,
     this.quizStatus,
+    this.tokenPush,
+    this.score,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +41,8 @@ class UserModel {
       password: json["password"],
       createdQuizzes: List<String>.from(questions.map((x) => x)),
       quizStatus: json["quizStatus"],
+      tokenPush: json["tokenPush"],
+      score: json["score"],
     );
   }
 
@@ -92,7 +98,7 @@ class UserModel {
   }
 
   Map<String, dynamic> toMap() => {
-        'userId': id,
+        'id': id,
         'firstName': firstName,
         'secondName': secondName,
         'lastName': lastName,
@@ -100,6 +106,7 @@ class UserModel {
         'email': email,
         'phoneNumber': phoneNumber,
         'quizStatus': quizStatus,
+        'tokenPush': tokenPush,
       };
 }
 

@@ -61,6 +61,10 @@ class SystemColors {
 
   final warning = const Color(0xFF856404);
   final backgroundWarning = const Color(0xFFFFF3CD);
+
+  final scoreGold = const Color(0xFFDAA520);
+  final scoreSilver = const Color(0xFFC0C0C0);
+  final scoreBronze = const Color(0xFFCD7F32);
 }
 
 SystemColors colors = lightColors;

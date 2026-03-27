@@ -31,13 +31,14 @@ class _HomePageState extends ConsumerState<HomePage> {
       customTitle: titleWidget(state.user?.firstName ?? ""),
       body: optionMenu(state.menuId, state.quizzes),
       bottomBar: BottomBarWidget(state.menuId),
+      enablePadding: false,
     );
   }
 
   Widget optionMenu(HomeId id, List<QuizModel> quizzes) => switch (id) {
         HomeId.init => DashboardView(),
         HomeId.quizzes => QuizzesView(quizzes: [], toHome: true),
-        HomeId.achievement => ResultsView(),
+        HomeId.scores => ResultsView(),
         HomeId.profile => ProfileView(),
       };
 

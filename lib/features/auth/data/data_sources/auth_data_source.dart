@@ -9,6 +9,8 @@ abstract class AuthDataSource {
   Future<HttpResponseModel> signIn({required SignInModel data});
 
   Future<HttpResponseModel> signUp({required UserModel data});
+
+  Future<HttpResponseModel> updateToken({required String userId, required String tokenPush});
 }
 
 @Injectable(as: AuthDataSource)
@@ -30,6 +32,17 @@ class AuthDataSourceImpl extends AuthDataSource {
     return await clientHttp.post(
       endpoint: "${Config.apiUrl}users",
       body: data.toJson(),
+    );
+  }
+
+  @override
+  Future<HttpResponseModel> updateToken({required String userId, required String tokenPush}) async {
+    return await clientHttp.post(
+      endpoint: "${Config.apiUrl}users/updateToken",
+      body: {
+        "userId": userId,
+        "tokenPush": tokenPush,
+      },
     );
   }
 }

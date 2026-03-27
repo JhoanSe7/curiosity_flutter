@@ -5,7 +5,6 @@ import 'package:curiosity_flutter/features/auth/data/models/response/user_model.
 import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_controller.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/bottom_bar_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -29,6 +28,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   Widget build(BuildContext context) {
     return CustomPageBuilder(
       enableAppbar: false,
+      enablePadding: false,
       body: Column(
         children: [
           CustomHeader(
@@ -134,12 +134,15 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 ),
                 height.l,
                 CustomGestureDetector(
-                  onTap: () {},
-                  child: CustomText(
-                    "¿Olvidaste tu contraseña? 🤔",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: colors.aquamarine,
+                  onTap: _recovery,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    child: CustomText(
+                      "¿Olvidaste tu contraseña? 🤔",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: colors.aquamarine,
+                    ),
                   ),
                 ),
                 height.xl,
@@ -168,11 +171,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 height.l,
                 CustomGestureDetector(
                   onTap: _goToRegister,
-                  child: CustomText(
-                    "¡Únete gratis y aprende!",
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: colors.aquamarine,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    child: CustomText(
+                      "¡Únete gratis y aprende!",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: colors.aquamarine,
+                    ),
                   ),
                 ),
               ],
@@ -184,7 +190,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   }
 
   //Functions
-  _userLogin() async {
+  Future<void> _userLogin() async {
     final valid = _validateData();
     if (valid) await _handleLogin();
   }
@@ -206,23 +212,46 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     return error1.isEmpty && error2.isEmpty;
   }
 
-  _handleLogin() async {
+  Future<void> _handleLogin() async {
     final controller = ref.read(signInController.notifier);
-    final login = await controller.logIn(context, _userController.text, _passController.text);
-    if (login != null && (login.id ?? "").isNotEmpty) {
-      ref.read(homeController.notifier).setUser(data: login);
-      if (kDebugMode) await _saveData(login);
+    UserModel? user = await controller.logIn(context, _userController.text, _passController.text);
+    final pref = await SharedPreferences.getInstance();
+    if (user != null && (user.id ?? "").isNotEmpty) {
+      var localToken = pref.getString("tokenFCM") ?? "";
+      user = await _validateTokenPush(user, localToken);
+      final dashController = ref.read(homeController.notifier);
+      dashController.setUser(data: user);
+      dashController.setMenuIndex(HomeId.init);
       if (mounted) context.go(Routes.home);
     }
   }
 
-  _goToRegister() {
+  Future<UserModel> _validateTokenPush(UserModel user, String localToken) async {
+    final controller = ref.read(signInController.notifier);
+    if (localToken.isNotEmpty && localToken != user.tokenPush) {
+      return await controller.updateToken(context, userId: user.id ?? "", tokenPush: localToken);
+    } else {
+      return user;
+    }
+  }
+
+  void _goToRegister() {
     ref.read(homeController.notifier).setMenuIndex(HomeId.init);
     context.push(Routes.signUp);
   }
 
-  _saveData(UserModel user) async {
-    final pref = await SharedPreferences.getInstance();
-    pref.setStringList("user", user.toList());
+  void _recovery() {
+    if (_userController.text.isEmpty) {
+      setState(() {
+        error1 = "Se requiere un correo electronico para recuperar la contraseña";
+      });
+      return;
+    }
+    context.showModal(
+      title: "¿Olvidaste tu contraseña?",
+      content: "Para recuperar tu contraseña, "
+          "enviamos al correo electronico (${_userController.text}) "
+          "los pasos para restablecer tu contraseña.",
+    );
   }
 }

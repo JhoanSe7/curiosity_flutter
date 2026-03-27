@@ -15,13 +15,13 @@ extension HttpExtension on Response {
     }
   }
 
-  void inspect(data) {
+  void inspect(dynamic data) {
     final log = Logger('HttpExtension->inspect');
-    print('---=== START API ===---');
+    log.info('---=== START API ===---');
     log.info('Request: ${request?.method} ${request?.url}');
     log.info('Status: $statusCode');
     log.info('Body: $data');
     log.info('Response: ${utf8.decode(bodyBytes)}');
-    print('---=== END API ===---');
+    log.info('---=== END API ===---');
   }
 }

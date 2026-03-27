@@ -6,7 +6,6 @@ import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
 import 'package:curiosity_flutter/core/utils/util_page.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/generate_quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_data_type.dart';
-import 'package:curiosity_flutter/features/questionaries/data/models/question_type.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,9 +38,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
 
   List<QuestionDataType> get element {
     var element = Config.questionsType;
-    var list = List<QuestionDataType>.from(element);
-    list.removeWhere((e) => e.type == QuestionType.OPEN_ANSWER);
-    return list;
+    return List<QuestionDataType>.from(element);
   }
 
   @override
@@ -50,17 +47,14 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
       scrollController: scrollController,
       customTitle: titleWidget,
       appbarColor: colors.gradientPurple,
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            infoQuestionary(),
-            height.l,
-            settingsQuestionary(),
-            height.l,
-            typeQuestionary(),
-          ],
-        ),
+      body: Column(
+        children: [
+          infoQuestionary(),
+          height.l,
+          settingsQuestionary(),
+          height.l,
+          typeQuestionary(),
+        ],
       ),
       bottomBar: generateButton(),
     );
@@ -243,7 +237,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     );
   }
 
-  _actionCount(ActionCount action, bool opt) async {
+  Future<void> _actionCount(ActionCount action, bool opt) async {
     switch (action) {
       case ActionCount.questions:
         if (sumQuestions > 0) {
@@ -264,7 +258,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     }
   }
 
-  _changeCountQuestion(bool opt) {
+  void _changeCountQuestion(bool opt) {
     if (mounted) {
       setState(() {
         if (opt && questionCount < questionLimit) {
@@ -276,7 +270,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     }
   }
 
-  _changeCountTime(bool opt) {
+  void _changeCountTime(bool opt) {
     if (mounted) {
       setState(() {
         if (opt && timeCount < timeLimit) {
@@ -346,7 +340,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     );
   }
 
-  _selectLanguage(bool value) {
+  void _selectLanguage(bool value) {
     setState(() {
       spanish = value;
     });
@@ -484,7 +478,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     );
   }
 
-  _action(bool opt, int i) {
+  void _action(bool opt, int i) {
     if (mounted) {
       setState(() {
         if (opt && summary[i] < (questionCount)) {
@@ -551,7 +545,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     );
   }
 
-  _onTapGenerate() async {
+  Future<void> _onTapGenerate() async {
     bool invalid = _inValidForm();
     if (invalid) return;
     _setError(clear: true);
@@ -593,7 +587,7 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
     return false;
   }
 
-  _setError({bool clear = false}) {
+  void _setError({bool clear = false}) {
     if (mounted) {
       setState(() {
         topicError = clear ? "" : "Escribe un tema para el cuestionario";

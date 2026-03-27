@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -23,6 +24,7 @@ class CustomPageBuilder extends StatelessWidget {
   final bool enableLeading;
   final Color? bgColor;
   final Widget? overlay;
+  final bool enablePadding;
 
   const CustomPageBuilder({
     super.key,
@@ -45,6 +47,7 @@ class CustomPageBuilder extends StatelessWidget {
     this.enableLeading = true,
     this.bgColor,
     this.overlay,
+    this.enablePadding = true,
   });
 
   @override
@@ -70,21 +73,24 @@ class CustomPageBuilder extends StatelessWidget {
                     child: secondAppbar,
                   ),
                 Expanded(
-                  child: enableScrollable
-                      ? enableScrollBar
-                          ? Scrollbar(
-                              thumbVisibility: true,
-                              thickness: 10,
-                              child: SingleChildScrollView(
+                  child: Padding(
+                    padding: enablePadding ? EdgeInsets.all(context.scale(16) ?? 16) : EdgeInsets.zero,
+                    child: enableScrollable
+                        ? enableScrollBar
+                            ? Scrollbar(
+                                thumbVisibility: true,
+                                thickness: 10,
+                                child: SingleChildScrollView(
+                                  controller: scrollController,
+                                  child: body,
+                                ),
+                              )
+                            : SingleChildScrollView(
                                 controller: scrollController,
                                 child: body,
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              controller: scrollController,
-                              child: body,
-                            )
-                      : body,
+                              )
+                        : body,
+                  ),
                 ),
                 Skeletonizer(
                   enabled: loadingPage,

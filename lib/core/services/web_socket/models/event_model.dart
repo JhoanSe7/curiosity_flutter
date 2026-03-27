@@ -1,20 +1,22 @@
 import 'package:curiosity_flutter/core/utils/extensions/text_extension.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/room/data/models/quiz_result_model.dart';
 
 import 'event_type.dart';
 
 class EventModel {
-  final EventType event;
-  final String roomCode;
-  final String quizId;
-  final String quizTitle;
-  final String hostId;
-  final String hostName;
-  final int playerCount;
-  final List<UserModel> user;
-  final UserModel? userTrigger;
-  final String message;
-  final String timestamp;
+  EventType event;
+  String roomCode;
+  String quizId;
+  String quizTitle;
+  String hostId;
+  String hostName;
+  int playerCount;
+  List<UserModel> user;
+  UserModel? userTrigger;
+  String message;
+  String timestamp;
+  QuizResultModel? results;
 
   EventModel({
     required this.event,
@@ -28,6 +30,7 @@ class EventModel {
     this.userTrigger,
     required this.message,
     required this.timestamp,
+    this.results,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +47,7 @@ class EventModel {
       userTrigger: json['triggerPlayer'] != null ? UserModel.fromJson(json['triggerPlayer']) : null,
       message: json['message'] ?? '',
       timestamp: json['timestamp'] ?? '',
+      results: json['results'] != null ? QuizResultModel.fromJson(json['results']) : null,
     );
   }
 }

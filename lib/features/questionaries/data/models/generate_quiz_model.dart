@@ -28,4 +28,8 @@ class GenerateQuizModel {
         "timePerQuestion": timePerQuestion,
         "questionDistribution": questionDistribution,
       };
+
+  Map<String, dynamic> toIA() => {
+        "quiz": toJson(),
+      };
 }

@@ -14,36 +14,36 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   Widget build(BuildContext context) {
     return CustomPageBuilder(
       title: "Notificaciones",
-      body: Padding(
-        padding: EdgeInsets.all(32),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: colors.inactiveButton.withValues(alpha: .3),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: CustomIcon(
-                Icons.notifications_off_outlined,
-                size: 40,
-                color: colors.iconPlaceholder,
-              ),
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.inactiveButton.withValues(alpha: .3),
+              borderRadius: BorderRadius.circular(16),
             ),
-            height.xl,
-            CustomText(
-              "Sin notificaciones nuevas",
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+            child: CustomIcon(
+              Icons.notifications_off_outlined,
+              size: 40,
+              color: colors.iconPlaceholder,
             ),
-            height.m,
-            CustomText(
+          ),
+          height.xl,
+          CustomText(
+            "Sin notificaciones nuevas",
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+          height.m,
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: CustomText(
               "Cuando no tengas actividad pendiente, esta zona mostrará este estado vacio para indicarlo claramente",
               fontSize: 14,
               color: colors.paragraph,
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }

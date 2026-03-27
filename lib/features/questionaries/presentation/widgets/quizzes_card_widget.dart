@@ -1,9 +1,9 @@
 import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
-import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/options.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_data_type.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/room_model.dart';
@@ -177,7 +177,7 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
     );
   }
 
-  _onSelected(QuizModel q, Option value) async {
+  Future<void> _onSelected(QuizModel q, Option value) async {
     switch (value) {
       case Option.edit:
         ref.read(questionaryController.notifier).setQuiz(q);
@@ -186,6 +186,7 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
       case Option.delete:
         var user = ref.read(homeController).user;
         await ref.read(questionaryController.notifier).deleteQuiz(context, quizId: q.id ?? "", userId: user?.id ?? "");
+        ref.read(homeController.notifier).deleteQuiz(q);
         if (mounted) context.showToast(text: "Quiz eliminado con éxito");
         break;
     }
@@ -225,7 +226,7 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
     );
   }
 
-  _startQuiz() async {
+  Future<void> _startQuiz() async {
     var user = ref.read(homeController).user;
     var data = RoomModel(
       quizId: widget.quiz.id,
@@ -287,9 +288,4 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
       ),
     );
   }
-}
-
-enum Option {
-  edit,
-  delete,
 }

@@ -27,6 +27,7 @@ class LobbyView extends ConsumerStatefulWidget {
 class _LobbyViewState extends ConsumerState<LobbyView> {
   late UserModel user;
   String roomCode = "";
+  String identifier = "";
 
   @override
   void initState() {
@@ -34,13 +35,14 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
     Future.microtask(_loadData);
   }
 
-  _loadData() {
+  void _loadData() {
     user = ref.read(homeController).user ?? UserModel();
+    identifier = user.email ?? "";
     roomCode = ref.read(roomController).roomCode;
     ref.read(roomController.notifier).connect(user, roomCode);
   }
 
-  List<UserModel> get userFakeList => List.generate(
+  List<UserModel> get fakeUsers => List.generate(
         4,
         (i) => UserModel(
           id: 'fake_$i',
@@ -111,7 +113,7 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
           ? errorView(state.errorMessage)
           : Skeletonizer(
               enabled: state.isConnecting,
-              child: userList(state.isConnecting ? userFakeList : state.users),
+              child: userList(state.isConnecting ? fakeUsers : state.users),
             ),
       bottomBar: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
@@ -146,27 +148,25 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
   Widget connectionTick = Lottie.asset(animations.pulseDot, width: 32);
 
   Widget userList(List<UserModel> users) {
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: Column(
-        children: [
-          WaitingListWidget(
-            title: 'Esperando al organizador . . .',
-            text: '¡Paciencia, el quiz comenzará pronto!',
-          ),
-          ParticipantsWidget(users.length),
-          Flexible(
-            child: Scrollbar(
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
-                ),
+    return Column(
+      children: [
+        WaitingListWidget(
+          title: 'Esperando al organizador . . .',
+          text: '¡Paciencia, el quiz comenzará pronto!',
+        ),
+        ParticipantsWidget(users.length),
+        Flexible(
+          child: Scrollbar(
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              child: Column(
+                children:
+                    users.asMap().entries.map((e) => UserCardWidget(e.key, e.value, identifier: identifier)).toList(),
               ),
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 
@@ -199,14 +199,14 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
     );
   }
 
-  _onExit() {
+  void _onExit() {
     final controller = ref.read(roomController.notifier);
     controller.emitMsg('/app/lobby.leave/$roomCode', user.toMap());
     controller.clearState();
     context.pop();
   }
 
-  _getQuizAndStart(RoomState? previous, RoomState next) async {
+  Future<void> _getQuizAndStart(RoomState? previous, RoomState next) async {
     if (previous?.quizStarted != true && next.quizStarted) {
       await ref.read(roomController.notifier).loadQuiz(context, quizId: next.quizId);
       if (mounted) context.pushReplacement(Routes.quizFlow);

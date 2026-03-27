@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/design/templates/qr_preview.dart';
+import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
@@ -39,7 +40,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     Future.microtask(_loadData);
   }
 
-  _loadData() {
+  void _loadData() {
     user = ref.read(homeController).user ?? UserModel();
     roomCode = ref.read(roomController).roomCode;
     ref.read(roomController.notifier).connect(user, roomCode, isOwner: true);
@@ -53,39 +54,49 @@ class _RoomPageState extends ConsumerState<RoomPage> {
       title: quiz?.title ?? "",
       appbarColor: colors.gradientBlue,
       enableScrollable: false,
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            if (!started) ...[
-              CustomButton(
-                height: 16,
-                large: true,
-                text: "Invitar participantes",
-                isGradient: true,
-                gradientColor: colors.gradientBlue,
-                onTap: () => _inviteBottomSheet(state.roomCode),
-              ),
-              height.l,
-              WaitingListWidget(
-                title: 'Esperando participantes . . .',
-                text: 'Inicia el quiz cuando todos los participantes estén listos',
-              ),
-            ],
-            if (state.users.isEmpty) ParticipantsWidget(state.users.length),
+      centerTitle: true,
+      leading: Container(
+        decoration: BoxDecoration(
+          color: colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: CustomCircularButton(
+          icon: Icons.close,
+          onTap: _closeRoom,
+          color: colors.red,
+        ),
+      ),
+      enableLeading: !started,
+      body: Column(
+        children: [
+          if (!started) ...[
+            CustomButton(
+              height: 16,
+              large: true,
+              text: "Invitar participantes",
+              isGradient: true,
+              gradientColor: colors.gradientBlue,
+              onTap: () => _inviteBottomSheet(state.roomCode),
+            ),
             height.l,
-            Flexible(
-              child: Scrollbar(
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: state.users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
-                  ),
+            WaitingListWidget(
+              title: 'Esperando participantes . . .',
+              text: 'Inicia el quiz cuando todos los participantes estén listos',
+            ),
+          ],
+          if (state.users.isEmpty) ParticipantsWidget(state.users.length),
+          height.l,
+          Flexible(
+            child: Scrollbar(
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: state.users.asMap().entries.map((e) => UserCardWidget(e.key, e.value)).toList(),
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
       bottomBar: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
@@ -100,7 +111,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     );
   }
 
-  _inviteBottomSheet(String roomCode) async {
+  Future<void> _inviteBottomSheet(String roomCode) async {
     await context.showBottomSheetModal(
       title: "Invitar participantes",
       child: Column(
@@ -245,7 +256,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     );
   }
 
-  _shareRoom(String roomCode) async {
+  Future<void> _shareRoom(String roomCode) async {
     var file = await qrImageFile;
     var params = ShareParams(
       text: '¡Únete a mi quiz en Curiosity!\nUsa el código: $roomCode',
@@ -282,7 +293,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     );
   }
 
-  _copyRoom(String roomCode) async {
+  Future<void> _copyRoom(String roomCode) async {
     await Clipboard.setData(ClipboardData(text: roomCode));
     if (mounted) {
       context.pop();
@@ -290,7 +301,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     }
   }
 
-  _initializeQuiz() async {
+  Future<void> _initializeQuiz() async {
     var state = ref.read(roomController);
     if (state.users.isEmpty) {
       context.showToast(text: "No hay participantes en la sala", type: MessageType.warning);
@@ -302,9 +313,22 @@ class _RoomPageState extends ConsumerState<RoomPage> {
     });
   }
 
-  _finishQuiz() async {
-    ref.read(roomController.notifier).finishQuiz(context, roomCode: roomCode, userId: user.id ?? "");
-    await context.showModal(title: "Información", content: "El ha sido terminado para todos los participantes");
-    if (mounted) context.pop();
+  Future<void> _finishQuiz() async {
+    final res = await context.showModal(
+      title: "Información",
+      content: "El quiz sera finalizado para todos los participantes",
+    );
+    if (res && mounted) {
+      await ref.read(roomController.notifier).finishQuiz(context, roomCode: roomCode, userId: user.id ?? "");
+    }
+    if (mounted) context.pushReplacement(Routes.scoredBoard);
+  }
+
+  void _closeRoom() {
+    final controller = ref.read(roomController.notifier);
+    var roomCode = ref.read(roomController).roomCode;
+    controller.emitMsg('/app/lobby.leave/$roomCode/host', {});
+    controller.clearState();
+    context.pop();
   }
 }

@@ -27,7 +27,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     Future.microtask(_loadData);
   }
 
-  _loadData() async {
+  Future<void> _loadData() async {
     await ref.read(homeController.notifier).loadQuizzes(context);
     ref.read(homeController.notifier).setLoading(false);
   }

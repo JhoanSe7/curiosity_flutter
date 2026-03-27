@@ -48,7 +48,18 @@ class HomeController extends StateNotifier<HomeState> {
 
   ///
   void sendReport({required SupportModel data}) {
-    print(data.toJson());
+    //TODO: Implementar envio de reporte
+  }
+
+  ///
+  void addQuiz(QuizModel quiz) {
+    if (mounted) state = state.copyWith(quizzes: [...state.quizzes, quiz]);
+  }
+
+  ///
+  void deleteQuiz(QuizModel q) {
+    state.quizzes.removeWhere((e) => e.id == q.id);
+    if (mounted) state = state.copyWith(quizzes: state.quizzes);
   }
 }
 

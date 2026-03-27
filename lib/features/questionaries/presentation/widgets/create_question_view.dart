@@ -39,14 +39,14 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     Future.microtask(_loadData);
   }
 
-  _loadData() {
+  void _loadData() {
     _setQuestion();
     if (options.isEmpty) options = List.generate(4, (i) => OptionModel(code: i, isCorrect: false));
     optionControllers = List.generate(4, (i) => TextEditingController(text: options[i].text));
     if (mounted) setState(() => isLoading = false);
   }
 
-  _setQuestion() {
+  void _setQuestion() {
     var state = ref.read(questionaryController);
     if (state.question != null && state.question?.question != null) {
       _questionController.text = state.question?.question ?? "";
@@ -69,48 +69,46 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     return CustomPageBuilder(
       title: question?.title ?? "Pregunta",
       appbarColor: question?.color,
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              key: _questionKey,
-              child: CustomTextField(
-                label: "Pregunta",
-                controller: _questionController,
-                placeHolder: "Escribe tu pregunta aquí...",
-                maxLines: 5,
-                inputType: TextInputType.multiline,
-                textError: error == 1 ? "Debes escribir una pregunta" : "",
-                onChange: (_) => _setError(0),
-              ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            key: _questionKey,
+            child: CustomTextField(
+              label: "Pregunta",
+              controller: _questionController,
+              placeHolder: "Escribe tu pregunta aquí...",
+              maxLines: 5,
+              inputType: TextInputType.multiline,
+              textError: error == 1 ? "Debes escribir una pregunta" : "",
+              onChange: (_) => _setError(0),
             ),
-            height.xl,
-            if (!isLoading)
-              Container(
-                key: _typeOptionKey,
-                child: questionTypeOption(question?.type ?? QuestionType.OPEN_ANSWER),
-              ),
-            height.xl,
-            if (question?.type != QuestionType.OPEN_ANSWER) ...[
-              explanationField(),
-              height.xl,
-            ],
-            timeOptions(),
-          ],
-        ),
+          ),
+          height.xl,
+          if (!isLoading)
+            Container(
+              key: _typeOptionKey,
+              child: questionTypeOption(question?.type),
+            ),
+          height.xl,
+          // if (question?.type != QuestionType.OPEN_ANSWER) ...[
+          //   explanationField(),
+          //   height.xl,
+          // ],
+          timeOptions(),
+        ],
       ),
       bottomBar: actions(question?.color),
     );
   }
 
-  Widget questionTypeOption(QuestionType q) => switch (q) {
+  Widget questionTypeOption(QuestionType? q) => switch (q) {
         QuestionType.SINGLE_SELECTION => simpleQuestion(),
         QuestionType.MULTIPLE_SELECTION => multipleQuestion(),
         QuestionType.FILL_IN_THE_BLANK => completeQuestion(),
         QuestionType.TRUE_FALSE => binaryQuestion(),
-        QuestionType.OPEN_ANSWER => openQuestion(),
+        // QuestionType.OPEN_ANSWER => openQuestion(),
+        null => SizedBox.shrink(),
       };
 
   Widget actions(List<Color>? color) {
@@ -142,7 +140,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     );
   }
 
-  _saveQuestion() {
+  void _saveQuestion() {
     var empty = _validateButton();
     if (empty) return;
     _setError(0);
@@ -159,7 +157,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     context.pop();
   }
 
-  _validateButton() {
+  bool _validateButton() {
     bool textEmpty = _questionController.text.isEmpty;
     bool questionTypeEmpty = _validQuestion();
     bool timeEmpty = timeSelected == 0;
@@ -176,7 +174,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     return textEmpty || timeEmpty || questionTypeEmpty;
   }
 
-  _setError(int code) {
+  void _setError(int code) {
     if (mounted) {
       setState(() {
         error = code;
@@ -196,8 +194,8 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
         return _answerController.text.isEmpty;
       case QuestionType.TRUE_FALSE:
         return binarySelected == null;
-      case QuestionType.OPEN_ANSWER:
-        return false;
+      // case QuestionType.OPEN_ANSWER:
+      //   return false;
     }
   }
 
@@ -260,7 +258,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     );
   }
 
-  _timeTap(int e) {
+  void _timeTap(int e) {
     if (mounted) {
       setState(() {
         timeSelected = e;
@@ -317,7 +315,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     );
   }
 
-  _checkTap(OptionModel o) {
+  void _checkTap(OptionModel o) {
     if (mounted) {
       setState(() {
         for (int i = 0; i < options.length; i++) {
@@ -342,7 +340,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
         ],
       );
 
-  _checkAdd(OptionModel e) {
+  void _checkAdd(OptionModel e) {
     var option = options[e.code];
     if (mounted) {
       setState(() {
@@ -412,7 +410,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
     );
   }
 
-  _binaryTap(bool value) {
+  void _binaryTap(bool value) {
     if (mounted) {
       setState(() {
         binarySelected = value;

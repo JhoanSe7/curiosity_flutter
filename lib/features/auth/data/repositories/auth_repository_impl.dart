@@ -44,4 +44,20 @@ class AuthRepositoryImpl extends AuthRepository {
       return left(CommonError(message: "Error signUp: $e"));
     }
   }
+
+  @override
+  Future<Either<CommonError, UserModel>> updateToken({required String userId, required String tokenPush}) async {
+    try {
+      final result = await dataSource.updateToken(userId: userId, tokenPush: tokenPush);
+      if (result.success) {
+        return right(UserModel.fromJson(result.body));
+      } else if (!result.success && result.body is Map<String, dynamic>) {
+        final error = ErrorResponseModel.fromJson(result.body);
+        return left(CommonError(message: "${error.message}(${error.errorCode})"));
+      }
+      throw (result.message ?? "No se pudo procesar los datos");
+    } catch (e) {
+      return left(CommonError(message: "Error updateToken: $e"));
+    }
+  }
 }

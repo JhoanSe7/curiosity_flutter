@@ -1,0 +1,4 @@
+enum Option {
+  edit,
+  delete,
+}

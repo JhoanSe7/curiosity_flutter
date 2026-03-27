@@ -34,7 +34,7 @@ class QuestionariesDataSourceImpl extends QuestionariesDataSource {
   Future<HttpResponseModel> generateQuiz({required GenerateQuizModel data}) async {
     return await clientHttp.post(
       endpoint: "${Config.apiUrl}groq/generate-quiz",
-      body: data.toJson(),
+      body: data.toIA(),
     );
   }
 

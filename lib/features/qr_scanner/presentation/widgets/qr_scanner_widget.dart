@@ -67,6 +67,7 @@ class _QrScannerWidgetState extends State<QrScannerWidget> with WidgetsBindingOb
   Widget build(BuildContext context) {
     return CustomPageBuilder(
       enableScrollable: false,
+      enablePadding: false,
       title: widget.title,
       body: Stack(
         fit: StackFit.expand,

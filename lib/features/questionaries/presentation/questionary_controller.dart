@@ -94,9 +94,22 @@ class QuestionaryController extends StateNotifier<QuestionaryState> {
       (data) => data,
     );
   }
+
+  ///
+  void addQuestionToQuiz(QuestionModel question) {
+    addQuestion(question);
+    removeQuestionToQuiz(question);
+  }
+
+  ///
+  void removeQuestionToQuiz(QuestionModel question) {
+    var quiz = state.quiz;
+    if (quiz == null) return;
+    var success = quiz.suggestQuestions?.remove(question);
+    if (success ?? false) state = state.copyWith(quiz: quiz);
+  }
 }
 
-final questionaryController =
-    StateNotifierProvider<QuestionaryController, QuestionaryState>((ref) => QuestionaryController(
-          getIt.get(),
-        ));
+final questionaryController = StateNotifierProvider<QuestionaryController, QuestionaryState>(
+  (ref) => QuestionaryController(getIt.get()),
+);

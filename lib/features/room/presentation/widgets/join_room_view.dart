@@ -23,63 +23,60 @@ class _JoinRoomViewState extends ConsumerState<JoinRoomView> {
     return CustomPageBuilder(
       title: "¡Únete al Quiz!",
       centerTitle: true,
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            CustomText(
-              "Ingresa el código único de tu quiz para comenzar a jugar y aprender con tus amigos",
-              fontSize: 14,
+      body: Column(
+        children: [
+          CustomText(
+            "Ingresa el código único de tu quiz para comenzar a jugar y aprender con tus amigos",
+            fontSize: 14,
+          ),
+          height.l,
+          CustomTextField(
+            placeHolder: 'EJ: ABC123',
+            controller: _codeInput,
+            formatters: InputFilters.alphaNumeric(
+              inputLength: 6,
+              allowSpace: false,
+              uppercase: true,
             ),
-            height.l,
-            CustomTextField(
-              placeHolder: 'EJ: ABC123',
-              controller: _codeInput,
-              formatters: InputFilters.alphaNumeric(
-                inputLength: 6,
-                allowSpace: false,
-                uppercase: true,
-              ),
-              onSubmit: (_) => _onJoinQuiz(),
+            onSubmit: (_) => _onJoinQuiz(),
+          ),
+          height.l,
+          CustomButton(
+            onTap: _onJoinQuiz,
+            height: 16,
+            text: "Unirse",
+            large: true,
+            color: colors.primary,
+          ),
+          height.l,
+          CustomText(
+            "o escanear código",
+            fontSize: 14,
+          ),
+          height.l,
+          CustomButton(
+            onTap: _scanQr,
+            height: 16,
+            color: colors.whiteSmoke,
+            border: Border.all(color: colors.iconPlaceholder),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomIcon(Icons.qr_code_2),
+                width.m,
+                CustomText(
+                  "Escanear código QR",
+                  fontSize: 14,
+                ),
+              ],
             ),
-            height.l,
-            CustomButton(
-              onTap: _onJoinQuiz,
-              height: 16,
-              text: "Unirse",
-              large: true,
-              color: colors.primary,
-            ),
-            height.l,
-            CustomText(
-              "o escanear código",
-              fontSize: 14,
-            ),
-            height.l,
-            CustomButton(
-              onTap: _scanQr,
-              height: 16,
-              color: colors.whiteSmoke,
-              border: Border.all(color: colors.iconPlaceholder),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomIcon(Icons.qr_code_2),
-                  width.m,
-                  CustomText(
-                    "Escanear código QR",
-                    fontSize: 14,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  _onJoinQuiz() async {
+  Future<void> _onJoinQuiz() async {
     bool invalid = _validateCode();
     if (invalid) return;
     final controller = ref.read(roomController.notifier);
@@ -98,7 +95,7 @@ class _JoinRoomViewState extends ConsumerState<JoinRoomView> {
     return empty;
   }
 
-  _scanQr() async {
+  Future<void> _scanQr() async {
     var code = await QrScanner.scan(context);
     if (code.code == QrScanStatus.success) {
       _codeInput.text = code.rawValue;

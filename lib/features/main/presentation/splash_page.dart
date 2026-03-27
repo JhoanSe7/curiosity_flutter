@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
@@ -31,17 +28,13 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     if (mounted) context.go(Routes.signIn);
   }
 
-  _permissionRequest() async {
-    var permissions = await [
+  Future<void> _permissionRequest() async {
+    await [
       Permission.camera,
       Permission.storage,
       Permission.manageExternalStorage,
       Permission.photos,
     ].request();
-    print("PermissionRequest Status");
-    for (var e in permissions.entries) {
-      print(e.key.status);
-    }
   }
 
   @override

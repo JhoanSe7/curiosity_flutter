@@ -1,4 +1,6 @@
+import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/design/molecules/custom_switch.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:curiosity_flutter/features/auth/data/models/field_name.dart';
@@ -8,6 +10,7 @@ import 'package:curiosity_flutter/features/home/presentation/home_controller.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
@@ -18,7 +21,7 @@ class SignUpPage extends ConsumerStatefulWidget {
 
 class SignUpPageState extends ConsumerState<SignUpPage> {
   bool btnEnable = false;
-  bool showLicense = false;
+  bool agreeCheck = false;
 
   final labels = {
     FieldName.name1: "Primer Nombre",
@@ -97,6 +100,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
   Widget build(BuildContext context) {
     return CustomPageBuilder(
       enableAppbar: false,
+      enablePadding: false,
       body: Column(
         children: [
           CustomHeader(
@@ -142,12 +146,40 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                         showStrengthLevel: input == FieldName.passwd,
                       )
                     ],
-                    height.xl,
+                    height.l,
+                    Row(
+                      children: [
+                        CustomSwitch(
+                          active: agreeCheck,
+                          onChange: () => setState(() => agreeCheck = !agreeCheck),
+                        ),
+                        width.s,
+                        Flexible(
+                          child: CustomGestureDetector(
+                            onTap: () => view.launchURL(
+                              Config.urlTYC,
+                              mode: LaunchMode.inAppWebView,
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(4),
+                              child: CustomText(
+                                "Acepto los terminos y condiciones",
+                                fontSize: 14,
+                                color: colors.primary,
+                                fontWeight: FontWeight.w600,
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    height.l,
                     CustomButton(
                       onTap: _register,
                       isGradient: true,
                       height: 16,
-                      enable: btnEnable,
+                      enable: true,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -175,22 +207,25 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
                     height.xl,
                     CustomGestureDetector(
                       onTap: context.pop,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomText(
-                            "¿Ya tienes cuenta? ",
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: colors.paragraph,
-                          ),
-                          CustomText(
-                            "¡Inicia sesion aquí! 🚀",
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: colors.aquamarine,
-                          )
-                        ],
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomText(
+                              "¿Ya tienes cuenta? ",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: colors.paragraph,
+                            ),
+                            CustomText(
+                              "¡Inicia sesion aquí! 🚀",
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: colors.aquamarine,
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     height.l,
@@ -204,7 +239,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
     );
   }
 
-  _validateFields(FieldName key) {
+  void _validateFields(FieldName key) {
     try {
       String required = "Campo obligatorio";
       if ((key == FieldName.name1 ||
@@ -241,11 +276,15 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
     }
   }
 
-  _register() {
+  void _register() {
+    if (!agreeCheck) {
+      context.showToast(text: "Debes aceptar los terminos y condiciones", type: MessageType.warning);
+      return;
+    }
     if (btnEnable) _handleRegistry();
   }
 
-  _handleRegistry() async {
+  Future<void> _handleRegistry() async {
     final controller = ref.read(signUpController.notifier);
     final data = UserModel(
       firstName: controllers[FieldName.name1]?.text,

@@ -5,7 +5,6 @@ class CustomCircularButton extends StatelessWidget {
   final IconData icon;
   final void Function() onTap;
   final Color? color;
-  final Color? backgroundColor;
   final double? size;
 
   const CustomCircularButton({
@@ -13,7 +12,6 @@ class CustomCircularButton extends StatelessWidget {
     required this.icon,
     required this.onTap,
     this.color,
-    this.backgroundColor,
     this.size,
   });
 

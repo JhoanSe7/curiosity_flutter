@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
 extension MessageExtension on BuildContext {
-  showToast({required String text, MessageType type = MessageType.info}) {
+  void showToast({required String text, MessageType type = MessageType.info}) {
     final message = SnackBar(
       backgroundColor: _bgColor(type),
       showCloseIcon: true,
@@ -83,6 +83,7 @@ extension MessageExtension on BuildContext {
     Widget? actions,
     bool showClose = false,
     double? closeSize,
+    void Function()? onTap,
   }) async =>
       await showDialog(
         context: this,
@@ -132,7 +133,7 @@ extension MessageExtension on BuildContext {
                       text: "Entendido",
                       color: buttonColor ?? colors.primary,
                       height: 14,
-                      onTap: () => context.pop(true),
+                      onTap: onTap ?? () => context.pop(true),
                     ),
               ],
             ),

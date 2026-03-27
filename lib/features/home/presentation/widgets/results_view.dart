@@ -6,25 +6,22 @@ class ResultsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPageBuilder(
-      title: "Resultados",
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            CustomText(
-              "Sin resultados",
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-            height.m,
-            CustomText(
-              "Cuando finalices un quiz, tus resultados se visualizaran aqui",
-              fontSize: 14,
-              color: colors.paragraph,
-            )
-          ],
-        ),
+    return Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          CustomText(
+            "Sin resultados",
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+          height.m,
+          CustomText(
+            "Cuando finalices un quiz, tus resultados se visualizaran aqui",
+            fontSize: 14,
+            color: colors.paragraph,
+          )
+        ],
       ),
     );
   }

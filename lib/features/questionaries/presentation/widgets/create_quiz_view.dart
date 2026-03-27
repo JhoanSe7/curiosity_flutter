@@ -3,6 +3,7 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/options.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_data_type.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
@@ -23,6 +24,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
   final TextEditingController _desController = TextEditingController();
 
   String textError = "";
+  bool isOpen = false;
 
   @override
   void initState() {
@@ -30,7 +32,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
     Future.microtask(_loadData);
   }
 
-  _loadData() {
+  void _loadData() {
     var state = ref.read(questionaryController);
     if (state.quiz != null || state.quiz?.title != null) {
       _titleController.text = state.quiz?.title ?? "";
@@ -48,64 +50,225 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
       customTitle: titleWidget(state.questions),
       trailing: actionButton(),
       enableScrollable: false,
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            CustomTextField(
-              label: "Título del quiz",
-              placeHolder: "Escribe el titulo del quiz",
-              controller: _titleController,
-              textError: textError,
-              onChange: (_) => setState(() => textError = ""),
-            ),
-            height.l,
-            CustomTextField(
-              label: "Descripcion",
-              placeHolder: "Escribe una descripcion del quiz",
-              controller: _desController,
-              maxLines: 3,
-              inputType: TextInputType.multiline,
-            ),
-            height.l,
-            Flexible(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    for (var q in state.questions.asMap().entries) ...[
-                      questionCard(q.key, q.value),
-                      height.l,
-                    ],
-                  ],
+      body: Column(
+        children: [
+          CustomTextField(
+            label: "Título del quiz",
+            placeHolder: "Escribe el titulo del quiz",
+            controller: _titleController,
+            textError: textError,
+            onChange: (_) => setState(() => textError = ""),
+          ),
+          height.l,
+          CustomTextField(
+            label: "Descripcion",
+            placeHolder: "Escribe una descripcion del quiz",
+            controller: _desController,
+            maxLines: 3,
+            inputType: TextInputType.multiline,
+          ),
+          height.l,
+          CustomButton(
+            height: 16,
+            large: true,
+            isGradient: true,
+            onTap: _questionTypeBottomSheet,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomIcon(
+                  Icons.add,
+                  color: colors.white,
                 ),
-              ),
+                width.l,
+                CustomText(
+                  "Agregar pregunta",
+                  color: colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                )
+              ],
             ),
-            height.l,
-            CustomButton(
-              width: 24,
-              height: 12,
-              isGradient: true,
-              onTap:  _questionTypeBottomSheet,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
+          ),
+          height.l,
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  CustomIcon(
-                    Icons.add,
-                    color: colors.white,
-                  ),
-                  width.l,
-                  CustomText(
-                    "Agregar pregunta",
-                    color: colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  )
+                  for (var q in state.questions.asMap().entries) ...[
+                    questionCard(q.key, q.value),
+                    height.l,
+                  ],
                 ],
               ),
-            )
-          ],
+            ),
+          ),
+        ],
+      ),
+      bottomBar: showSuggestQuestions(),
+    );
+  }
+
+  Widget? showSuggestQuestions() {
+    List<QuestionModel> list = ref.read(questionaryController).quiz?.suggestQuestions ?? [];
+    if (list.isNotEmpty && !isOpen) {
+      return CustomGestureDetector(
+        onTap: () => _openMoreQuestion(list),
+        child: Container(
+          decoration: BoxDecoration(
+            color: colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(color: colors.orange.withValues(alpha: .4), offset: Offset(0, -5), blurRadius: 5),
+            ],
+          ),
+          child: Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.orange.withValues(alpha: .1),
+              border: Border.all(color: colors.orange),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    CustomText(
+                      "¡Agregar +${list.length} preguntas!",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: colors.orange,
+                    ),
+                    CustomText(
+                      "Puedes añadirlas si quieres",
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
+      );
+    }
+    return null;
+  }
+
+  Future<void> _openMoreQuestion(List<QuestionModel> list) async {
+    setState(() => isOpen = true);
+    await context.showBottomSheetModal(
+      title: "Agregar preguntas",
+      child: Column(
+        children: list.map((e) => infoQuestion(e)).toList(),
+      ),
+    );
+    setState(() => isOpen = false);
+  }
+
+  Widget infoQuestion(QuestionModel q) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colors.inputBorder),
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  iconTypeColor(q, 18, 4, 8),
+                  width.m,
+                  typeQuestionColor(q),
+                ],
+              ),
+              CustomGestureDetector(
+                onTap: () => _toAddQuestion(q),
+                child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: questionData(q).color.last),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      CustomIcon(
+                        Icons.add,
+                        color: questionData(q).color.last,
+                      ),
+                      width.s,
+                      CustomText(
+                        "Agregar",
+                        fontSize: 14,
+                        color: questionData(q).color.last,
+                        fontWeight: FontWeight.w700,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          height.m,
+          Tooltip(
+            message: q.question,
+            child: CustomText(
+              q.question ?? "",
+              fontSize: 14,
+              textAlign: TextAlign.start,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _toAddQuestion(QuestionModel q) {
+    context.pop();
+    ref.read(questionaryController.notifier).addQuestionToQuiz(q);
+  }
+
+  Widget typeQuestionColor(QuestionModel q) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: questionData(q).color,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ).withOpacity(.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: CustomText(
+        questionData(q).title,
+        fontSize: 14,
+      ),
+    );
+  }
+
+  Widget iconTypeColor(QuestionModel q, double size, double padding, double radius) {
+    return Container(
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        gradient: LinearGradient(
+          colors: questionData(q).color,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: CustomIcon(
+        questionData(q).icon,
+        color: colors.white,
+        size: size,
       ),
     );
   }
@@ -146,7 +309,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
     );
   }
 
-  _saveQuiz() async {
+  Future<void> _saveQuiz() async {
     bool empty = _validateButton();
     if (empty) return;
     final quiz = ref.read(questionaryController).quiz;
@@ -157,6 +320,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
       ..questions = ref.read(questionaryController).questions;
     var res = await ref.read(questionaryController.notifier).createQuiz(context, data: data);
     if ((res.id ?? "").isNotEmpty) {
+      ref.read(homeController.notifier).addQuiz(res);
       if (mounted) context.showToast(text: "Quiz creado con exito");
     }
     if (mounted) context.pop();
@@ -184,82 +348,99 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
       ),
       child: Row(
         children: [
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              gradient: LinearGradient(
-                colors: questionData(q).color,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: CustomIcon(
-              questionData(q).icon,
-              color: colors.white,
-              size: 25,
-            ),
-          ),
+          iconTypeColor(q, 20, 12, 12),
           width.l,
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  "PREGUNTA ${index + 1}",
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: colors.paragraph,
-                ),
-                CustomText(
-                  q.question ?? "",
-                  textAlign: TextAlign.start,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                height.m,
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: questionData(q).color,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ).withOpacity(.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: CustomText(
-                    questionData(q).title,
+            child: Tooltip(
+              message: q.question,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    "PREGUNTA ${index + 1}",
                     fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: colors.paragraph,
                   ),
-                )
-              ],
+                  CustomText(
+                    q.question ?? "",
+                    textAlign: TextAlign.start,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  height.m,
+                  typeQuestionColor(q),
+                ],
+              ),
             ),
           ),
           width.l,
-          CustomCircularButton(
-            icon: Icons.edit,
-            color: colors.aquamarine,
-            onTap: () => _editQuestion(q),
-          ),
-          CustomCircularButton(
-            icon: Icons.delete_forever_outlined,
-            color: colors.red,
-            onTap: () => _showDeleteModal(q),
-          )
+          moreOptions(q),
         ],
       ),
     );
   }
 
-  _editQuestion(QuestionModel q) {
+  Widget moreOptions(QuestionModel q) {
+    return PopupMenuButton(
+      onSelected: (value) => _onSelected(q, value),
+      color: colors.white,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: Option.edit,
+          child: Row(
+            children: [
+              CustomIcon(
+                Icons.edit,
+                size: 20,
+                color: colors.iconPlaceholder,
+              ),
+              width.m,
+              CustomText(
+                "Editar",
+                color: colors.paragraph,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: Option.delete,
+          child: Row(
+            children: [
+              CustomIcon(
+                Icons.delete_forever_outlined,
+                size: 20,
+                color: colors.red,
+              ),
+              width.m,
+              CustomText(
+                "Eliminar",
+                color: colors.red,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _onSelected(QuestionModel q, Option value) => switch (value) {
+        Option.edit => _editQuestion(q),
+        Option.delete => _showDeleteModal(q),
+      };
+
+  void _editQuestion(QuestionModel q) {
     ref.read(questionaryController.notifier).setQuestion(q);
     ref.read(questionaryController.notifier).setQuestionType(questionData(q));
     context.push(Routes.createQuestion);
   }
 
-  _showDeleteModal(QuestionModel q) {
+  Future<dynamic> _showDeleteModal(QuestionModel q) {
     return context.showModal(
       icon: Icons.delete_forever_outlined,
       iconColor: colors.red,
@@ -290,7 +471,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
     );
   }
 
-  _deleteQuestion(QuestionModel q) {
+  void _deleteQuestion(QuestionModel q) {
     ref.read(questionaryController.notifier).deleteQuestion(q);
     context.pop();
     context.showToast(text: "Pregunta eliminada");
@@ -362,7 +543,7 @@ class _CreateQuizViewState extends ConsumerState<CreateQuizView> {
     );
   }
 
-  _newQuestion(QuestionDataType q) {
+  void _newQuestion(QuestionDataType q) {
     ref.read(questionaryController.notifier).setQuestionType(q);
     ref.read(questionaryController.notifier).clearQuestion();
     context.pop();

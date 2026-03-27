@@ -3,5 +3,5 @@ enum QuestionType {
   MULTIPLE_SELECTION,
   TRUE_FALSE,
   FILL_IN_THE_BLANK,
-  OPEN_ANSWER,
+  // OPEN_ANSWER,
 }

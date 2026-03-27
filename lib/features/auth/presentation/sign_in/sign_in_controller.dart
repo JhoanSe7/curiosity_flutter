@@ -26,6 +26,14 @@ class SignInController extends StateNotifier<SignInState> {
     final res = await signIn(context, data: data);
     return res;
   }
+
+  Future<UserModel> updateToken(BuildContext context, {required String userId, required String tokenPush}) async {
+    final result = await execute<UserModel>(context, useCase.updateToken(userId: userId, tokenPush: tokenPush));
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? UserModel(),
+      (data) => data,
+    );
+  }
 }
 
 final signInController = StateNotifierProvider.autoDispose<SignInController, SignInState>(

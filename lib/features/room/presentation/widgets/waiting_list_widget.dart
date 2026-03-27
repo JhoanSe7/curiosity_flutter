@@ -1,8 +1,8 @@
 import 'package:curiosity_flutter/core/constants/path_animations.dart';
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 
 class WaitingListWidget extends StatelessWidget {
@@ -32,11 +32,10 @@ class WaitingListWidget extends StatelessWidget {
             ),
             child: Padding(
               padding: EdgeInsets.all(8),
-              child: SvgPicture.asset(
+              child: CustomSvg(
                 icons.king,
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(colors.white, BlendMode.srcIn),
+                size: 24,
+                color: colors.white,
               ),
             ),
           ),
@@ -64,7 +63,7 @@ class WaitingListWidget extends StatelessWidget {
           ),
           Lottie.asset(
             animations.loadingSmaller,
-            width: 32,
+            width: context.scale(32),
           ),
         ],
       ),

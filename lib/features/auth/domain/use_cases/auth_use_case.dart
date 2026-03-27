@@ -14,6 +14,8 @@ class AuthUseCase {
   Future<Either<CommonError, UserModel>> signIn({required SignInModel data}) async =>
       await repository.signIn(data: data);
 
-  Future<Either<CommonError, UserModel>> signUp({required UserModel data}) async =>
-      await repository.signUp(data: data);
+  Future<Either<CommonError, UserModel>> signUp({required UserModel data}) async => await repository.signUp(data: data);
+
+  Future<Either<CommonError, UserModel>> updateToken({required String userId, required String tokenPush}) async =>
+      await repository.updateToken(userId: userId, tokenPush: tokenPush);
 }

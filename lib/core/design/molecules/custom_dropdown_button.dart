@@ -83,7 +83,7 @@ class CustomDropdownButtonState extends State<CustomDropdownButton> {
     );
   }
 
-  _item(ItemModel item) {
+  Widget _item(ItemModel item) {
     String subtitle = item.subtitle ?? "";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

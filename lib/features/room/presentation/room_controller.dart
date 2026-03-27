@@ -8,6 +8,7 @@ import 'package:curiosity_flutter/core/services/web_socket/web_socket_service.da
 import 'package:curiosity_flutter/core/utils/util_processor.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
+import 'package:curiosity_flutter/features/room/data/models/quiz_result_model.dart';
 import 'package:curiosity_flutter/features/room/domain/use_cases/room_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,6 +36,7 @@ class RoomController extends StateNotifier<RoomState> {
       // Conectar y ejecutar suscripción + emit solo cuando esté listo
       wsService.connect(onConnected: () {
         onSubscribe(channelSub, channelEmit, user);
+        if (!isOwner) subscribeResult(roomCode, user.id ?? "");
       });
     } catch (e) {
       if (mounted) {
@@ -54,10 +56,16 @@ class RoomController extends StateNotifier<RoomState> {
   }
 
   ///
+  void subscribeResult(String roomCode, String userId) {
+    wsService.subscribe(channel: "/topic/lobby/$roomCode/student/$userId", callback: callbackSub);
+  }
+
+  ///
   void callbackSub(StompFrame frame) {
     if (frame.body == null) return;
     try {
       final json = jsonDecode(frame.body ?? "");
+      log.info('callback body: $json');
       final event = EventModel.fromJson(json);
       log.info('Evento recibido: ${event.event}');
       _eventController.add(event);
@@ -91,11 +99,16 @@ class RoomController extends StateNotifier<RoomState> {
       case EventType.close:
         state = state.copyWith(
           isConnected: false,
-          errorMessage: 'El lobby fue cerrado por el profesor',
+          errorMessage: 'El lobby fue cerrado por el organizador',
         );
       case EventType.userUpdate:
         state = state.copyWith(users: event.user);
+      case EventType.forceFinish:
+        state = state.copyWith(forceFinish: true, results: QuizResultModel());
+      case EventType.quizResult:
+        state = state.copyWith(results: event.results, waiting: false);
       case EventType.unknown:
+        print(event.toString());
         break;
     }
   }
@@ -113,6 +126,8 @@ class RoomController extends StateNotifier<RoomState> {
         isConnected: false,
         errorMessage: "",
         quizStarted: false,
+        forceFinish: false,
+        waiting: true,
         quizTitle: "",
         roomCode: "",
         users: [],
@@ -165,6 +180,11 @@ class RoomController extends StateNotifier<RoomState> {
       (e) => processError(context, error: e.message) ?? false,
       (data) => data,
     );
+  }
+
+  ///
+  void setWaiting(bool waiting) {
+    if (mounted) state = state.copyWith(waiting: waiting);
   }
 }
 

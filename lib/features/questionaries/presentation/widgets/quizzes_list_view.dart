@@ -26,14 +26,14 @@ class _QuizzesListViewState extends ConsumerState<QuizzesListView> {
     _filterController.addListener(_onChange);
   }
 
-  _loadData() {
+  void _loadData() {
     setState(() {
       quizzes = ref.read(homeController).quizzes;
       filterList = quizzes;
     });
   }
 
-  _onChange() {
+  void _onChange() {
     setState(() {
       if (_filterController.text.trim().isEmpty) {
         _filterController.clear();
@@ -51,6 +51,7 @@ class _QuizzesListViewState extends ConsumerState<QuizzesListView> {
   @override
   Widget build(BuildContext context) {
     return CustomPageBuilder(
+      enablePadding: false,
       customTitle: titleWidget(quizzes.length),
       trailing: actions(),
       secondAppbar: Padding(

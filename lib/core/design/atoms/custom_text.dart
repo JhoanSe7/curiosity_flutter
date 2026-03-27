@@ -12,6 +12,7 @@ class CustomText extends StatelessWidget {
   final List<Shadow>? shadows;
   final TextOverflow? overflow;
   final Paint? foreground;
+  final double? height;
 
   const CustomText(
     this.text, {
@@ -24,6 +25,7 @@ class CustomText extends StatelessWidget {
     this.shadows,
     this.overflow,
     this.foreground,
+    this.height,
   });
 
   @override
@@ -39,6 +41,7 @@ class CustomText extends StatelessWidget {
         color: color,
         shadows: shadows,
         foreground: foreground,
+        height: height,
       ),
     );
   }

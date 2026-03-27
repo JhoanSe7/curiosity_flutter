@@ -13,15 +13,12 @@ class InfoProfileView extends ConsumerWidget {
     final user = ref.watch(homeController).user;
     return CustomPageBuilder(
       title: "Información Personal",
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            avatarProfile(context),
-            height.xl,
-            userInfo(user),
-          ],
-        ),
+      body: Column(
+        children: [
+          avatarProfile(context),
+          height.xl,
+          userInfo(user),
+        ],
       ),
     );
   }

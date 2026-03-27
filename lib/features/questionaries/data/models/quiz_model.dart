@@ -9,6 +9,7 @@ class QuizModel {
   String? category;
   String? difficulty;
   bool? isPublic;
+  List<QuestionModel>? suggestQuestions;
 
   QuizModel({
     this.id,
@@ -19,10 +20,12 @@ class QuizModel {
     this.category,
     this.difficulty,
     this.isPublic,
+    this.suggestQuestions,
   });
 
   factory QuizModel.fromJson(Map<String, dynamic> json) {
     List questions = json["questions"] != null && json["questions"] is List ? json["questions"] : [];
+    List suggest = json["suggestQuestions"] != null && json["suggestQuestions"] is List ? json["suggestQuestions"] : [];
     return QuizModel(
       id: json["id"],
       userId: json["userId"],
@@ -32,6 +35,7 @@ class QuizModel {
       category: json["category"],
       difficulty: json["difficulty"],
       isPublic: json["isPublic"],
+      suggestQuestions: suggest.map((e) => QuestionModel.fromJson(e)).toList(),
     );
   }
 

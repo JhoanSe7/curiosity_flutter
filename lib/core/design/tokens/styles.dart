@@ -10,6 +10,7 @@ class Styles {
     TextAlign? textAlign,
     List<Shadow>? shadows,
     Paint? foreground,
+    double? height
   }) {
     return GoogleFonts.poppins(
       fontSize: fontSize ?? 14,
@@ -18,6 +19,7 @@ class Styles {
       decoration: TextDecoration.none,
       shadows: shadows,
       foreground: foreground,
+      height: height,
     );
   }
 }

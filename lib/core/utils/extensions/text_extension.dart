@@ -8,20 +8,20 @@ extension TextExtension on String {
 
   String get cleaned {
     return replaceAll(
-        RegExp(
-          r'[^\w\s]',
-        ),
-        '')
+            RegExp(
+              r'[^\w\s]',
+            ),
+            '')
         .replaceAll(
-        RegExp(
-          r'[\u{1F600}-\u{1F64F}]|' // emoticonos
-          r'[\u{1F300}-\u{1F5FF}]|' // símbolos y pictogramas
-          r'[\u{1F680}-\u{1F6FF}]|' // transporte y mapas
-          r'[\u{2600}-\u{26FF}]|' // símbolos misceláneos
-          r'[\u{2700}-\u{27BF}]', // símbolos Dingbats
-          unicode: true,
-        ),
-        '')
+            RegExp(
+              r'[\u{1F600}-\u{1F64F}]|' // emoticonos
+              r'[\u{1F300}-\u{1F5FF}]|' // símbolos y pictogramas
+              r'[\u{1F680}-\u{1F6FF}]|' // transporte y mapas
+              r'[\u{2600}-\u{26FF}]|' // símbolos misceláneos
+              r'[\u{2700}-\u{27BF}]', // símbolos Dingbats
+              unicode: true,
+            ),
+            '')
         .trim();
   }
 
@@ -40,9 +40,13 @@ extension TextExtension on String {
         return EventType.close;
       case 'LOBBY_ERROR':
         return EventType.error;
-      case 'STUDENT_ABANDONED':
-      case 'STUDENT_IN_PROGRESS':
+      case 'USER_UPDATED':
+      case 'QUIZ_FINISH_COMPLETE':
         return EventType.userUpdate;
+      case 'QUIZ_FORCE_FINISHED':
+        return EventType.forceFinish;
+      case 'QUIZ_RESULT':
+        return EventType.quizResult;
       default:
         return EventType.unknown;
     }

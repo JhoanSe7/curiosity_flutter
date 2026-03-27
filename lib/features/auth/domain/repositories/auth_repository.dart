@@ -7,4 +7,6 @@ abstract class AuthRepository {
   Future<Either<CommonError, UserModel>> signIn({required SignInModel data});
 
   Future<Either<CommonError, UserModel>> signUp({required UserModel data});
+
+  Future<Either<CommonError, UserModel>> updateToken({required String userId, required String tokenPush});
 }
