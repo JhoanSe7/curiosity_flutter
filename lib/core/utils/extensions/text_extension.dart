@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/services/web_socket/models/event_type.dart';
+import 'package:intl/intl.dart';
 
 extension TextExtension on String {
   bool get isEmail {
@@ -49,6 +50,27 @@ extension TextExtension on String {
         return EventType.quizResult;
       default:
         return EventType.unknown;
+    }
+  }
+
+  String get customDate {
+    final date = DateTime.parse(this);
+    final now = DateTime.now();
+
+    final today = DateTime(now.year, now.month, now.day);
+    final lastDay = today.subtract(const Duration(days: 1));
+
+    final current = DateTime(date.year, date.month, date.day);
+
+    final hora = DateFormat('hh:mm a').format(date);
+    final newDate = DateFormat('dd MMM yyyy', 'es').format(date);
+
+    if (current == today) {
+      return 'Hoy, $hora';
+    } else if (current == lastDay) {
+      return 'Ayer, $hora';
+    } else {
+      return newDate;
     }
   }
 }

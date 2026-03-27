@@ -5,8 +5,9 @@ import 'package:curiosity_flutter/features/questionaries/presentation/widgets/qu
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'quiz_create_card_widget.dart';
 import 'show_more_widget.dart';
-import 'subtitle_widget.dart';
+import 'home_subtitle_widget.dart';
 
 class QuizzesView extends ConsumerStatefulWidget {
   const QuizzesView({super.key, required this.quizzes, this.toHome = false});
@@ -23,9 +24,9 @@ class _QuizzesViewState extends ConsumerState<QuizzesView> {
   int selection = 0;
   List<QuizModel> quizList = [];
 
-  List<QuizModel> _loadList() {
+  List<QuizModel> _loadList(List<QuizModel> quizzes) {
     if (widget.toHome) {
-      quizList = ref.read(homeController).quizzes;
+      quizList = quizzes;
       return quizList.length > 10 ? quizList.sublist(0, 10) : quizList;
     } else {
       quizList = widget.quizzes;
@@ -35,7 +36,8 @@ class _QuizzesViewState extends ConsumerState<QuizzesView> {
 
   @override
   Widget build(BuildContext context) {
-    var list = _loadList();
+    final state = ref.watch(homeController);
+    var list = _loadList(state.quizzes);
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
@@ -44,11 +46,13 @@ class _QuizzesViewState extends ConsumerState<QuizzesView> {
           height.l,
           if (list.isNotEmpty)
             ...list.asMap().entries.map((e) => QuizzesCardWidget(e.key, e.value))
-          else
+          else if (!widget.toHome)
             CustomText(
               'No se encontraron resultados',
               fontSize: 14,
-            ),
+            )
+          else
+            QuizCreateCardWidget(),
         ],
       ),
     );
@@ -72,7 +76,7 @@ class _QuizzesViewState extends ConsumerState<QuizzesView> {
                 ),
               )
         else
-          SubtitleWidget("Mis Cuestionarios", Icons.menu_book, colors.purple),
+          HomeSubtitleWidget("Mis Cuestionarios", Icons.menu_book, colors.purple),
         Spacer(),
         if (quizList.isNotEmpty && widget.toHome) ShowMoreWidget("Ver todos"),
       ],

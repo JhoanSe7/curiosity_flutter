@@ -107,11 +107,12 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
   }
 
   Widget userStats(UserModel? user) {
-    var quizzes = user?.createdQuizzes ?? [];
+    var sessions = user?.quizSessionIds ?? [];
+    var results = user?.quizResultIds ?? [];
     return Row(
       children: [
-        statDetailCard("Salas Creadas", quizzes.length),
-        statDetailCard("Participaciones", 0),
+        statDetailCard("Salas Creadas", sessions.length),
+        statDetailCard("Participaciones", results.length),
       ],
     );
   }

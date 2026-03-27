@@ -108,7 +108,6 @@ class RoomController extends StateNotifier<RoomState> {
       case EventType.quizResult:
         state = state.copyWith(results: event.results, waiting: false);
       case EventType.unknown:
-        print(event.toString());
         break;
     }
   }

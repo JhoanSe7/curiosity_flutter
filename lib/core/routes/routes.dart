@@ -5,6 +5,7 @@ import 'package:curiosity_flutter/features/home/presentation/widgets/profile/abo
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/info_profile_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/notifications_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/support_view.dart';
+import 'package:curiosity_flutter/features/home/presentation/widgets/result/result_detail_view.dart';
 import 'package:curiosity_flutter/features/main/presentation/splash_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_question_view.dart';
@@ -42,6 +43,7 @@ class Routes {
   static String joinRoom = "/join-room";
   static String finishQuiz = "/finish-quiz";
   static String scoredBoard = "/scored-board";
+  static String resultDetail = "/result-detail";
 }
 
 final router = GoRouter(
@@ -122,6 +124,10 @@ final router = GoRouter(
     GoRoute(
       path: Routes.scoredBoard,
       builder: (context, state) => const ScoredBoardView(),
+    ),
+    GoRoute(
+      path: Routes.resultDetail,
+      builder: (context, state) => const ResultDetailView(),
     ),
   ],
 );

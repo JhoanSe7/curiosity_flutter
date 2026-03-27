@@ -1,8 +1,8 @@
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:flutter/material.dart';
 
-class SubtitleWidget extends StatelessWidget {
-  const SubtitleWidget(this.text, this.icon, this.color, {super.key});
+class HomeSubtitleWidget extends StatelessWidget {
+  const HomeSubtitleWidget(this.text, this.icon, this.color, {super.key});
 
   final String text;
   final IconData icon;

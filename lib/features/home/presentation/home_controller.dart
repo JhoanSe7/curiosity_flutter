@@ -5,6 +5,7 @@ import 'package:curiosity_flutter/features/home/data/models/support_model.dart';
 import 'package:curiosity_flutter/features/home/domain/use_cases/home_use_case.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_state.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
+import 'package:curiosity_flutter/features/room/data/models/quiz_result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -60,6 +61,27 @@ class HomeController extends StateNotifier<HomeState> {
   void deleteQuiz(QuizModel q) {
     state.quizzes.removeWhere((e) => e.id == q.id);
     if (mounted) state = state.copyWith(quizzes: state.quizzes);
+  }
+
+  ///
+  Future<List<QuizResultModel>> getResults(BuildContext context, {required String userId}) async {
+    final result = await execute<List<QuizResultModel>>(context, useCase.getResults(userId: userId));
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? [],
+      (res) => res,
+    );
+  }
+
+  ///
+  Future<void> loadResults(BuildContext context) async {
+    var userId = state.user?.id ?? "";
+    final res = await getResults(context, userId: userId);
+    if (mounted) state = state.copyWith(results: res);
+  }
+
+  ///
+  void setResultDetail(QuizResultModel result) {
+    if (mounted) state = state.copyWith(resultSelected: result);
   }
 }
 

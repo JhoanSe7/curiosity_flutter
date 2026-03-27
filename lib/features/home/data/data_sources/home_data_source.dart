@@ -5,6 +5,8 @@ import 'package:injectable/injectable.dart';
 
 abstract class HomeDataSource {
   Future<HttpResponseModel> getQuizzes({required String userId});
+
+  Future<HttpResponseModel> getResults({required String userId});
 }
 
 @Injectable(as: HomeDataSource)
@@ -16,5 +18,10 @@ class HomeDataSourceImpl extends HomeDataSource {
   @override
   Future<HttpResponseModel> getQuizzes({required String userId}) async {
     return await clientHttp.get(endpoint: "${Config.apiUrl}quiz/user/$userId");
+  }
+
+  @override
+  Future<HttpResponseModel> getResults({required String userId}) async {
+    return await clientHttp.get(endpoint: "${Config.apiUrl}results/user/$userId");
   }
 }

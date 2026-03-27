@@ -9,8 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+import 'home_subtitle_widget.dart';
+import 'quiz_create_card_widget.dart';
 import 'show_more_widget.dart';
-import 'subtitle_widget.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
@@ -58,7 +59,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Widget quickAccessWidget() {
     return Column(
       children: [
-        SubtitleWidget("Acciones Rápidas", Icons.electric_bolt_outlined, colors.yellow),
+        HomeSubtitleWidget("Acciones Rápidas", Icons.electric_bolt_outlined, colors.yellow),
         height.l,
         Row(
           children: [
@@ -145,7 +146,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Widget beginWidget() {
     return Column(
       children: [
-        SubtitleWidget("¿Cómo empezar?", Icons.star_border, colors.yellow),
+        HomeSubtitleWidget("¿Cómo empezar?", Icons.star_border, colors.yellow),
         height.l,
         CustomCard(
           subtitle: "Paso 1",
@@ -188,21 +189,13 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SubtitleWidget("Mis Cuestionarios", Icons.menu_book, colors.purple),
+            HomeSubtitleWidget("Mis Cuestionarios", Icons.menu_book, colors.purple),
             if (quizzes.isNotEmpty) ShowMoreWidget("Ver todos"),
           ],
         ),
         height.l,
         quizzes.isEmpty
-            ? Container(
-                padding: EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: colors.inputBorder),
-                ),
-                child: creationQuizWidget(),
-              )
+            ? QuizCreateCardWidget()
             : Column(
                 children: shortList.asMap().entries.map((e) => QuizzesCardWidget(e.key, e.value)).toList(),
               ),
@@ -218,51 +211,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             ),
             child: ShowMoreWidget("Ver los${less > 1 ? " $less " : " "}cuestionarios restantes"),
           )
-      ],
-    );
-  }
-
-  Widget creationQuizWidget() {
-    return Column(
-      children: [
-        GenericLogo(),
-        height.l,
-        CustomText(
-          "¡Tu primer custionario te espera!",
-          fontWeight: FontWeight.w700,
-          fontSize: 18,
-        ),
-        height.l,
-        CustomText(
-          "Crea cuestionarios increibles y comparte tu conocimiento con el mundo",
-          color: colors.paragraph,
-          fontSize: 16,
-        ),
-        height.l,
-        CustomButton(
-          onTap: () => context.push(Routes.questionary),
-          width: 24,
-          height: 12,
-          isGradient: true,
-          gradientColor: colors.gradientPurple,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CustomIcon(
-                Icons.add,
-                color: colors.white,
-              ),
-              width.l,
-              CustomText(
-                "Crear mi primer quiz",
-                color: colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              )
-            ],
-          ),
-        )
       ],
     );
   }

@@ -8,7 +8,10 @@ class UserModel {
   String? phoneNumber;
   String? password;
   String? tokenPush;
+
   List<String>? createdQuizzes;
+  List<String>? quizResultIds;
+  List<String>? quizSessionIds;
 
   String? quizStatus;
   double? score;
@@ -22,14 +25,18 @@ class UserModel {
     this.email,
     this.phoneNumber,
     this.password,
-    this.createdQuizzes,
-    this.quizStatus,
     this.tokenPush,
+    this.createdQuizzes,
+    this.quizResultIds,
+    this.quizSessionIds,
+    this.quizStatus,
     this.score,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     List questions = json["createdQuizzes"] != null && json["createdQuizzes"] is List ? json["createdQuizzes"] : [];
+    List results = json["quizResultIds"] != null && json["quizResultIds"] is List ? json["quizResultIds"] : [];
+    List sessions = json["quizSessionIds"] != null && json["quizSessionIds"] is List ? json["quizSessionIds"] : [];
     return UserModel(
       id: json["id"],
       firstName: json["firstName"],
@@ -39,9 +46,11 @@ class UserModel {
       email: json["email"],
       phoneNumber: json["phoneNumber"],
       password: json["password"],
-      createdQuizzes: List<String>.from(questions.map((x) => x)),
-      quizStatus: json["quizStatus"],
       tokenPush: json["tokenPush"],
+      createdQuizzes: List<String>.from(questions.map((x) => x)),
+      quizResultIds: List<String>.from(results.map((x) => x)),
+      quizSessionIds: List<String>.from(sessions.map((x) => x)),
+      quizStatus: json["quizStatus"],
       score: json["score"],
     );
   }
@@ -55,8 +64,12 @@ class UserModel {
         "email": email,
         "phoneNumber": phoneNumber,
         "password": password,
+        "tokenPush": tokenPush,
         "createdQuizzes": createdQuizzes,
+        "quizResultIds": quizResultIds,
+        "quizSessionIds": quizSessionIds,
         "quizStatus": quizStatus,
+        "score": score,
       };
 
   Map<UserParam, String> information() => {
@@ -64,33 +77,6 @@ class UserModel {
         UserParam.email: email ?? "",
         UserParam.phone: phoneNumber ?? "",
       };
-
-  List<String> toList() => [
-        id ?? "",
-        firstName ?? "",
-        secondName ?? "",
-        lastName ?? "",
-        secondLastName ?? "",
-        email ?? "",
-        phoneNumber ?? "",
-        password ?? "",
-        createdQuizzes?.join(",") ?? ""
-      ];
-
-  factory UserModel.fromList(List<String> data) {
-    if (data.isEmpty || data.length < 10) return UserModel();
-    return UserModel(
-      id: data[0],
-      firstName: data[1],
-      secondName: data[2],
-      lastName: data[3],
-      secondLastName: data[4],
-      email: data[5],
-      phoneNumber: data[6],
-      password: data[8],
-      createdQuizzes: data[9].split(","),
-    );
-  }
 
   String fullName() {
     var data = [firstName, secondName, lastName, secondLastName].where((e) => e != null && e.isNotEmpty).toList();
