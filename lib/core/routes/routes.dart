@@ -5,7 +5,7 @@ import 'package:curiosity_flutter/features/home/presentation/widgets/profile/abo
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/info_profile_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/notifications_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/support_view.dart';
-import 'package:curiosity_flutter/features/home/presentation/widgets/result/result_detail_view.dart';
+import 'package:curiosity_flutter/features/home/presentation/widgets/results/result_detail_view.dart';
 import 'package:curiosity_flutter/features/main/presentation/splash_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_question_view.dart';

@@ -32,12 +32,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       body: optionMenu(state.menuId, state.quizzes),
       bottomBar: BottomBarWidget(state.menuId),
       enablePadding: false,
+      enableScrollable: state.enableScroll,
     );
   }
 
   Widget optionMenu(HomeId id, List<QuizModel> quizzes) => switch (id) {
         HomeId.init => DashboardView(),
-        HomeId.quizzes => QuizzesView(quizzes: [], toHome: true),
+        HomeId.quizzes => QuizzesView(),
         HomeId.scores => ResultsView(),
         HomeId.profile => ProfileView(),
       };

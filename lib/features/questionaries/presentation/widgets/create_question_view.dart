@@ -42,7 +42,7 @@ class _CreateQuestionViewState extends ConsumerState<CreateQuestionView> {
   void _loadData() {
     _setQuestion();
     if (options.isEmpty) options = List.generate(4, (i) => OptionModel(code: i, isCorrect: false));
-    optionControllers = List.generate(4, (i) => TextEditingController(text: options[i].text));
+    optionControllers = List.generate(options.length, (i) => TextEditingController(text: options[i].text));
     if (mounted) setState(() => isLoading = false);
   }
 

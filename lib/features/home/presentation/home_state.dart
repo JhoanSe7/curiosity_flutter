@@ -11,6 +11,7 @@ class HomeState {
   final List<QuizResultModel> results;
   final bool isLoading;
   final QuizResultModel? resultSelected;
+  final bool enableScroll;
 
   HomeState({
     this.menuId = HomeId.init,
@@ -19,6 +20,7 @@ class HomeState {
     this.results = const [],
     this.isLoading = true,
     this.resultSelected,
+    this.enableScroll = true,
   });
 
   HomeState copyWith({
@@ -28,6 +30,7 @@ class HomeState {
     List<QuizResultModel>? results,
     bool? isLoading,
     QuizResultModel? resultSelected,
+    bool? enableScroll,
   }) =>
       HomeState(
         menuId: menuId ?? this.menuId,
@@ -36,5 +39,6 @@ class HomeState {
         results: results ?? this.results,
         isLoading: isLoading ?? this.isLoading,
         resultSelected: resultSelected ?? this.resultSelected,
+        enableScroll: enableScroll ?? this.enableScroll,
       );
 }

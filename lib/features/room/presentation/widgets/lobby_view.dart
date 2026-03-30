@@ -3,6 +3,7 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/core/design/templates/waiting_list_widget.dart';
 import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:curiosity_flutter/features/room/presentation/room_state.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/participants_widget.dart';
@@ -10,10 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 import 'user_card_widget.dart';
-import 'waiting_list_widget.dart';
+import 'header_wait_widget.dart';
 
 class LobbyView extends ConsumerStatefulWidget {
   const LobbyView({
@@ -41,16 +41,6 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
     roomCode = ref.read(roomController).roomCode;
     ref.read(roomController.notifier).connect(user, roomCode);
   }
-
-  List<UserModel> get fakeUsers => List.generate(
-        4,
-        (i) => UserModel(
-          id: 'fake_$i',
-          firstName: 'Jugador $i',
-          email: 'FAKE@GMAIL.COM',
-          phoneNumber: '0000000000',
-        ),
-      );
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +101,9 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
       ),
       body: state.errorMessage.isNotEmpty
           ? errorView(state.errorMessage)
-          : Skeletonizer(
-              enabled: state.isConnecting,
-              child: userList(state.isConnecting ? fakeUsers : state.users),
-            ),
+          : state.isConnecting
+              ? WaitingListWidget(loading: state.isConnecting, list: FakeList.user)
+              : userList(state.users),
       bottomBar: Padding(
         padding: EdgeInsets.only(left: 16, right: 16, bottom: 8),
         child: CustomButton(
@@ -150,7 +139,7 @@ class _LobbyViewState extends ConsumerState<LobbyView> {
   Widget userList(List<UserModel> users) {
     return Column(
       children: [
-        WaitingListWidget(
+        HeaderWaitWidget(
           title: 'Esperando al organizador . . .',
           text: '¡Paciencia, el quiz comenzará pronto!',
         ),

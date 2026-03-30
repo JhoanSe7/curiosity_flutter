@@ -17,7 +17,7 @@ import 'package:share_plus/share_plus.dart';
 
 import 'room_controller.dart';
 import 'widgets/user_card_widget.dart';
-import 'widgets/waiting_list_widget.dart';
+import 'widgets/header_wait_widget.dart';
 
 class RoomPage extends ConsumerStatefulWidget {
   const RoomPage({super.key});
@@ -79,7 +79,7 @@ class _RoomPageState extends ConsumerState<RoomPage> {
               onTap: () => _inviteBottomSheet(state.roomCode),
             ),
             height.l,
-            WaitingListWidget(
+            HeaderWaitWidget(
               title: 'Esperando participantes . . .',
               text: 'Inicia el quiz cuando todos los participantes estén listos',
             ),

@@ -5,8 +5,8 @@ import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class WaitingListWidget extends StatelessWidget {
-  const WaitingListWidget({super.key, required this.title, required this.text});
+class HeaderWaitWidget extends StatelessWidget {
+  const HeaderWaitWidget({super.key, required this.title, required this.text});
 
   final String title;
   final String text;

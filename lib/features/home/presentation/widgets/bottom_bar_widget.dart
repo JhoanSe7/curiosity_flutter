@@ -19,13 +19,13 @@ class BottomBarWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: EdgeInsets.only(bottom: 12,left: 8, right: 8, top: 8),
+      padding: EdgeInsets.only(bottom: 12, left: 8, right: 8, top: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: actions
             .map(
               (e) => CustomGestureDetector(
-                onTap: () => ref.read(homeController.notifier).setMenuIndex(e.id),
+                onTap: () => _tapOption(ref, e.id),
                 child: Container(
                   padding: EdgeInsets.all(4),
                   width: context.scale(75),
@@ -55,6 +55,19 @@ class BottomBarWidget extends ConsumerWidget {
             .toList(),
       ),
     );
+  }
+}
+
+void _tapOption(WidgetRef ref, HomeId id) {
+  final controller = ref.read(homeController.notifier);
+  controller.setMenuIndex(id);
+  switch (id) {
+    case HomeId.init:
+    case HomeId.profile:
+      controller.setScroll(true);
+    case HomeId.quizzes:
+    case HomeId.scores:
+      controller.setScroll(false);
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/text_extension.dart';
 import 'package:curiosity_flutter/features/room/data/models/result_detail_model.dart';
 import 'package:flutter/material.dart';
 
@@ -55,8 +56,8 @@ class DetailAnswerWidget extends StatelessWidget {
               textAlign: TextAlign.left,
             ),
             if (e.questionType == "MULTIPLE_SELECTION") ...[
-              if (answer.isNotEmpty) ...[height.m, answerCard(answer, true)],
-              if (incorrectAnswer.isNotEmpty) ...[height.m, answerCard(incorrectAnswer, false)],
+              if (answer.isNotEmpty) ...[height.m, answerCard(answer.cleanString, true)],
+              if (incorrectAnswer.isNotEmpty) ...[height.m, answerCard(incorrectAnswer.cleanString, false)],
               if (incorrectAnswer.isEmpty && !isCorrect) ...[height.m, missingAnswerCard(answer, correctAnswer)]
             ] else ...[
               height.m,
@@ -76,7 +77,7 @@ class DetailAnswerWidget extends StatelessWidget {
                     width.s,
                     Flexible(
                       child: CustomText(
-                        "Respuesta correcta: $correctAnswer",
+                        "Respuesta correcta: ${correctAnswer.cleanString}",
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: colors.paragraph,
@@ -122,8 +123,8 @@ class DetailAnswerWidget extends StatelessWidget {
   }
 
   Widget missingAnswerCard(String answer, String correctAnswer) {
-    List<String> answerList = answer.split(", ");
-    List<String> correctList = correctAnswer.split(", ");
+    List<String> answerList = answer.split("*&*");
+    List<String> correctList = correctAnswer.split("*&*");
     List<String> diff = correctList.where((e) => !answerList.contains(e)).toList();
     String missing = diff.isNotEmpty ? diff.join(", ") : "";
 

@@ -73,4 +73,6 @@ extension TextExtension on String {
       return newDate;
     }
   }
+
+  String get cleanString => replaceAll("*&*", ", ");
 }

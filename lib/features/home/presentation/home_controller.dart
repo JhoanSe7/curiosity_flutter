@@ -83,6 +83,11 @@ class HomeController extends StateNotifier<HomeState> {
   void setResultDetail(QuizResultModel result) {
     if (mounted) state = state.copyWith(resultSelected: result);
   }
+
+  ///
+  void setScroll(bool value) {
+    if (mounted) state = state.copyWith(enableScroll: value);
+  }
 }
 
 final homeController = StateNotifierProvider<HomeController, HomeState>((ref) => HomeController(

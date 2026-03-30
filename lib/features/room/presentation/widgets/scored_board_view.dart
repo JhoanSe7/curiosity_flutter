@@ -14,17 +14,6 @@ class ScoredBoardView extends ConsumerStatefulWidget {
 }
 
 class _ScoredBoardViewState extends ConsumerState<ScoredBoardView> {
-  // List<UserModel> get fakeUsers => List.generate(
-  //       10,
-  //       (i) => UserModel(
-  //         id: 'ID$i',
-  //         firstName: Config.fakeNames[Random().nextInt(Config.fakeNames.length)],
-  //         lastName: Config.fakeLastNames[Random().nextInt(Config.fakeNames.length)],
-  //         email: 'usuario$i@correo.co',
-  //         score: Random().nextInt(1000).toDouble(),
-  //       ),
-  //     );
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(roomController);

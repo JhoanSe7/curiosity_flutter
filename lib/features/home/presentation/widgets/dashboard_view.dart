@@ -9,9 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-import 'home_subtitle_widget.dart';
-import 'quiz_create_card_widget.dart';
-import 'show_more_widget.dart';
+import 'dashboard/home_subtitle_widget.dart';
+import 'quizzes/quiz_create_card_widget.dart';
+import 'dashboard/show_more_widget.dart';
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
@@ -24,13 +24,14 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(homeController.notifier).setLoading(true));
     Future.microtask(_loadData);
   }
 
   Future<void> _loadData() async {
-    await ref.read(homeController.notifier).loadQuizzes(context);
-    ref.read(homeController.notifier).setLoading(false);
+    final controller = ref.read(homeController.notifier);
+    controller.setLoading(true);
+    await controller.loadQuizzes(context);
+    controller.setLoading(false);
   }
 
   @override
