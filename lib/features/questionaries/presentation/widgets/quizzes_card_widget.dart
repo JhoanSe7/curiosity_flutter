@@ -24,13 +24,6 @@ class QuizzesCardWidget extends ConsumerStatefulWidget {
 }
 
 class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
-  List<Color> allColors = [
-    colors.blue,
-    colors.green,
-    colors.orange,
-    colors.purple,
-  ];
-
   QuestionDataType questionData(String type) => Config.questionsType.firstWhere((e) => e.type.name == type);
 
   @override
@@ -42,7 +35,7 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
         color: colors.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
-          BoxShadow(color: allColors[widget.index % allColors.length], offset: Offset(0, -5)),
+          BoxShadow(color: Config.allColors[widget.index % Config.allColors.length].first, offset: Offset(0, -5)),
           BoxShadow(color: colors.greyLight.withValues(alpha: .5), offset: Offset(0, 2), blurRadius: 10),
         ],
       ),
@@ -72,8 +65,9 @@ class _QuizzesCardWidgetState extends ConsumerState<QuizzesCardWidget> {
               questionsText(widget.quiz),
               CustomButton(
                 height: 6,
-                color: allColors[widget.index % allColors.length],
                 onTap: _startQuiz,
+                gradientColor: Config.allColors[widget.index % Config.allColors.length],
+                isGradient: true,
                 child: Row(
                   children: [
                     CustomIcon(

@@ -115,7 +115,7 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
             ],
           ),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 22, horizontal: 16),
+            padding: EdgeInsets.symmetric(vertical: context.scale(22) ?? 22, horizontal: context.scale(16) ?? 16),
             color: colors.background,
             child: Column(
               children: [

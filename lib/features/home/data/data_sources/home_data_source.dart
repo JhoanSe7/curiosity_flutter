@@ -7,6 +7,10 @@ abstract class HomeDataSource {
   Future<HttpResponseModel> getQuizzes({required String userId});
 
   Future<HttpResponseModel> getResults({required String userId});
+
+  Future<HttpResponseModel> getSessions({required String userId});
+
+  Future<HttpResponseModel> getResultSessionUser({required String roomCode, required String userId});
 }
 
 @Injectable(as: HomeDataSource)
@@ -23,5 +27,15 @@ class HomeDataSourceImpl extends HomeDataSource {
   @override
   Future<HttpResponseModel> getResults({required String userId}) async {
     return await clientHttp.get(endpoint: "${Config.apiUrl}results/user/$userId");
+  }
+
+  @override
+  Future<HttpResponseModel> getSessions({required String userId}) async {
+    return await clientHttp.get(endpoint: "${Config.apiUrl}sessions/user/$userId");
+  }
+
+  @override
+  Future<HttpResponseModel> getResultSessionUser({required String roomCode, required String userId}) async {
+    return await clientHttp.get(endpoint: "${Config.apiUrl}results/roomCode/$roomCode/user/$userId");
   }
 }

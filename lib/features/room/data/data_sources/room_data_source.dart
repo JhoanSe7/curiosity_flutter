@@ -11,6 +11,8 @@ abstract class RoomDataSource {
   Future<HttpResponseModel> getQuizById({required String quizId});
 
   Future<HttpResponseModel> finishQuiz({required String roomCode, required String userId});
+
+  Future<HttpResponseModel> getSessionByRoom({required String roomCode});
 }
 
 @Injectable(as: RoomDataSource)
@@ -53,5 +55,10 @@ class RoomDataSourceImpl implements RoomDataSource {
         "userId": userId,
       },
     );
+  }
+
+  @override
+  Future<HttpResponseModel> getSessionByRoom({required String roomCode}) async {
+    return await clientHttp.get(endpoint: "${Config.apiUrl}sessions/room/$roomCode");
   }
 }

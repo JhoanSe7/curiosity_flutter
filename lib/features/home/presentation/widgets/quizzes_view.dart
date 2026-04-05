@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/core/design/templates/waiting_list_widget.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
@@ -67,7 +68,11 @@ class _QuizzesViewState extends ConsumerState<QuizzesView> {
         if (quizzes.isNotEmpty)
           Container(
             decoration: BoxDecoration(gradient: LinearGradient(colors: colors.gradientPrimary)),
-            padding: EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            padding: EdgeInsets.only(
+              left: context.scale(16) ?? 16,
+              right: context.scale(16) ?? 16,
+              bottom: context.scale(16) ?? 16,
+            ),
             child: CustomTextField(
               controller: _filterController,
               prefix: CustomIcon(
@@ -93,7 +98,7 @@ class _QuizzesViewState extends ConsumerState<QuizzesView> {
 
   Widget contentList() {
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(context.scale(16) ??16),
       child: Column(
         children: [
           if (filterList.isNotEmpty)

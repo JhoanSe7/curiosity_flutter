@@ -1,5 +1,6 @@
 import 'package:curiosity_flutter/core/network/models/common_error.dart';
 import 'package:curiosity_flutter/core/network/models/response/error_response_model.dart';
+import 'package:curiosity_flutter/features/home/data/models/session_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/room/data/data_sources/room_data_source.dart';
 import 'package:curiosity_flutter/features/room/domain/repositories/room_repository.dart';
@@ -56,7 +57,7 @@ class RoomRepositoryImpl extends RoomRepository {
       }
       throw (result.message ?? "No se pudo procesar los datos");
     } catch (e) {
-      return left(CommonError(message: "Error startQuiz: $e"));
+      return left(CommonError(message: "Error getQuizById: $e"));
     }
   }
 
@@ -73,6 +74,22 @@ class RoomRepositoryImpl extends RoomRepository {
       throw (result.message ?? "No se pudo procesar los datos");
     } catch (e) {
       return left(CommonError(message: "Error finishQuiz: $e"));
+    }
+  }
+
+  @override
+  Future<Either<CommonError, SessionModel>> getSessionByRoom({required String roomCode}) async {
+    try {
+      final result = await dataSource.getSessionByRoom(roomCode: roomCode);
+      if (result.success) {
+        return right(SessionModel.fromJson(result.body));
+      } else if (!result.success && result.body is Map<String, dynamic>) {
+        final error = ErrorResponseModel.fromJson(result.body);
+        return left(CommonError(message: "${error.message}(${error.errorCode})"));
+      }
+      throw (result.message ?? "No se pudo procesar los datos");
+    } catch (e) {
+      return left(CommonError(message: "Error getSessionByRoom: $e"));
     }
   }
 }

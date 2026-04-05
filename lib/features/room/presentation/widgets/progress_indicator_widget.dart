@@ -1,4 +1,5 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:flutter/material.dart';
 
 class ProgressIndicatorWidget extends StatelessWidget {
@@ -38,7 +39,7 @@ class ProgressIndicatorWidget extends StatelessWidget {
             height: size,
             child: CustomText(
               percentage,
-              fontSize: 40,
+              fontSize: context.isTablet ? 30 : 40,
               fontWeight: FontWeight.w700,
               textAlign: TextAlign.center,
             ),

@@ -1,10 +1,14 @@
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
+import 'package:curiosity_flutter/features/home/data/models/session_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/results/result_detail_card_widget.dart';
 import 'package:curiosity_flutter/core/design/templates/waiting_list_widget.dart';
 import 'package:curiosity_flutter/features/room/data/models/quiz_result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'results/session_detail_card_widget.dart';
 
 class ResultsView extends ConsumerStatefulWidget {
   const ResultsView({super.key});
@@ -17,6 +21,7 @@ class _ResultsViewState extends ConsumerState<ResultsView> with TickerProviderSt
   late final TabController _tabController;
 
   List<QuizResultModel> resultList = [];
+  List<SessionModel> sessionList = [];
 
   @override
   void initState() {
@@ -28,20 +33,18 @@ class _ResultsViewState extends ConsumerState<ResultsView> with TickerProviderSt
   Future<void> _loadData() async {
     final controller = ref.read(homeController.notifier);
     controller.setLoading(true);
-    await controller.loadResults(context);
-    _loadList();
+    await _getResults();
+    await _getSessions();
+    setState(() {
+      resultList = ref.read(homeController).results;
+      sessionList = ref.read(homeController).sessions;
+    });
     controller.setLoading(false);
   }
 
-  void _loadList() {
-    var tempList = ref.read(homeController).results;
-    tempList.sort((a, b) {
-      final dateA = DateTime.parse(a.submittedAt ?? "0");
-      final dateB = DateTime.parse(b.submittedAt ?? "0");
-      return dateB.compareTo(dateA);
-    });
-    setState(() => resultList = tempList);
-  }
+  Future<void> _getResults() async => await ref.read(homeController.notifier).loadResults(context);
+
+  Future<void> _getSessions() async => await ref.read(homeController.notifier).loadSessions(context);
 
   @override
   void dispose() {
@@ -52,7 +55,12 @@ class _ResultsViewState extends ConsumerState<ResultsView> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(homeController);
-    return state.isLoading ? WaitingListWidget(loading: state.isLoading, list: FakeList.result) : tabBarWidget();
+    return state.isLoading
+        ? WaitingListWidget(
+            loading: state.isLoading,
+            list: FakeList.result,
+          )
+        : tabBarWidget();
   }
 
   Widget tabBarWidget() {
@@ -63,6 +71,7 @@ class _ResultsViewState extends ConsumerState<ResultsView> with TickerProviderSt
           dividerColor: colors.primary,
           indicatorColor: colors.orange,
           overlayColor: WidgetStatePropertyAll(colors.primary.withValues(alpha: .2)),
+          padding: EdgeInsets.all(context.scale(16) ?? 16),
           tabs: [
             Tab(
               child: CustomText(
@@ -72,18 +81,22 @@ class _ResultsViewState extends ConsumerState<ResultsView> with TickerProviderSt
               ),
             ),
             Tab(
-              child: CustomText("Mis salas", fontSize: 14, fontWeight: FontWeight.w600),
+              child: CustomText(
+                "Mis salas",
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(context.scale(16) ?? 16),
             child: TabBarView(
               controller: _tabController,
               children: [
                 resultListWidget(),
-                sessionList(),
+                sessionListWidget(),
               ],
             ),
           ),
@@ -104,11 +117,14 @@ class _ResultsViewState extends ConsumerState<ResultsView> with TickerProviderSt
     );
   }
 
-  Widget sessionList() {
+  Widget sessionListWidget() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        emptyResult(),
+        if (sessionList.isEmpty)
+          emptyResult()
+        else
+          ...sessionList.asMap().entries.map((e) => SessionDetailCardWidget(e.key, e.value))
       ],
     );
   }

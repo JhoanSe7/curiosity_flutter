@@ -1,10 +1,13 @@
+import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
-import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/core/utils/util_page.dart';
 import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
-import 'package:curiosity_flutter/features/room/presentation/widgets/user_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'users_scored_list_widget.dart';
 
 class ScoredBoardView extends ConsumerStatefulWidget {
   const ScoredBoardView({super.key});
@@ -18,33 +21,12 @@ class _ScoredBoardViewState extends ConsumerState<ScoredBoardView> {
   Widget build(BuildContext context) {
     final state = ref.watch(roomController);
     return CustomPageBuilder(
-      trailing: actions(),
+      trailing: actions(state.roomCode),
       title: "Clasificacion",
       centerTitle: true,
       enableLeading: false,
       appbarColor: colors.gradientSecondary,
-      body: Column(
-        children: [
-          ...getUsersList(state.users, true).asMap().entries.map(
-                (e) => UserCardWidget(
-                  e.key,
-                  e.value,
-                  scored: true,
-                  position: e.key + 1,
-                ),
-              ),
-          Divider(),
-          height.m,
-          ...getUsersList(state.users, false).asMap().entries.map(
-                (e) => UserCardWidget(
-                  e.key,
-                  e.value,
-                  scored: true,
-                  position: e.key + 4,
-                ),
-              ),
-        ],
-      ),
+      body: UsersScoredListWidget(users: state.users),
       bottomBar: Padding(
         padding: EdgeInsets.all(16),
         child: CustomButton(
@@ -58,28 +40,24 @@ class _ScoredBoardViewState extends ConsumerState<ScoredBoardView> {
     );
   }
 
-  Widget actions() {
+  Widget actions(String roomCode) {
     return Row(
       children: [
         CustomCircularButton(
           icon: Icons.save_alt,
-          onTap: () {},
+          onTap: () => _getReport(roomCode),
         )
       ],
     );
   }
 
-  List<UserModel> getUsersList(List<UserModel> userList, bool top) {
-    if (userList.isEmpty) return [];
-    List<UserModel> list = List.from(userList);
-    list.sort((a, b) => (a.score ?? 0).compareTo(b.score ?? 0));
-    list = list.reversed.toList();
-    return top
-        ? list.length >= 3
-            ? list.sublist(0, 3)
-            : list
-        : list.length > 3
-            ? list.sublist(3, list.length)
-            : [];
+  _getReport(String roomCode) async {
+    var session = await ref.read(roomController.notifier).getSessionByRoom(context, roomCode: roomCode);
+    if (session.id != null) {
+      view.launchURL(
+        "${Config.apiUrl}reports/excel/${session.id ?? ""}",
+        mode: LaunchMode.inAppWebView,
+      );
+    }
   }
 }

@@ -54,6 +54,7 @@ extension TextExtension on String {
   }
 
   String get customDate {
+    if (isEmpty) return "01 Ene 2000";
     final date = DateTime.parse(this);
     final now = DateTime.now();
 

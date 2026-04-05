@@ -78,9 +78,9 @@ class _FinishQuizViewState extends ConsumerState<FinishQuizView> {
             color: colors.paragraph,
           ),
           height.l,
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: Divider(),
+          Divider(
+            indent: 8,
+            endIndent: 8,
           ),
           height.l,
           statsWidget(state),

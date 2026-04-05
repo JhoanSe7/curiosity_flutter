@@ -4,7 +4,7 @@ import 'package:curiosity_flutter/features/questionaries/data/models/question_ty
 import 'package:flutter/material.dart';
 
 class Config {
-  static final Environment env = Environment.production;
+  static final Environment env = Environment.development;
 
   static final String apiUrl = backUrl[env] ?? "";
   static final String wsBaseUrl = wsUrl[env] ?? "";

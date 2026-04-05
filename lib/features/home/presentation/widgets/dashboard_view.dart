@@ -41,7 +41,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
       enabled: state.isLoading,
       justifyMultiLineText: true,
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(context.scale(16) ?? 16),
         child: Column(
           children: [
             quickAccessWidget(),

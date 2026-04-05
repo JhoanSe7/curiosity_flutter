@@ -3,6 +3,7 @@ import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/text_extension.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/home/presentation/widgets/results/date_text_widget.dart';
 import 'package:curiosity_flutter/features/room/data/models/quiz_result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,26 +55,7 @@ class ResultDetailCardWidget extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      CustomIcon(
-                        Icons.calendar_today_outlined,
-                        size: 18,
-                        color: colors.iconPlaceholder,
-                      ),
-                      width.s,
-                      Flexible(
-                        child: CustomText(
-                          (e.submittedAt ?? "").customDate,
-                          fontSize: 14,
-                          color: colors.paragraph,
-                          fontWeight: FontWeight.w500,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      )
-                    ],
-                  )
+                  DateTextWidget(text: (e.submittedAt ?? "").customDate),
                 ],
               ),
             ),

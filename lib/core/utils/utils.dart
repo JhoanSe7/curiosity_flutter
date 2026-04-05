@@ -1,4 +1,5 @@
 export 'extensions/dimension_extension.dart';
+export 'extensions/fake_extension.dart';
 export 'extensions/http_extension.dart';
 export 'extensions/message_extension.dart';
 export 'extensions/numeric_extension.dart';

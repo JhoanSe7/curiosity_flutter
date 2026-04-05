@@ -1,6 +1,7 @@
 import 'package:curiosity_flutter/core/di/injection.dart';
 import 'package:curiosity_flutter/core/utils/util_processor.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/home/data/models/session_model.dart';
 import 'package:curiosity_flutter/features/home/data/models/support_model.dart';
 import 'package:curiosity_flutter/features/home/domain/use_cases/home_use_case.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_state.dart';
@@ -75,8 +76,8 @@ class HomeController extends StateNotifier<HomeState> {
   ///
   Future<void> loadResults(BuildContext context) async {
     var userId = state.user?.id ?? "";
-    final res = await getResults(context, userId: userId);
-    if (mounted) state = state.copyWith(results: res);
+    final results = await getResults(context, userId: userId);
+    if (mounted) state = state.copyWith(results: results);
   }
 
   ///
@@ -87,6 +88,40 @@ class HomeController extends StateNotifier<HomeState> {
   ///
   void setScroll(bool value) {
     if (mounted) state = state.copyWith(enableScroll: value);
+  }
+
+  ///
+  Future<List<SessionModel>> getSessions(BuildContext context, {required String userId}) async {
+    final result = await execute<List<SessionModel>>(context, useCase.getSessions(userId: userId));
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? [],
+      (res) => res,
+    );
+  }
+
+  ///
+  Future<void> loadSessions(BuildContext context) async {
+    var userId = state.user?.id ?? "";
+    final sessions = await getSessions(context, userId: userId);
+    if (mounted) state = state.copyWith(sessions: sessions);
+  }
+
+  ///
+  void setSessionSelected(SessionModel e) {
+    if (mounted) state = state.copyWith(sessionSelected: e);
+  }
+
+  ///
+  Future<QuizResultModel> getResultSessionUser(BuildContext context,
+      {required String roomCode, required String userId}) async {
+    final result = await execute<QuizResultModel>(
+      context,
+      useCase.getResultSessionUser(roomCode: roomCode, userId: userId),
+    );
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? QuizResultModel(),
+      (res) => res,
+    );
   }
 }
 

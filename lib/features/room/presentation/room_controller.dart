@@ -7,6 +7,7 @@ import 'package:curiosity_flutter/core/services/web_socket/models/event_type.dar
 import 'package:curiosity_flutter/core/services/web_socket/web_socket_service.dart';
 import 'package:curiosity_flutter/core/utils/util_processor.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
+import 'package:curiosity_flutter/features/home/data/models/session_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
 import 'package:curiosity_flutter/features/room/data/models/quiz_result_model.dart';
 import 'package:curiosity_flutter/features/room/domain/use_cases/room_use_case.dart';
@@ -184,6 +185,15 @@ class RoomController extends StateNotifier<RoomState> {
   ///
   void setWaiting(bool waiting) {
     if (mounted) state = state.copyWith(waiting: waiting);
+  }
+
+  ///
+  Future<SessionModel> getSessionByRoom(BuildContext context, {required String roomCode}) async {
+    final result = await execute<SessionModel>(context, useCase.getSessionByRoom(roomCode: roomCode));
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? SessionModel(),
+      (data) => data,
+    );
   }
 }
 
