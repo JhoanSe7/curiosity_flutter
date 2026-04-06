@@ -1,0 +1,27 @@
+import 'package:curiosity_flutter/core/network/models/common_error.dart';
+import 'package:curiosity_flutter/features/home/data/models/session_model.dart';
+import 'package:curiosity_flutter/features/home/domain/repositories/home_repository.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
+import 'package:curiosity_flutter/features/room/data/models/quiz_result_model.dart';
+import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
+
+@injectable
+class HomeUseCase {
+  final HomeRepository repository;
+
+  HomeUseCase(this.repository);
+
+  Future<Either<CommonError, List<QuizModel>>> getQuizzes({required String userId}) =>
+      repository.getQuizzes(userId: userId);
+
+  Future<Either<CommonError, List<QuizResultModel>>> getResults({required String userId}) =>
+      repository.getResults(userId: userId);
+
+  Future<Either<CommonError, List<SessionModel>>> getSessions({required String userId}) =>
+      repository.getSessions(userId: userId);
+
+  Future<Either<CommonError, QuizResultModel>> getResultSessionUser(
+          {required String roomCode, required String userId}) =>
+      repository.getResultSessionUser(roomCode: roomCode, userId: userId);
+}

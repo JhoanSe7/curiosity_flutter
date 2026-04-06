@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "844600246339",
+    "project_id": "curiosity-71332",
+    "storage_bucket": "curiosity-71332.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:844600246339:android:591f97b315fc61128614f6",
+        "android_client_info": {
+          "package_name": "com.uts.app.curiosity_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWpKVoKmxnZPmmqjUP2tpu2Iie23GDzWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

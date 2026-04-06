@@ -1,0 +1,218 @@
+import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/routes/routes.dart';
+import 'package:curiosity_flutter/core/utils/utils.dart';
+import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/questionaries/data/models/quiz_model.dart';
+import 'package:curiosity_flutter/features/questionaries/presentation/widgets/quizzes_card_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+
+import 'dashboard/home_subtitle_widget.dart';
+import 'quizzes/quiz_create_card_widget.dart';
+import 'dashboard/show_more_widget.dart';
+
+class DashboardView extends ConsumerStatefulWidget {
+  const DashboardView({super.key});
+
+  @override
+  ConsumerState<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends ConsumerState<DashboardView> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(_loadData);
+  }
+
+  Future<void> _loadData() async {
+    final controller = ref.read(homeController.notifier);
+    controller.setLoading(true);
+    await controller.loadQuizzes(context);
+    controller.setLoading(false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(homeController);
+    return Skeletonizer(
+      enabled: state.isLoading,
+      justifyMultiLineText: true,
+      child: Padding(
+        padding: EdgeInsets.all(context.scale(16) ?? 16),
+        child: Column(
+          children: [
+            quickAccessWidget(),
+            height.xl,
+            if (state.user?.createdQuizzes?.isEmpty ?? true) ...[
+              beginWidget(),
+              height.xl,
+            ],
+            questionnairesWidget(state.quizzes),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget quickAccessWidget() {
+    return Column(
+      children: [
+        HomeSubtitleWidget("Acciones Rápidas", Icons.electric_bolt_outlined, colors.yellow),
+        height.l,
+        Row(
+          children: [
+            quickAccessButton(
+              "Crear Quiz",
+              "Diseña tu\ncuestionario",
+              Icons.add,
+              colors.gradientSecondary,
+              () => context.push(Routes.questionary),
+            ),
+            width.l,
+            quickAccessButton(
+              "Unirse",
+              "Código de quiz",
+              Icons.numbers,
+              colors.gradientPrimary,
+              () => context.push(Routes.joinRoom),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget quickAccessButton(
+    String title,
+    String desc,
+    IconData icon,
+    List<Color> bgColor,
+    void Function() onTap,
+  ) {
+    return Expanded(
+      child: CustomGestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: context.scale(context.height * .18),
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(color: colors.greyLight, offset: Offset(0, 3), blurRadius: 10),
+            ],
+            gradient: LinearGradient(
+              colors: bgColor,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: colors.white.withValues(alpha: .3),
+                ),
+                child: CustomIcon(
+                  icon,
+                  color: colors.white,
+                  size: 18,
+                ),
+              ),
+              height.m,
+              CustomText(
+                title,
+                color: colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
+              height.s,
+              CustomText(
+                desc,
+                color: colors.white,
+                fontSize: 12,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget beginWidget() {
+    return Column(
+      children: [
+        HomeSubtitleWidget("¿Cómo empezar?", Icons.star_border, colors.yellow),
+        height.l,
+        CustomCard(
+          subtitle: "Paso 1",
+          title: "Crea tu primer quiz",
+          desc: "Diseña preguntas divertidas sobre cualquier tema que te apasione",
+          icon: Icons.add,
+          bgColor: colors.gradientPurple,
+          color: colors.purple,
+          enableShadow: true,
+        ),
+        height.l,
+        CustomCard(
+          subtitle: "Paso 2",
+          title: "Comparte el código",
+          desc: "Invita a tus amigos a jugar usando el código unico de tu quiz",
+          icon: Icons.numbers,
+          bgColor: colors.gradientPrimary,
+          color: colors.aquamarine,
+          enableShadow: true,
+        ),
+        height.l,
+        CustomCard(
+          subtitle: "Paso 3",
+          title: "Juega y aprende",
+          desc: "Compite en tiempo real y descubre quién sabe más",
+          icon: Icons.electric_bolt_outlined,
+          bgColor: colors.gradientYellow,
+          color: colors.orange,
+          enableShadow: true,
+        ),
+      ],
+    );
+  }
+
+  Widget questionnairesWidget(List<QuizModel> quizzes) {
+    var shortList = quizzes.length > 2 ? quizzes.sublist(0, 2) : quizzes;
+    var less = quizzes.length - 2;
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            HomeSubtitleWidget("Mis Cuestionarios", Icons.menu_book, colors.purple),
+            if (quizzes.isNotEmpty) ShowMoreWidget("Ver todos"),
+          ],
+        ),
+        height.l,
+        quizzes.isEmpty
+            ? QuizCreateCardWidget()
+            : Column(
+                children: shortList.asMap().entries.map((e) => QuizzesCardWidget(e.key, e.value)).toList(),
+              ),
+        if (less > 0)
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(color: colors.greyLight.withValues(alpha: .5), offset: Offset(0, 3), blurRadius: 1),
+              ],
+            ),
+            child: ShowMoreWidget("Ver los${less > 1 ? " $less " : " "}cuestionarios restantes"),
+          )
+      ],
+    );
+  }
+}

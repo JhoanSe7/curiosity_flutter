@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -11,17 +12,69 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/auth/data/data_sources/auth_data_source.dart' as _i933;
+import '../../features/auth/data/repositories/auth_repository_impl.dart'
+    as _i153;
+import '../../features/auth/domain/repositories/auth_repository.dart' as _i787;
+import '../../features/auth/domain/use_cases/auth_use_case.dart' as _i283;
+import '../../features/home/data/data_sources/home_data_source.dart' as _i779;
+import '../../features/home/data/repositories/home_repository_impl.dart'
+    as _i76;
+import '../../features/home/domain/repositories/home_repository.dart' as _i0;
+import '../../features/home/domain/use_cases/home_use_case.dart' as _i933;
+import '../../features/questionaries/data/data_sources/questionaries_data_source.dart'
+    as _i812;
+import '../../features/questionaries/data/repositories/questionaries_repository_impl.dart'
+    as _i932;
+import '../../features/questionaries/domain/repositories/questionaries_repository.dart'
+    as _i664;
+import '../../features/questionaries/domain/use_cases/questionaries_use_case.dart'
+    as _i912;
+import '../../features/room/data/data_sources/room_data_source.dart' as _i419;
+import '../../features/room/data/repositories/room_repository_impl.dart'
+    as _i166;
+import '../../features/room/domain/repositories/room_repository.dart' as _i855;
+import '../../features/room/domain/use_cases/room_use_case.dart' as _i834;
+import '../network/client_http.dart' as _i107;
+import '../services/web_socket/web_socket_service.dart' as _i1055;
+
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
   _i174.GetIt init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
   }) {
-    _i526.GetItHelper(
+    final gh = _i526.GetItHelper(
       this,
       environment,
       environmentFilter,
     );
+    gh.factory<_i107.ClientHttp>(() => _i107.ClientHttp());
+    gh.singleton<_i1055.WebSocketService>(() => _i1055.WebSocketService());
+    gh.factory<_i779.HomeDataSource>(
+        () => _i779.HomeDataSourceImpl(gh<_i107.ClientHttp>()));
+    gh.factory<_i419.RoomDataSource>(
+        () => _i419.RoomDataSourceImpl(gh<_i107.ClientHttp>()));
+    gh.factory<_i933.AuthDataSource>(
+        () => _i933.AuthDataSourceImpl(gh<_i107.ClientHttp>()));
+    gh.factory<_i812.QuestionariesDataSource>(
+        () => _i812.QuestionariesDataSourceImpl(gh<_i107.ClientHttp>()));
+    gh.factory<_i664.QuestionariesRepository>(() =>
+        _i932.QuestionariesRepositoryImpl(gh<_i812.QuestionariesDataSource>()));
+    gh.factory<_i0.HomeRepository>(
+        () => _i76.HomeRepositoryImpl(gh<_i779.HomeDataSource>()));
+    gh.factory<_i912.QuestionariesUseCase>(
+        () => _i912.QuestionariesUseCase(gh<_i664.QuestionariesRepository>()));
+    gh.factory<_i855.RoomRepository>(
+        () => _i166.RoomRepositoryImpl(gh<_i419.RoomDataSource>()));
+    gh.factory<_i787.AuthRepository>(
+        () => _i153.AuthRepositoryImpl(gh<_i933.AuthDataSource>()));
+    gh.factory<_i933.HomeUseCase>(
+        () => _i933.HomeUseCase(gh<_i0.HomeRepository>()));
+    gh.factory<_i834.RoomUseCase>(
+        () => _i834.RoomUseCase(gh<_i855.RoomRepository>()));
+    gh.factory<_i283.AuthUseCase>(
+        () => _i283.AuthUseCase(gh<_i787.AuthRepository>()));
     return this;
   }
 }
