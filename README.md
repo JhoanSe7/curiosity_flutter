@@ -175,7 +175,7 @@ curiosity_flutter/
 | Carlos Alberto Santos Rodríguez | Ingeniería de Sistemas |
 | Jhoan Sebastián Silva Vargas | Ingeniería de Sistemas |
 
-*Trabajo de grado — Unidades Tecnológicas de Santander, 2025*
+*Trabajo de grado — Unidades Tecnológicas de Santander, 2026*
 
 ---
 
