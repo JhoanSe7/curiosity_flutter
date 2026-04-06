@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-  Logger log = Logger('Util');
+Logger log = Logger('Util');
+
 class UtilPage {
   void autoScroll(BuildContext context) {
     Scrollable.ensureVisible(
@@ -21,6 +22,13 @@ class UtilPage {
     final androidInfo = await deviceInfo.androidInfo;
     final manufacturer = androidInfo.manufacturer.toLowerCase();
     return manufacturer.contains('huawei');
+  }
+
+  Future<bool> get allowFirebase async {
+    if (Platform.isIOS) return false;
+    bool huawei = await isHuawei;
+    if (huawei) return false;
+    return true;
   }
 
   Future<void> launchURL(
