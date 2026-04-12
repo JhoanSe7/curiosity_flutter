@@ -56,7 +56,7 @@ class AuthDataSourceImpl extends AuthDataSource {
   Future<HttpResponseModel> sendOTP({required String email}) async {
     return await clientHttp.post(
       endpoint: "${Config.apiUrl}users/reset-password",
-      body: {"email": email, "test": true},
+      body: {"email": email},
     );
   }
 
