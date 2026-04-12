@@ -1,3 +1,6 @@
+import 'package:curiosity_flutter/features/auth/presentation/reset_password/reset_password_page.dart';
+import 'package:curiosity_flutter/features/auth/presentation/reset_password/widgets/create_password_view.dart';
+import 'package:curiosity_flutter/features/auth/presentation/reset_password/widgets/validate_otp_view.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_page.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_page.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_page.dart';
@@ -46,6 +49,9 @@ class Routes {
   static String scoredBoard = "/scored-board";
   static String resultDetail = "/result-detail";
   static String sessionResultUser = "/session-result-user";
+  static String requestOTP = "/request-otp";
+  static String validateOTP = "/validate-otp";
+  static String createPassword = "/create-password";
 }
 
 final router = GoRouter(
@@ -134,6 +140,18 @@ final router = GoRouter(
     GoRoute(
       path: Routes.sessionResultUser,
       builder: (context, state) => const SessionResultUsersView(),
+    ),
+    GoRoute(
+      path: Routes.requestOTP,
+      builder: (context, state) => const ResetPasswordPage(),
+    ),
+    GoRoute(
+      path: Routes.validateOTP,
+      builder: (context, state) => const ValidateOtpView(),
+    ),
+    GoRoute(
+      path: Routes.createPassword,
+      builder: (context, state) => const CreatePasswordView(),
     ),
   ],
 );

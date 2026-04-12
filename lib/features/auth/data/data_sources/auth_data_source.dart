@@ -11,6 +11,12 @@ abstract class AuthDataSource {
   Future<HttpResponseModel> signUp({required UserModel data});
 
   Future<HttpResponseModel> updateToken({required String userId, required String tokenPush});
+
+  Future<HttpResponseModel> sendOTP({required String email});
+
+  Future<HttpResponseModel> validateOTP({required String userId, required String code});
+
+  Future<HttpResponseModel> updateUser({required UserModel data});
 }
 
 @Injectable(as: AuthDataSource)
@@ -43,6 +49,30 @@ class AuthDataSourceImpl extends AuthDataSource {
         "userId": userId,
         "tokenPush": tokenPush,
       },
+    );
+  }
+
+  @override
+  Future<HttpResponseModel> sendOTP({required String email}) async {
+    return await clientHttp.post(
+      endpoint: "${Config.apiUrl}users/reset-password",
+      body: {"email": email, "test": true},
+    );
+  }
+
+  @override
+  Future<HttpResponseModel> validateOTP({required String userId, required String code}) async {
+    return await clientHttp.post(
+      endpoint: "${Config.apiUrl}users/validate-otp",
+      body: {"userId": userId, "code": code},
+    );
+  }
+
+  @override
+  Future<HttpResponseModel> updateUser({required UserModel data}) async {
+    return await clientHttp.post(
+      endpoint: "${Config.apiUrl}users/update-user",
+      body: data.toUpdate(),
     );
   }
 }

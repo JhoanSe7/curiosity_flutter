@@ -9,4 +9,10 @@ abstract class AuthRepository {
   Future<Either<CommonError, UserModel>> signUp({required UserModel data});
 
   Future<Either<CommonError, UserModel>> updateToken({required String userId, required String tokenPush});
+
+  Future<Either<CommonError, UserModel>> sendOTP({required String email});
+
+  Future<Either<CommonError, bool>> validateOTP({required String userId, required String code});
+
+  Future<Either<CommonError, UserModel>> updateUser({required UserModel data});
 }
