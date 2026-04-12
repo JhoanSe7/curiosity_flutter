@@ -1,5 +1,6 @@
 import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
+import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
 import 'package:curiosity_flutter/core/utils/util_page.dart';
 import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:flutter/material.dart';
@@ -44,16 +45,30 @@ class _ScoredBoardViewState extends ConsumerState<ScoredBoardView> {
     return Row(
       children: [
         CustomCircularButton(
+          icon: Icons.attach_email_outlined,
+          onTap: () => _getReport(
+            roomCode,
+            attach: true,
+          ),
+        ),
+        width.m,
+        CustomCircularButton(
           icon: Icons.save_alt,
           onTap: () => _getReport(roomCode),
-        )
+        ),
       ],
     );
   }
 
-  _getReport(String roomCode) async {
+  Future<void> _getReport(String roomCode, {bool attach = false}) async {
     var session = await ref.read(roomController.notifier).getSessionByRoom(context, roomCode: roomCode);
     if (session.id != null) {
+      if (mounted && attach) {
+        var isSend = await ref.read(roomController.notifier).sendMailReport(context, sessionId: session.id ?? "");
+        if (mounted && isSend) {
+          return await context.showModal(title: "Informe enviado", content: "Hemos enviado el informe a tu correo.");
+        }
+      }
       view.launchURL(
         "${Config.apiUrl}reports/excel/${session.id ?? ""}",
         mode: LaunchMode.inAppWebView,

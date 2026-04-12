@@ -33,11 +33,13 @@ class SessionDetailCardWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomText(
-                e.quizTitle ?? "",
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                overflow: TextOverflow.ellipsis,
+              Flexible(
+                child: CustomText(
+                  e.quizTitle ?? "",
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               Consumer(
                 builder: (context, ref, _) => CustomButton(

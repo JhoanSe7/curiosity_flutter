@@ -25,4 +25,7 @@ class RoomUseCase {
 
   Future<Either<CommonError, SessionModel>> getSessionByRoom({required String roomCode}) async =>
       repository.getSessionByRoom(roomCode: roomCode);
+
+  Future<Either<CommonError, bool>> sendMailReport({required String sessionId}) async =>
+      repository.sendMailReport(sessionId: sessionId);
 }

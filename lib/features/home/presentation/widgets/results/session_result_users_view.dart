@@ -1,9 +1,11 @@
 import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
+import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
 import 'package:curiosity_flutter/core/utils/util_page.dart';
 import 'package:curiosity_flutter/features/home/data/models/session_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
 import 'package:curiosity_flutter/features/room/presentation/widgets/users_scored_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,9 +37,14 @@ class _SessionResultUsersViewState extends ConsumerState<SessionResultUsersView>
     return Row(
       children: [
         CustomCircularButton(
+          icon: Icons.attach_email_outlined,
+          onTap: () => _getReport(sessionId, attach: true),
+        ),
+        width.m,
+        CustomCircularButton(
           icon: Icons.save_alt,
           onTap: () => _getReport(sessionId),
-        )
+        ),
       ],
     );
   }
@@ -53,7 +60,13 @@ class _SessionResultUsersViewState extends ConsumerState<SessionResultUsersView>
     }
   }
 
-  _getReport(String sessionId) {
+  Future<dynamic> _getReport(String sessionId, {bool attach = false}) async {
+    if (attach) {
+      var isSend = await ref.read(roomController.notifier).sendMailReport(context, sessionId: sessionId);
+      if (mounted && isSend) {
+        return await context.showModal(title: "Informe enviado", content: "Hemos enviado el informe a tu correo.");
+      }
+    }
     view.launchURL(
       "${Config.apiUrl}reports/excel/$sessionId",
       mode: LaunchMode.inAppWebView,
