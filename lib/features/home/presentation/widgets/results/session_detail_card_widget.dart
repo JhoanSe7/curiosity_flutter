@@ -20,6 +20,7 @@ class SessionDetailCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -33,11 +34,13 @@ class SessionDetailCardWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CustomText(
-                e.quizTitle ?? "",
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                overflow: TextOverflow.ellipsis,
+              Flexible(
+                child: CustomText(
+                  e.quizTitle ?? "",
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               Consumer(
                 builder: (context, ref, _) => CustomButton(

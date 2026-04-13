@@ -92,4 +92,33 @@ class RoomRepositoryImpl extends RoomRepository {
       return left(CommonError(message: "Error getSessionByRoom: $e"));
     }
   }
+
+  @override
+  Future<Either<CommonError, bool>> sendMailReport({required String sessionId}) async {
+    try {
+      final result = await dataSource.sendMailReport(sessionId: sessionId);
+      if (result.success) {
+        return right(result.body);
+      } else if (!result.success && result.body is Map<String, dynamic>) {
+        final error = ErrorResponseModel.fromJson(result.body);
+        return left(CommonError(message: "${error.message}(${error.errorCode})"));
+      }
+      throw (result.message ?? "No se pudo procesar los datos");
+    } catch (e) {
+      return left(CommonError(message: "Error sendMailReport: $e"));
+    }
+  }
+
+  @override
+  Future<Either<CommonError, dynamic>> downloadReport({required String sessionId}) async {
+    try {
+      final result = await dataSource.downloadReport(sessionId: sessionId);
+      if (result.success) {
+        return right(result.body);
+      }
+      throw (result.message ?? "No se pudo procesar los datos");
+    } catch (e) {
+      return left(CommonError(message: "Error downloadReport: $e"));
+    }
+  }
 }

@@ -7,6 +7,7 @@ import 'package:curiosity_flutter/features/auth/data/models/field_name.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_controller.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
+import 'package:curiosity_flutter/features/home/presentation/widgets/bottom_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -297,7 +298,9 @@ class SignUpPageState extends ConsumerState<SignUpPage> {
     );
     final register = await controller.register(context, data);
     if (register != null && (register.firstName ?? "").isNotEmpty) {
-      ref.read(homeController.notifier).setUser(data: register);
+      final dashController = ref.read(homeController.notifier);
+      dashController.setMenuIndex(HomeId.init);
+      dashController.setUser(data: register);
       if (mounted) context.go(Routes.home);
     }
   }

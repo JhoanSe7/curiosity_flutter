@@ -24,4 +24,14 @@ extension HttpExtension on Response {
     log.info('Response: ${utf8.decode(bodyBytes)}');
     log.info('---=== END API ===---');
   }
+
+  HttpResponseModel parseFile() {
+    final log = Logger('HttpExtension->parseFile');
+    try {
+      return HttpResponseModel(success: statusCode == 200, message: "file", body: bodyBytes);
+    } catch (e) {
+      log.warning("Error HttpUtils: $e");
+      return HttpResponseModel(success: false, body: body);
+    }
+  }
 }

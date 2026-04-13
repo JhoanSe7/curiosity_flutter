@@ -94,6 +94,17 @@ class UserModel {
         'quizStatus': quizStatus,
         'tokenPush': tokenPush,
       };
+
+  Map<String, dynamic> toUpdate() => {
+        'id': id,
+        'firstName': firstName,
+        'secondName': secondName,
+        'lastName': lastName,
+        'secondLastName': secondLastName,
+        'email': email,
+        'phoneNumber': phoneNumber,
+        'password': password,
+      };
 }
 
 enum UserParam {

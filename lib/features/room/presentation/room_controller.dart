@@ -195,6 +195,24 @@ class RoomController extends StateNotifier<RoomState> {
       (data) => data,
     );
   }
+
+  ///
+  Future<bool> sendMailReport(BuildContext context, {required String sessionId}) async {
+    final result = await execute<bool>(context, useCase.sendMailReport(sessionId: sessionId));
+    return result.fold(
+      (e) => processError(context, error: e.message) ?? false,
+      (data) => data,
+    );
+  }
+
+  ///
+  Future<dynamic> downloadReport(BuildContext context, {required String sessionId}) async {
+    final result = await execute<dynamic>(context, useCase.downloadReport(sessionId: sessionId));
+    return result.fold(
+      (e) => processError(context, error: e.message),
+      (data) => data,
+    );
+  }
 }
 
 final roomController = StateNotifierProvider<RoomController, RoomState>(

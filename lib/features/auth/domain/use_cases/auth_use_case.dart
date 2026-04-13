@@ -18,4 +18,13 @@ class AuthUseCase {
 
   Future<Either<CommonError, UserModel>> updateToken({required String userId, required String tokenPush}) async =>
       await repository.updateToken(userId: userId, tokenPush: tokenPush);
+
+  Future<Either<CommonError, UserModel>> sendOTP({required String email}) async =>
+      await repository.sendOTP(email: email);
+
+  Future<Either<CommonError, bool>> validateOTP({required String userId, required String code}) async =>
+      await repository.validateOTP(userId: userId, code: code);
+
+  Future<Either<CommonError, UserModel>> updateUser({required UserModel data}) async =>
+      await repository.updateUser(data: data);
 }

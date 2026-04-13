@@ -83,6 +83,7 @@ extension MessageExtension on BuildContext {
     Widget? actions,
     bool showClose = false,
     double? closeSize,
+    String buttonText = "Entendido",
     void Function()? onTap,
   }) async =>
       await showDialog(
@@ -102,7 +103,7 @@ extension MessageExtension on BuildContext {
                   Align(
                     alignment: Alignment.topRight,
                     child: CustomCircularButton(
-                      color: colors.primary,
+                      color: buttonColor ?? colors.primary,
                       icon: Icons.cancel,
                       size: closeSize,
                       onTap: () => context.pop(),
@@ -130,7 +131,7 @@ extension MessageExtension on BuildContext {
                 height.xl,
                 actions ??
                     CustomButton(
-                      text: "Entendido",
+                      text: buttonText,
                       color: buttonColor ?? colors.primary,
                       height: 14,
                       onTap: onTap ?? () => context.pop(true),

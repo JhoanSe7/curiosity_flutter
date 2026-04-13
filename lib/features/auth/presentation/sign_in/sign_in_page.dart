@@ -236,22 +236,10 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   }
 
   void _goToRegister() {
-    ref.read(homeController.notifier).setMenuIndex(HomeId.init);
     context.push(Routes.signUp);
   }
 
   void _recovery() {
-    if (_userController.text.isEmpty) {
-      setState(() {
-        error1 = "Se requiere un correo electronico para recuperar la contraseña";
-      });
-      return;
-    }
-    context.showModal(
-      title: "¿Olvidaste tu contraseña?",
-      content: "Para recuperar tu contraseña, "
-          "enviamos al correo electronico (${_userController.text}) "
-          "los pasos para restablecer tu contraseña.",
-    );
+    context.push(Routes.requestOTP);
   }
 }
