@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:curiosity_flutter/core/network/token_storage.dart';
 import 'package:curiosity_flutter/core/utils/extensions/http_extension.dart';
 import 'package:http/http.dart';
 import 'package:injectable/injectable.dart';
@@ -19,6 +20,9 @@ class ClientHttp {
     try {
       var response = await http.get(Uri.parse(endpoint), headers: Config.headers);
       if (!getFile) response.inspect("");
+      if (response.statusCode == 401) {
+        return await _handleUnauthorized(isGet: true, endpoint: endpoint);
+      }
       if (getFile) return response.parseFile();
       return response.validate();
     } on TimeoutException catch (e) {
@@ -37,6 +41,9 @@ class ClientHttp {
     try {
       var response = await http.post(Uri.parse(endpoint), body: jsonEncode(body), headers: Config.headers);
       response.inspect(body);
+      if (response.statusCode == 401) {
+        return await _handleUnauthorized(isGet: false, endpoint: endpoint, body: body);
+      }
       return response.validate();
     } on TimeoutException catch (e) {
       log.warning("POST Timeout http request to $endpoint: $e");
@@ -47,6 +54,60 @@ class ClientHttp {
     } catch (e) {
       log.warning("POST Error http request to $endpoint: $e");
       return HttpResponseModel(success: false, message: "Problemas tecnicos");
+    }
+  }
+
+  Future<HttpResponseModel> _handleUnauthorized({
+    required bool isGet,
+    required String endpoint,
+    dynamic body,
+  }) async {
+    log.warning("401 detected — intentando renovar token");
+    try {
+      final refreshToken = await TokenStorage.getRefreshToken();
+      if (refreshToken == null || refreshToken.isEmpty) {
+        log.warning("No hay refresh token disponible");
+        return HttpResponseModel(success: false, message: "Sesion expirada");
+      }
+
+      final refreshResponse = await http.post(
+        Uri.parse("${Config.apiUrl}auth/refresh"),
+        body: jsonEncode({"refreshToken": refreshToken}),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (refreshResponse.statusCode != 200) {
+        log.warning("Refresh fallido: ${refreshResponse.statusCode}");
+        await TokenStorage.clearTokens();
+        Config.clearToken();
+        return HttpResponseModel(success: false, message: "Sesion expirada");
+      }
+
+      final refreshData = jsonDecode(refreshResponse.body);
+      final newAccessToken = refreshData['body']['accessToken'] as String;
+
+      await TokenStorage.saveTokens(
+        accessToken: newAccessToken,
+        refreshToken: refreshToken,
+      );
+      Config.setToken(newAccessToken);
+      log.info("Token renovado exitosamente");
+
+      // reintentar petición original
+      if (isGet) {
+        final retry = await http.get(Uri.parse(endpoint), headers: Config.headers);
+        return retry.validate();
+      } else {
+        final retry = await http.post(
+          Uri.parse(endpoint),
+          body: jsonEncode(body),
+          headers: Config.headers,
+        );
+        return retry.validate();
+      }
+    } catch (e) {
+      log.warning("Error renovando token: $e");
+      return HttpResponseModel(success: false, message: "Sesion expirada");
     }
   }
 }

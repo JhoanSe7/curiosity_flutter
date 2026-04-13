@@ -1,4 +1,6 @@
+import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/network/models/common_error.dart';
+import 'package:curiosity_flutter/core/network/token_storage.dart';
 import 'package:curiosity_flutter/features/auth/data/data_sources/auth_data_source.dart';
 import 'package:curiosity_flutter/core/network/models/response/error_response_model.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
@@ -18,7 +20,19 @@ class AuthRepositoryImpl extends AuthRepository {
     try {
       final result = await dataSource.signIn(data: data);
       if (result.success) {
-        return right(UserModel.fromJson(result.body));
+        final body = result.body as Map<String, dynamic>;
+        final accessToken = body['accessToken'] as String? ?? "";
+        final refreshToken = body['refreshToken'] as String? ?? "";
+
+        if (accessToken.isNotEmpty) {
+          await TokenStorage.saveTokens(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          );
+          Config.setToken(accessToken);
+        }
+
+        return right(UserModel.fromJson(body['user']));
       } else if (!result.success && result.body is Map<String, dynamic>) {
         final error = ErrorResponseModel.fromJson(result.body);
         return left(CommonError(message: "${error.message}(${error.errorCode})"));

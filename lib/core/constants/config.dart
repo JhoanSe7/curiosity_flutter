@@ -9,10 +9,15 @@ class Config {
   static final String apiUrl = backUrl[env] ?? "";
   static final String wsBaseUrl = wsUrl[env] ?? "";
 
-  static final Map<String, String> headers = {
-    "Accept": "application/json",
-    "Content-Type": 'application/json',
-  };
+  static String _token = "";
+  static void setToken(String token) => _token = token;
+  static void clearToken() => _token = "";
+
+  static Map<String, String> get headers => {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        if (_token.isNotEmpty) "Authorization": "Bearer $_token",
+      };
 
   static final Map<Environment, String> backUrl = {
     Environment.development: "http://192.168.0.23:9070/api/",
