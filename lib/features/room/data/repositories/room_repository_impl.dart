@@ -108,4 +108,17 @@ class RoomRepositoryImpl extends RoomRepository {
       return left(CommonError(message: "Error sendMailReport: $e"));
     }
   }
+
+  @override
+  Future<Either<CommonError, dynamic>> downloadReport({required String sessionId}) async {
+    try {
+      final result = await dataSource.downloadReport(sessionId: sessionId);
+      if (result.success) {
+        return right(result.body);
+      }
+      throw (result.message ?? "No se pudo procesar los datos");
+    } catch (e) {
+      return left(CommonError(message: "Error downloadReport: $e"));
+    }
+  }
 }

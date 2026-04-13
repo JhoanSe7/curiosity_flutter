@@ -15,4 +15,6 @@ abstract class RoomRepository {
   Future<Either<CommonError, SessionModel>> getSessionByRoom({required String roomCode});
 
   Future<Either<CommonError, bool>> sendMailReport({required String sessionId});
+
+  Future<Either<CommonError, dynamic>> downloadReport({required String sessionId});
 }

@@ -15,10 +15,11 @@ class ClientHttp {
   final log = Logger('ClientHttpClass');
   Client http = Client();
 
-  Future<HttpResponseModel> get({required String endpoint}) async {
+  Future<HttpResponseModel> get({required String endpoint, bool getFile = false}) async {
     try {
       var response = await http.get(Uri.parse(endpoint), headers: Config.headers);
-      response.inspect("");
+      if (!getFile) response.inspect("");
+      if (getFile) return response.parseFile();
       return response.validate();
     } on TimeoutException catch (e) {
       log.warning("GET Timeout http request to $endpoint: $e");

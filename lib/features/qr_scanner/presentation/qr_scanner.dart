@@ -21,6 +21,7 @@ class QrScanner {
             title: title ?? 'Escanear QR',
             subTitle: subTitle ?? 'Centra el QR en el recuadro',
             showFlash: showFlash ?? true,
+            showGallery: showGallery ?? true,
           );
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {

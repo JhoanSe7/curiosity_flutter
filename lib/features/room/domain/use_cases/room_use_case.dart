@@ -28,4 +28,7 @@ class RoomUseCase {
 
   Future<Either<CommonError, bool>> sendMailReport({required String sessionId}) async =>
       repository.sendMailReport(sessionId: sessionId);
+
+  Future<Either<CommonError, dynamic>> downloadReport({required String sessionId}) async =>
+      repository.downloadReport(sessionId: sessionId);
 }

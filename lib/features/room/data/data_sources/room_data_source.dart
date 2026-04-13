@@ -15,6 +15,8 @@ abstract class RoomDataSource {
   Future<HttpResponseModel> getSessionByRoom({required String roomCode});
 
   Future<HttpResponseModel> sendMailReport({required String sessionId});
+
+  Future<HttpResponseModel> downloadReport({required String sessionId});
 }
 
 @Injectable(as: RoomDataSource)
@@ -67,5 +69,10 @@ class RoomDataSourceImpl implements RoomDataSource {
   @override
   Future<HttpResponseModel> sendMailReport({required String sessionId}) async {
     return await clientHttp.get(endpoint: "${Config.apiUrl}reports/send-report/$sessionId");
+  }
+
+  @override
+  Future<HttpResponseModel> downloadReport({required String sessionId}) async {
+    return await clientHttp.get(endpoint: "${Config.apiUrl}reports/excel/$sessionId", getFile: true);
   }
 }

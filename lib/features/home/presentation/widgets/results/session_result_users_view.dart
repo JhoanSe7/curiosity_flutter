@@ -1,8 +1,8 @@
-import 'package:curiosity_flutter/core/constants/config.dart';
+import 'dart:io';
+
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
-import 'package:curiosity_flutter/core/utils/util_page.dart';
 import 'package:curiosity_flutter/features/home/data/models/session_model.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_controller.dart';
 import 'package:curiosity_flutter/features/room/presentation/room_controller.dart';
@@ -10,7 +10,7 @@ import 'package:curiosity_flutter/features/room/presentation/widgets/users_score
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SessionResultUsersView extends ConsumerStatefulWidget {
   const SessionResultUsersView({super.key});
@@ -29,7 +29,10 @@ class _SessionResultUsersViewState extends ConsumerState<SessionResultUsersView>
       centerTitle: true,
       title: session.quizTitle ?? "Resultados",
       appbarColor: colors.gradientViolet,
-      body: UsersScoredListWidget(users: session.players ?? [], onTap: (e) => _onTapDetail(session.roomCode, e.id)),
+      body: UsersScoredListWidget(
+        users: session.players ?? [],
+        onTap: (e) => _onTapDetail(session.roomCode, e.id),
+      ),
     );
   }
 
@@ -52,7 +55,11 @@ class _SessionResultUsersViewState extends ConsumerState<SessionResultUsersView>
   Future<void> _onTapDetail(String? roomCode, String? userId) async {
     if ((roomCode ?? "").isNotEmpty && (userId ?? "").isNotEmpty) {
       final controller = ref.read(homeController.notifier);
-      var res = await controller.getResultSessionUser(context, roomCode: roomCode ?? "", userId: userId ?? "");
+      var res = await controller.getResultSessionUser(
+        context,
+        roomCode: roomCode ?? "",
+        userId: userId ?? "",
+      );
       if ((res.id ?? "").isNotEmpty) {
         controller.setResultDetail(res);
         if (mounted) context.push(Routes.resultDetail);
@@ -61,15 +68,54 @@ class _SessionResultUsersViewState extends ConsumerState<SessionResultUsersView>
   }
 
   Future<dynamic> _getReport(String sessionId, {bool attach = false}) async {
+    final controller = ref.read(roomController.notifier);
     if (attach) {
-      var isSend = await ref.read(roomController.notifier).sendMailReport(context, sessionId: sessionId);
+      var isSend = await controller.sendMailReport(context, sessionId: sessionId);
       if (mounted && isSend) {
-        return await context.showModal(title: "Informe enviado", content: "Hemos enviado el informe a tu correo.");
+        return await context.showModal(
+          title: "Informe enviado",
+          content: "Hemos enviado el informe a tu correo.",
+        );
       }
     }
-    view.launchURL(
-      "${Config.apiUrl}reports/excel/$sessionId",
-      mode: LaunchMode.inAppWebView,
-    );
+    if (!mounted) return;
+    var bytes = await controller.downloadReport(context, sessionId: sessionId);
+    if (bytes == null) return;
+    await _saveReport(bytes);
+  }
+
+  Future<void> _saveReport(dynamic bytes) async {
+    try {
+      final success = await _saveToDownloads(bytes);
+      if (!mounted) return;
+      context.pop();
+      context.showToast(
+        text: success ? "Reporte guardado en Descargas" : "No se pudo guardar el reporte",
+        type: success ? MessageType.success : MessageType.warning,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      context.showToast(
+        text: "Error al guardar el reporte",
+        type: MessageType.error,
+      );
+    }
+  }
+
+  Future<bool> _saveToDownloads(dynamic bytes) async {
+    if (Platform.isAndroid) {
+      final dir = Directory('/storage/emulated/0/Download');
+      if (!await dir.exists()) await dir.create(recursive: true);
+
+      final file = File('${dir.path}/reporte.xlsx');
+      await file.writeAsBytes(bytes);
+      return true;
+    } else if (Platform.isIOS) {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/reporte.xlsx');
+      await file.writeAsBytes(bytes);
+      return true;
+    }
+    return false;
   }
 }
