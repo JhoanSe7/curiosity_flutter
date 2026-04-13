@@ -24,6 +24,15 @@ class RoomController extends StateNotifier<RoomState> {
   final WebSocketService wsService;
 
   final _eventController = StreamController<EventModel>.broadcast();
+  StreamSubscription<EventModel>? _eventSub;
+
+  @override
+  void dispose() {
+    _eventSub?.cancel();
+    _eventController.close();
+    wsService.disconnect();
+    super.dispose();
+  }
 
   ///
   Future<void> connect(UserModel user, String roomCode, {bool isOwner = false}) async {
@@ -37,7 +46,10 @@ class RoomController extends StateNotifier<RoomState> {
       // Conectar y ejecutar suscripción + emit solo cuando esté listo
       wsService.connect(onConnected: () {
         onSubscribe(channelSub, channelEmit, user);
-        if (!isOwner) subscribeResult(roomCode, user.id ?? "");
+
+        if (!isOwner) {
+          subscribeResult(roomCode, user.id ?? "");
+        }
       });
     } catch (e) {
       if (mounted) {
@@ -52,7 +64,9 @@ class RoomController extends StateNotifier<RoomState> {
   ///
   void onSubscribe(String channelSub, String channelEmit, UserModel user) {
     wsService.subscribe(channel: channelSub, callback: callbackSub);
-    _eventController.stream.listen(_eventReceived);
+    _eventSub?.cancel();
+    _eventSub = _eventController.stream.listen(_eventReceived);
+
     wsService.emit(channel: channelEmit, data: user.toMap());
   }
 
@@ -89,25 +103,32 @@ class RoomController extends StateNotifier<RoomState> {
           quizTitle: event.quizTitle,
           errorMessage: "",
         );
+        break;
       case EventType.error:
         state = state.copyWith(
           isConnecting: false,
           isConnected: false,
           errorMessage: event.message,
         );
+        break;
       case EventType.start:
         state = state.copyWith(quizStarted: true, quizId: event.quizId);
+        break;
       case EventType.close:
         state = state.copyWith(
           isConnected: false,
           errorMessage: 'El lobby fue cerrado por el organizador',
         );
+        break;
       case EventType.userUpdate:
         state = state.copyWith(users: event.user);
+        break;
       case EventType.forceFinish:
         state = state.copyWith(forceFinish: true, results: QuizResultModel());
+        break;
       case EventType.quizResult:
         state = state.copyWith(results: event.results, waiting: false);
+        break;
       case EventType.unknown:
         break;
     }
