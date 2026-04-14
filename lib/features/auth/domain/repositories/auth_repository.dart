@@ -15,4 +15,6 @@ abstract class AuthRepository {
   Future<Either<CommonError, bool>> validateOTP({required String userId, required String code});
 
   Future<Either<CommonError, UserModel>> updateUser({required UserModel data});
+
+  Future<Either<CommonError, bool>> status();
 }

@@ -27,13 +27,13 @@ class ClientHttp {
       return response.validate();
     } on TimeoutException catch (e) {
       log.warning("GET Timeout http request to $endpoint: $e");
-      return HttpResponseModel(success: false, message: "Problemas de conexion");
+      return HttpResponseModel(success: false, message: ClientStatus.highLatency.message);
     } on SocketException catch (e) {
       log.warning("GET SocketException http request to $endpoint: $e");
-      return HttpResponseModel(success: false, message: "Sin conexion a internet");
+      return HttpResponseModel(success: false, message: ClientStatus.noConnection.message);
     } catch (e) {
       log.warning("GET Error http request to $endpoint: $e");
-      return HttpResponseModel(success: false, message: "Problemas tecnicos");
+      return HttpResponseModel(success: false, message: ClientStatus.technicalIssues.message);
     }
   }
 
@@ -47,13 +47,13 @@ class ClientHttp {
       return response.validate();
     } on TimeoutException catch (e) {
       log.warning("POST Timeout http request to $endpoint: $e");
-      return HttpResponseModel(success: false, message: "Problemas de conexion");
+      return HttpResponseModel(success: false, message: ClientStatus.highLatency.message);
     } on SocketException catch (e) {
       log.warning("POST SocketException http request to $endpoint: $e");
-      return HttpResponseModel(success: false, message: "Sin conexion a internet");
+      return HttpResponseModel(success: false, message: ClientStatus.noConnection.message);
     } catch (e) {
       log.warning("POST Error http request to $endpoint: $e");
-      return HttpResponseModel(success: false, message: "Problemas tecnicos");
+      return HttpResponseModel(success: false, message: ClientStatus.technicalIssues.message);
     }
   }
 
@@ -67,7 +67,7 @@ class ClientHttp {
       final refreshToken = await TokenStorage.getRefreshToken();
       if (refreshToken == null || refreshToken.isEmpty) {
         log.warning("No hay refresh token disponible");
-        return HttpResponseModel(success: false, message: "Sesion expirada");
+        return HttpResponseModel(success: false, message: ClientStatus.expiredToken.message);
       }
 
       final refreshResponse = await http.post(
@@ -80,7 +80,7 @@ class ClientHttp {
         log.warning("Refresh fallido: ${refreshResponse.statusCode}");
         await TokenStorage.clearTokens();
         Config.clearToken();
-        return HttpResponseModel(success: false, message: "Sesion expirada");
+        return HttpResponseModel(success: false, message: ClientStatus.expiredToken.message);
       }
 
       final refreshData = jsonDecode(refreshResponse.body);
@@ -107,7 +107,27 @@ class ClientHttp {
       }
     } catch (e) {
       log.warning("Error renovando token: $e");
-      return HttpResponseModel(success: false, message: "Sesion expirada");
+      return HttpResponseModel(success: false, message: ClientStatus.expiredToken.message);
+    }
+  }
+}
+
+enum ClientStatus {
+  noConnection,
+  technicalIssues,
+  expiredToken,
+  highLatency;
+
+  String get message {
+    switch (this) {
+      case ClientStatus.noConnection:
+        return 'Sin conexión a internet';
+      case ClientStatus.technicalIssues:
+        return 'Problemas técnicos';
+      case ClientStatus.expiredToken:
+        return 'Sesion expirada';
+      case ClientStatus.highLatency:
+        return 'Problemas de conexion';
     }
   }
 }

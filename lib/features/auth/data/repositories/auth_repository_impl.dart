@@ -122,4 +122,14 @@ class AuthRepositoryImpl extends AuthRepository {
       return left(CommonError(message: "Error updateUser: $e"));
     }
   }
+
+  @override
+  Future<Either<CommonError, bool>> status() async {
+    try {
+      final result = await dataSource.status();
+      return right(result.success);
+    } catch (e) {
+      return left(CommonError(message: "Error status: $e"));
+    }
+  }
 }

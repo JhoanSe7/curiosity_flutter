@@ -2,11 +2,14 @@ import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/services/notification_service.dart';
-import 'package:curiosity_flutter/core/utils/util_page.dart';
+import 'package:curiosity_flutter/core/utils/network_utils.dart';
+import 'package:curiosity_flutter/core/utils/page_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'splash_controller.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -24,6 +27,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
   Future<void> _initialize() async {
     await _permissionRequest();
+    var failed = await _validateStatusConnection();
+    if (failed) return;
     if (!(await view.isHuawei)) await notificationSvc.initialize();
     if (mounted) context.go(Routes.signIn);
   }
@@ -35,6 +40,22 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       Permission.manageExternalStorage,
       Permission.photos,
     ].request();
+  }
+
+  Future<bool> _validateStatusConnection() async {
+    bool hasConnection = await NetworkUtils.hasConnection();
+    if (!hasConnection) {
+      if (mounted) context.pushReplacement(Routes.connectionFailure);
+      return true;
+    }
+    if (mounted) {
+      bool systemStatus = await ref.read(splashController.notifier).status(context);
+      if (!systemStatus) {
+        if (mounted) context.pushReplacement(Routes.maintenance);
+        return true;
+      }
+    }
+    return false;
   }
 
   @override
