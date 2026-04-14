@@ -27,4 +27,6 @@ class AuthUseCase {
 
   Future<Either<CommonError, UserModel>> updateUser({required UserModel data}) async =>
       await repository.updateUser(data: data);
+
+  Future<Either<CommonError, bool>> status() async => await repository.status();
 }

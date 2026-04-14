@@ -3,8 +3,7 @@ class PathAnimations {
   final String emptySearch = "assets/animations/lottie-empty-search.json";
   final String pulseDot = "assets/animations/lottie-pulse-dot.json";
   final String loadingSmaller = "assets/animations/lottie-load.json";
-
-
+  final String pulse = "assets/animations/lottie-pulse.json";
 }
 
 final PathAnimations animations = PathAnimations();

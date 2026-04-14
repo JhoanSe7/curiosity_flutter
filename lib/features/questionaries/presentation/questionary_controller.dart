@@ -1,5 +1,5 @@
 import 'package:curiosity_flutter/core/di/injection.dart';
-import 'package:curiosity_flutter/core/utils/util_processor.dart';
+import 'package:curiosity_flutter/core/utils/processor_utils.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/generate_quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_data_type.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_model.dart';

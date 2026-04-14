@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Logger log = Logger('Util');
+Logger log = Logger('PageUtils');
 
-class UtilPage {
+class PageUtils {
   void autoScroll(BuildContext context) {
     Scrollable.ensureVisible(
       context,
@@ -60,4 +60,4 @@ class UtilPage {
   }
 }
 
-final view = UtilPage();
+final view = PageUtils();

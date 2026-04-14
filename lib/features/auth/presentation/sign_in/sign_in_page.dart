@@ -215,8 +215,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   Future<void> _handleLogin() async {
     final controller = ref.read(signInController.notifier);
     UserModel? user = await controller.logIn(context, _userController.text, _passController.text);
-    final pref = await SharedPreferences.getInstance();
     if (user != null && (user.id ?? "").isNotEmpty) {
+      final pref = await SharedPreferences.getInstance();
       var localToken = pref.getString("tokenFCM") ?? "";
       user = await _validateTokenPush(user, localToken);
       final dashController = ref.read(homeController.notifier);

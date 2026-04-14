@@ -3,6 +3,9 @@ import 'package:curiosity_flutter/features/auth/presentation/reset_password/widg
 import 'package:curiosity_flutter/features/auth/presentation/reset_password/widgets/validate_otp_view.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_in/sign_in_page.dart';
 import 'package:curiosity_flutter/features/auth/presentation/sign_up/sign_up_page.dart';
+import 'package:curiosity_flutter/features/auth/presentation/splash/splash_page.dart';
+import 'package:curiosity_flutter/features/auth/presentation/splash/widgets/connection_failure_view.dart';
+import 'package:curiosity_flutter/features/auth/presentation/splash/widgets/maintenance_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/home_page.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/about_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/info_profile_view.dart';
@@ -10,7 +13,6 @@ import 'package:curiosity_flutter/features/home/presentation/widgets/profile/not
 import 'package:curiosity_flutter/features/home/presentation/widgets/profile/support_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/results/result_detail_view.dart';
 import 'package:curiosity_flutter/features/home/presentation/widgets/results/session_result_users_view.dart';
-import 'package:curiosity_flutter/features/main/presentation/splash_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_page.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_question_view.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/widgets/create_quiz_view.dart';
@@ -52,6 +54,8 @@ class Routes {
   static String requestOTP = "/request-otp";
   static String validateOTP = "/validate-otp";
   static String createPassword = "/create-password";
+  static String maintenance = "/maintenance";
+  static String connectionFailure = "/connection-failure";
 }
 
 final router = GoRouter(
@@ -152,6 +156,14 @@ final router = GoRouter(
     GoRoute(
       path: Routes.createPassword,
       builder: (context, state) => const CreatePasswordView(),
+    ),
+    GoRoute(
+      path: Routes.maintenance,
+      builder: (context, state) => const MaintenanceView(),
+    ),
+    GoRoute(
+      path: Routes.connectionFailure,
+      builder: (context, state) => const ConnectionFailureView(),
     ),
   ],
 );

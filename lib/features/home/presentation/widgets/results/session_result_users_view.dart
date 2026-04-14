@@ -107,12 +107,12 @@ class _SessionResultUsersViewState extends ConsumerState<SessionResultUsersView>
       final dir = Directory('/storage/emulated/0/Download');
       if (!await dir.exists()) await dir.create(recursive: true);
 
-      final file = File('${dir.path}/reporte.xlsx');
+      final file = File('${dir.path}/reporte_${DateTime.now().millisecondsSinceEpoch}.xlsx');
       await file.writeAsBytes(bytes);
       return true;
     } else if (Platform.isIOS) {
       final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/reporte.xlsx');
+      final file = File('${dir.path}/reporte_${DateTime.now().millisecondsSinceEpoch}.xlsx');
       await file.writeAsBytes(bytes);
       return true;
     }
