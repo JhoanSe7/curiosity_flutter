@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '844600246339',
     projectId: 'curiosity-71332',
     storageBucket: 'curiosity-71332.firebasestorage.app',
-    iosBundleId: 'com.uts.app.curiosityFlutter',
+    iosBundleId: 'com.test.app-flutter',
   );
 }

@@ -6,7 +6,7 @@ import 'injection.config.dart';
 final getIt = GetIt.instance;
 
 @InjectableInit(
-  initializerName: 'init',
+  initializerName: 'splash',
   preferRelativeImports: true,
   asExtension: true,
 )

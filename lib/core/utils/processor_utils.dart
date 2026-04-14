@@ -1,12 +1,23 @@
 import 'dart:async';
 
+import 'package:curiosity_flutter/core/network/client_http.dart';
 import 'package:curiosity_flutter/core/network/models/common_error.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/utils.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 dynamic processError(BuildContext context, {required String error}) {
+  if (ClientStatus.values.any((e) => e.message == error)) {
+    var newContext = navigatorKey.currentContext;
+    bool canPop = newContext?.canPop() ?? false;
+    while (canPop) {
+      newContext?.pop();
+    }
+    newContext?.pushReplacement(Routes.root);
+    return;
+  }
   context.showToast(text: error, type: MessageType.error);
   log.warning(error);
 }

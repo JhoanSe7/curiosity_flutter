@@ -1,5 +1,5 @@
 import 'package:curiosity_flutter/core/di/injection.dart';
-import 'package:curiosity_flutter/core/utils/util_processor.dart';
+import 'package:curiosity_flutter/core/utils/processor_utils.dart';
 import 'package:curiosity_flutter/features/auth/data/models/response/user_model.dart';
 import 'package:curiosity_flutter/features/home/data/models/session_model.dart';
 import 'package:curiosity_flutter/features/home/data/models/support_model.dart';

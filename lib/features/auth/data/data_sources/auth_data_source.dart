@@ -17,6 +17,8 @@ abstract class AuthDataSource {
   Future<HttpResponseModel> validateOTP({required String userId, required String code});
 
   Future<HttpResponseModel> updateUser({required UserModel data});
+
+  Future<HttpResponseModel> status();
 }
 
 @Injectable(as: AuthDataSource)
@@ -74,5 +76,10 @@ class AuthDataSourceImpl extends AuthDataSource {
       endpoint: "${Config.apiUrl}users/update-user",
       body: data.toUpdate(),
     );
+  }
+
+  @override
+  Future<HttpResponseModel> status() async {
+    return await clientHttp.get(endpoint: "${Config.apiUrl}auth/status");
   }
 }

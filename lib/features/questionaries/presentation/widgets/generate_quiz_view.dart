@@ -3,7 +3,7 @@ import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
-import 'package:curiosity_flutter/core/utils/util_page.dart';
+import 'package:curiosity_flutter/core/utils/page_utils.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/generate_quiz_model.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/question_data_type.dart';
 import 'package:curiosity_flutter/features/questionaries/presentation/questionary_controller.dart';
