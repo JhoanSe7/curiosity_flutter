@@ -29,7 +29,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     await _permissionRequest();
     var failed = await _validateStatusConnection();
     if (failed) return;
-    if (!(await view.isHuawei)) await notificationSvc.initialize();
+    bool allow = await view.allowFirebase;
+    if (allow) await notificationSvc.initialize();
     if (mounted) context.go(Routes.signIn);
   }
 

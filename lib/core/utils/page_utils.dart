@@ -24,6 +24,13 @@ class PageUtils {
     return manufacturer.contains('huawei');
   }
 
+  Future<bool> get allowFirebase async {
+    if (Platform.isIOS) return false;
+    bool huawei = await isHuawei;
+    if (huawei) return false;
+    return true;
+  }
+
   Future<void> launchURL(
     String url, {
     LaunchMode mode = LaunchMode.externalApplication,
