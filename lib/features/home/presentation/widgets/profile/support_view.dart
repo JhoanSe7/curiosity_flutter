@@ -63,6 +63,7 @@ class _SupportViewState extends ConsumerState<SupportView> {
           ),
           height.l,
           Container(
+            padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               color: colors.white,

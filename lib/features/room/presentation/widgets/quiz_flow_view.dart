@@ -321,7 +321,7 @@ class _QuizFlowViewState extends ConsumerState<QuizFlowView> with SingleTickerPr
       );
 
   void _saveResponseText(String text) {
-    answers[indexQuestion].correctAnswerText = text;
+    answers[indexQuestion].correctAnswerText = text.trim();
   }
 
   void _checkTap(OptionModel o) {

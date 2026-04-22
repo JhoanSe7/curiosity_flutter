@@ -2,6 +2,7 @@ import 'package:curiosity_flutter/core/constants/config.dart';
 import 'package:curiosity_flutter/core/constants/path_icons.dart';
 import 'package:curiosity_flutter/core/design/design.dart';
 import 'package:curiosity_flutter/core/routes/routes.dart';
+import 'package:curiosity_flutter/core/utils/extensions/dimension_extension.dart';
 import 'package:curiosity_flutter/core/utils/extensions/message_extension.dart';
 import 'package:curiosity_flutter/core/utils/page_utils.dart';
 import 'package:curiosity_flutter/features/questionaries/data/models/generate_quiz_model.dart';
@@ -47,14 +48,18 @@ class _GenerateQuizViewState extends ConsumerState<GenerateQuizView> {
       scrollController: scrollController,
       customTitle: titleWidget,
       appbarColor: colors.gradientPurple,
-      body: Column(
-        children: [
-          infoQuestionary(),
-          height.l,
-          settingsQuestionary(),
-          height.l,
-          typeQuestionary(),
-        ],
+      enablePadding: false,
+      body: Container(
+        margin: EdgeInsets.all(context.scale(16) ?? 16),
+        child: Column(
+          children: [
+            infoQuestionary(),
+            height.l,
+            settingsQuestionary(),
+            height.l,
+            typeQuestionary(),
+          ],
+        ),
       ),
       bottomBar: generateButton(),
     );

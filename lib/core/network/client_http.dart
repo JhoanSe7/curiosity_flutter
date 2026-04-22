@@ -18,9 +18,9 @@ class ClientHttp {
 
   Future<HttpResponseModel> get({required String endpoint, bool getFile = false}) async {
     try {
-      var response = await http.get(Uri.parse(endpoint), headers: Config.headers);
+      var response = await http.get(Uri.parse(endpoint), headers: Config.headers).timeout(Duration(seconds: 60));
       if (!getFile) response.inspect("");
-      if (response.statusCode == 401) {
+      if (response.statusCode == 401 || response.statusCode == 403) {
         return await _handleUnauthorized(isGet: true, endpoint: endpoint);
       }
       if (getFile) return response.parseFile();

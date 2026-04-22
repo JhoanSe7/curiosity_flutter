@@ -84,21 +84,18 @@ class _QuizzesViewState extends ConsumerState<QuizzesView> {
               dense: true,
             ),
           ),
-        if (state.isLoading)
-          WaitingListWidget(loading: state.isLoading, list: FakeList.quiz)
-        else
-          Expanded(
-            child: SingleChildScrollView(
-              child: contentList(),
-            ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: state.isLoading ? WaitingListWidget(loading: state.isLoading, list: FakeList.quiz) : contentList(),
           ),
+        ),
       ],
     );
   }
 
   Widget contentList() {
     return Padding(
-      padding: EdgeInsets.all(context.scale(16) ??16),
+      padding: EdgeInsets.all(context.scale(16) ?? 16),
       child: Column(
         children: [
           if (filterList.isNotEmpty)
