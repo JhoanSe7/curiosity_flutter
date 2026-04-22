@@ -36,6 +36,9 @@ class WebSocketService {
         onWebSocketError: (error) => log.warning('WebSocket error: $error'),
         onStompError: (frame) => log.warning('STOMP error: ${frame.body}'),
         reconnectDelay: const Duration(seconds: 5),
+        stompConnectHeaders: {
+          'Authorization': 'Bearer ${Config.getToken()}',
+        },
       ),
     );
 

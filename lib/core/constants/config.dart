@@ -10,6 +10,7 @@ class Config {
   static final String wsBaseUrl = wsUrl[env] ?? "";
 
   static String _token = "";
+  static String getToken() => _token;
   static void setToken(String token) => _token = token;
   static void clearToken() => _token = "";
 
